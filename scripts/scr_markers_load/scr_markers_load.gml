@@ -41,7 +41,7 @@ function scr_markers_load()
         array_push(save_candidates, global.markers_file);
     }
 
-        if (json != "")
+        if (file_exists(save_name))
         {
             try {
                 var data = json_parse(json);
@@ -98,14 +98,30 @@ function scr_markers_load()
 
     for (var i = 0; i < array_length(defaults); i++)
     {
-        var fname_default = defaults[i];
-        if (!file_exists(fname_default)) continue;
+        var def_name = defaults[i];
 
-        var buf = buffer_load(fname_default);
-        var json2 = buffer_read(buf, buffer_text);
-        buffer_delete(buf);
+        if (file_exists(def_name))
+        {
+            var json_def = "";
+            if (script_exists(scr_load_text_file)) {
+                json_def = string_trim(scr_load_text_file(def_name));
+            } else {
+                var fd = file_text_open_read(def_name);
+                if (fd >= 0) {
+                    while (!file_text_eof(fd)) {
+                        json_def += file_text_read_string(fd);
+                        if (!file_text_eof(fd)) file_text_readln(fd);
+                    }
+                    file_text_close(fd);
+                    json_def = string_trim(json_def);
+                }
+            }
 
-        json2 = string_trim(json2);
+            if (json_def != "")
+            {
+                try {
+                    var data_def = json_parse(json_def);
+                    var loaded_def = undefined;
 
         if (json2 != "")
         {
