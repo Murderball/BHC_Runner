@@ -44,7 +44,7 @@
 	// ----------------------------------------------------
 	// 1) BEAT PULSE ZOOM (safe, tiny) — respects offsets
 	// ----------------------------------------------------
-	var zoom = 1.0;
+	var zoom_pulse = 1.0;
 
 if (variable_global_exists("CAM_PULSE_ON") && global.CAM_PULSE_ON) {
     var bpm = (variable_global_exists("BPM") && is_real(global.BPM) && global.BPM > 0) ? global.BPM : 140;
@@ -88,11 +88,73 @@ if (variable_global_exists("CAM_PULSE_ON") && global.CAM_PULSE_ON) {
     var amp = is_downbeat ? amp_down : amp_beat;
     amp = clamp(amp, 0.0, 0.15);
 
-    zoom = 1.0 + (amp * pulse);
+    zoom_pulse = 1.0 + (amp * pulse);
 }
+
+// Marker-driven camera track (zoom + pan).
+var marker_zoom = 1.0;
+var marker_pan_x = 0.0;
+var marker_pan_y = 0.0;
+
+if (variable_global_exists("camera_events") && is_array(global.camera_events) && array_length(global.camera_events) > 0)
+{
+    var ev_prev = -1;
+    var ev_next = -1;
+
+    for (var ei = 0; ei < array_length(global.camera_events); ei++)
+    {
+        var ev = global.camera_events[ei];
+        if (!is_struct(ev)) continue;
+
+        if (ev.t <= t) ev_prev = ei;
+        if (ev.t > t) { ev_next = ei; break; }
+    }
+
+    if (ev_prev >= 0)
+    {
+        marker_zoom = global.camera_events[ev_prev].zoom;
+        marker_pan_x = global.camera_events[ev_prev].pan_x;
+        marker_pan_y = global.camera_events[ev_prev].pan_y;
+    }
+
+    if (ev_next >= 0)
+    {
+        var next_ev = global.camera_events[ev_next];
+
+        var start_t = 0.0;
+        var start_zoom = 1.0;
+        var start_pan_x = 0.0;
+        var start_pan_y = 0.0;
+
+        if (ev_prev >= 0)
+        {
+            var prev_ev = global.camera_events[ev_prev];
+            start_t = prev_ev.t;
+            start_zoom = prev_ev.zoom;
+            start_pan_x = prev_ev.pan_x;
+            start_pan_y = prev_ev.pan_y;
+        }
+
+        var denom = max(0.0001, next_ev.t - start_t);
+        var k = clamp((t - start_t) / denom, 0.0, 1.0);
+
+        var ease_mode = (variable_struct_exists(next_ev, "ease") ? next_ev.ease : "smooth");
+        if (ease_mode == "hold") k = (k >= 1.0) ? 1.0 : 0.0;
+        else if (ease_mode == "smooth") k = k * k * (3.0 - (2.0 * k));
+
+        marker_zoom = lerp(start_zoom, next_ev.zoom, k);
+        marker_pan_x = lerp(start_pan_x, next_ev.pan_x, k);
+        marker_pan_y = lerp(start_pan_y, next_ev.pan_y, k);
+    }
+}
+
+var zoom = clamp(zoom_pulse * marker_zoom, cam_zoom_min, cam_zoom_max);
 
 // Save for UI/debug
 cam_zoom = zoom;
+dbg_cam_marker_zoom = marker_zoom;
+dbg_cam_marker_pan_x = marker_pan_x;
+dbg_cam_marker_pan_y = marker_pan_y;
 
 // Apply zoom by changing camera *view size* (port stays BASE_W/BASE_H)
 var base_w = global.BASE_W;
@@ -115,7 +177,7 @@ if (!is_real(pps) || is_nan(pps) || pps <= 0) pps = 1.0;
 var chunk_w_px = global.CHUNK_W_TILES * global.TILE_W;
 if (!is_real(chunk_w_px) || is_nan(chunk_w_px) || chunk_w_px < 1) {
     cam_world_x = 0;
-    cam_world_y = keep_y;
+    cam_world_y = keep_y + marker_pan_y;
     camera_set_view_pos(cam, cam_world_x, cam_world_y);
     dbg_cam_error = "camera waiting: bad chunk_w_px";
     exit;
@@ -124,7 +186,7 @@ if (!is_real(chunk_w_px) || is_nan(chunk_w_px) || chunk_w_px < 1) {
 var buf = global.BUFFER_CHUNKS;
 if (!is_real(buf) || is_nan(buf) || buf < 2) {
     cam_world_x = 0;
-    cam_world_y = keep_y;
+    cam_world_y = keep_y + marker_pan_y;
     camera_set_view_pos(cam, cam_world_x, cam_world_y);
     dbg_cam_error = "camera waiting: BUFFER_CHUNKS < 2";
     exit;
@@ -136,7 +198,7 @@ var strip_w_px = buf * chunk_w_px;
 var wrap_w = strip_w_px - view_w;
 if (!is_real(wrap_w) || is_nan(wrap_w) || wrap_w < 1) {
     cam_world_x = 0;
-    cam_world_y = keep_y;
+    cam_world_y = keep_y + marker_pan_y;
     camera_set_view_pos(cam, cam_world_x, cam_world_y);
     dbg_cam_error = "strip < view (increase BUFFER_CHUNKS)";
     exit;
@@ -175,6 +237,7 @@ if (x_vis < 0) x_vis += wrap_w;
 var hitx = global.HITLINE_X; // px from camera left at zoom=1
 var anchor_shift = hitx - (hitx / zoom);
 x_vis += anchor_shift;
+x_vis += marker_pan_x;
 
 // Wrap again after shift
 x_vis = x_vis mod wrap_w;
@@ -182,7 +245,7 @@ if (x_vis < 0) x_vis += wrap_w;
 
 // Final (preserve Y)
 cam_world_x = x_vis;
-cam_world_y = keep_y;
+cam_world_y = keep_y + marker_pan_y;
 camera_set_view_pos(cam, cam_world_x, cam_world_y);
 
 // Debug

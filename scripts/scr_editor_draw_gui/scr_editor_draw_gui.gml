@@ -118,7 +118,7 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
 
 
     // ==================================================
-    // STORY MARKERS (pause/diff/spawn)
+    // STORY MARKERS (pause/diff/spawn/camera)
     // ==================================================
     if (variable_global_exists("markers") && is_array(global.markers))
     {
@@ -138,6 +138,7 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
             var mt = (variable_struct_exists(m, "type") ? string(m.type) : "pause");
             var is_spawn = (mt == "spawn");
             var is_diff  = (mt == "difficulty" || mt == "diff");
+            var is_camera = (mt == "camera");
 
             // --- Main vertical line (for all non-spawn markers) ---
             if (!is_spawn)
@@ -145,14 +146,16 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
                 if (mi == global.editor_marker_sel)
                 {
                     draw_set_alpha(1);
-                    draw_set_color(c_fuchsia);
-                    draw_line_width(gx, top_y, gx, bot_y, 4);
+                    if (is_camera) draw_set_color(make_color_rgb(0, 255, 255));
+                    else draw_set_color(c_fuchsia);
+                    draw_line_width(gx, top_y, gx, bot_y, (is_camera ? 6 : 4));
                 }
                 else
                 {
-                    draw_set_alpha(0.85);
-                    draw_set_color(make_color_rgb(200, 120, 255));
-                    draw_line_width(gx, top_y, gx, bot_y, 2);
+                    draw_set_alpha(0.9);
+                    if (is_camera) draw_set_color(make_color_rgb(0, 200, 255));
+                    else draw_set_color(make_color_rgb(200, 120, 255));
+                    draw_line_width(gx, top_y, gx, bot_y, (is_camera ? 4 : 2));
                 }
             }
 
@@ -182,6 +185,14 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
                 {
                     var d = (variable_struct_exists(m, "diff") ? string(m.diff) : "normal");
                     draw_text(gx + 6, top_y + 8, "DIFF  " + string_upper(d));
+                }
+                else if (is_camera)
+                {
+                    var czoom = (variable_struct_exists(m, "zoom") ? string_format(real(m.zoom), 1, 2) : "1.00");
+                    var cpx = (variable_struct_exists(m, "pan_x") ? string(round(real(m.pan_x))) : "0");
+                    var cpy = (variable_struct_exists(m, "pan_y") ? string(round(real(m.pan_y))) : "0");
+                    var ce = (variable_struct_exists(m, "ease") ? string_upper(string(m.ease)) : "SMOOTH");
+                    draw_text(gx + 6, bot_y - 24, "CAM z" + czoom + " x" + cpx + " y" + cpy + " " + ce);
                 }
                 else
                 {
@@ -225,6 +236,13 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
             {
                 if (variable_struct_exists(msel, "diff"))    s += " diff=" + string(msel.diff);
                 if (variable_struct_exists(msel, "caption")) s += " caption=" + string(msel.caption);
+            }
+            else if (mt2 == "camera")
+            {
+                if (variable_struct_exists(msel, "zoom")) s += " zoom=" + string_format(real(msel.zoom), 1, 2);
+                if (variable_struct_exists(msel, "pan_x")) s += " pan_x=" + string(round(real(msel.pan_x)));
+                if (variable_struct_exists(msel, "pan_y")) s += " pan_y=" + string(round(real(msel.pan_y)));
+                if (variable_struct_exists(msel, "ease"))  s += " ease=" + string(msel.ease);
             }
             else
             {
@@ -489,6 +507,7 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
             "DIFFICULTY:\n" +
             "  Ctrl+1/2/3/4   Chart Difficulty Toggle\n" +
             "  T              Toggle Difficulty Marker\n" +
+            "  U              Toggle Camera Marker\n" +
             "  Shift+7/8/9    Marker Difficulty Toggle\n" +
 
             "MARKER TOOL (active):\n" +
@@ -498,6 +517,7 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
             "  LMB-drag       move selected marker time\n" +
             "  Shift+LMB      create SPAWN marker (enemy)\n" +
 			"  Shift+Alt+LMB  create PICKUP marker\n" +
+            "  Alt+LMB        create CAMERA marker\n" +
             "  Delete/Backsp  delete selected marker\n" +
             "  RMB            delete marker under mouse\n" +
             "  Shift+D        Swap Visual/Audio Modes\n" +
@@ -510,6 +530,15 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
 			"  J              cycle pickup_kind\n" +
 			"  Up/Down        nudge y\n" +
 			"  Shift+LMB hold  set y to mouse\n" +
+
+            "CAMERA MARKER (type=camera):\n" +
+            "  Alt+LMB        create camera marker\n" +
+            "  U              convert selected marker to camera\n" +
+            "  Q / E          zoom -/+\n" +
+            "  Arrows         pan x/y\n" +
+            "  Shift+Arrows   fast pan x/y\n" +
+            "  C / V          ease prev/next\n" +
+            "  R              reset zoom/pan\n" +
 
             "STORY/PAUSE MARKER:\n" +
             "  N              toggle Yes/No choices\n" +
