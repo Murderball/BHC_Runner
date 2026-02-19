@@ -54,12 +54,36 @@ function scr_markers_load()
                 } else {
                     show_debug_message("MARKERS LOAD: save file parsed but markers array was not found (resetting).");
                 }
-            }
-            catch (e) {
-                show_debug_message("MARKERS LOAD: parse failed for save file " + fname_save);
+                file_text_close(fs);
+                json_save = string_trim(json_save);
             }
         }
-        else show_debug_message("MARKERS LOAD: save file empty " + fname_save);
+
+        if (json_save == "") continue;
+
+        try {
+            var data_save = json_parse(json_save);
+            var loaded_save = undefined;
+
+            if (is_array(data_save)) loaded_save = data_save;
+            else if (is_struct(data_save)
+                && variable_struct_exists(data_save, "markers")
+                && is_array(data_save.markers))
+            {
+                loaded_save = data_save.markers;
+            }
+
+            if (is_array(loaded_save)) {
+                global.markers = loaded_save;
+                show_debug_message("MARKERS LOAD <- SAVE " + save_name + " count=" + string(array_length(global.markers)));
+                return;
+            }
+
+            show_debug_message("MARKERS LOAD: parsed " + save_name + " but markers array was not found.");
+        }
+        catch (e_save) {
+            show_debug_message("MARKERS LOAD: parse failed for " + save_name);
+        }
     }
 
     // 2) Fallback defaults
@@ -93,9 +117,35 @@ function scr_markers_load()
                     show_debug_message("MARKERS LOAD <- DEFAULT " + fname_default + " count=" + string(array_length(global.markers)) + " ctx=" + lvl + "/" + d);
                     return;
                 }
-            } catch (e2) {
-                show_debug_message("MARKERS LOAD: parse failed for default " + fname_default);
+                file_text_close(fd);
+                json_def = string_trim(json_def);
             }
+        }
+
+        if (json_def == "") continue;
+
+        try {
+            var data_def = json_parse(json_def);
+            var loaded_def = undefined;
+
+            if (is_array(data_def)) loaded_def = data_def;
+            else if (is_struct(data_def)
+                && variable_struct_exists(data_def, "markers")
+                && is_array(data_def.markers))
+            {
+                loaded_def = data_def.markers;
+            }
+
+            if (is_array(loaded_def)) {
+                global.markers = loaded_def;
+                show_debug_message("MARKERS LOAD <- DEFAULT " + def_name + " count=" + string(array_length(global.markers)) + " ctx=" + lvl + "/" + d);
+                return;
+            }
+
+            show_debug_message("MARKERS LOAD: parsed " + def_name + " but markers array was not found.");
+        }
+        catch (e_def) {
+            show_debug_message("MARKERS LOAD: parse failed for " + def_name);
         }
     }
 
