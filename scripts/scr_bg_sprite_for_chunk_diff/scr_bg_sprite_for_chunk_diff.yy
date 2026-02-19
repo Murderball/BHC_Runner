@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_bg_sprite_for_chunk_diff",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_bg_sprite_for_chunk_diff",
+  "parent":{
+    "name":"Scripts_Backgrounds",
+    "path":"folders/Scripts/Scripts_Backgrounds.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

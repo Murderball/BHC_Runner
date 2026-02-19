@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_set_playhead_time",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_set_playhead_time",
+  "parent":{
+    "name":"Scripts_Notes_Charts",
+    "path":"folders/Scripts/Scripts_Notes_Charts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

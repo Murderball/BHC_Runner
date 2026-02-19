@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_chart_save_and_reload",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_chart_save_and_reload",
+  "parent":{
+    "name":"Scripts_Editor",
+    "path":"folders/Scripts/Scripts_Editor.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

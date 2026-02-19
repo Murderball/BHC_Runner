@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_chart_save",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_chart_save",
+  "parent":{
+    "name":"Scripts_Notes_Charts",
+    "path":"folders/Scripts/Scripts_Notes_Charts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

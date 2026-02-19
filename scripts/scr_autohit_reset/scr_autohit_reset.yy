@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_autohit_reset",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_autohit_reset",
+  "parent":{
+    "name":"Scripts_Player",
+    "path":"folders/Scripts/Scripts_Player.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

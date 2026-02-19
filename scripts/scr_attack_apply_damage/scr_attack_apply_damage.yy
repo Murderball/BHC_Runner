@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_attack_apply_damage",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_attack_apply_damage",
+  "parent":{
+    "name":"Scripts_Enemy",
+    "path":"folders/Enemies/Scripts_Enemy.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

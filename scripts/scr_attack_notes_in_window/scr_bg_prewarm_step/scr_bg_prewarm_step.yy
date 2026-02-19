@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_bg_prewarm_step",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_bg_prewarm_step",
+  "parent":{
+    "name":"Scripts_Other",
+    "path":"folders/Scripts/Scripts_Other.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

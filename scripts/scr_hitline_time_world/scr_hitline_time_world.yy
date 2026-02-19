@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_hitline_time_world",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_hitline_time_world",
+  "parent":{
+    "name":"Scripts_Notes_Charts",
+    "path":"folders/Scripts/Scripts_Notes_Charts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

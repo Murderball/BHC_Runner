@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_datafile_read_all_text",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_datafile_read_all_text",
+  "parent":{
+    "name":"Scripts_Chunk",
+    "path":"folders/Scripts_Chunk.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

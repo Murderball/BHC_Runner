@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_music_pause_stop",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_music_pause_stop",
+  "parent":{
+    "name":"Scripts_Audio",
+    "path":"folders/Scripts/Scripts_Audio.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

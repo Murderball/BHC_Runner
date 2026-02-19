@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_master_sections_build_chunk_ranges",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_master_sections_build_chunk_ranges",
+  "parent":{
+    "name":"Other",
+    "path":"folders/Scripts/Other.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

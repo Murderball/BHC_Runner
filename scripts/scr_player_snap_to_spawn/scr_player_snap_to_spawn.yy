@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_player_snap_to_spawn",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_player_snap_to_spawn",
+  "parent":{
+    "name":"Scripts_Player",
+    "path":"folders/Scripts/Scripts_Player.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

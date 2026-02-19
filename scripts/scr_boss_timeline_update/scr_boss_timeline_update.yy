@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_boss_timeline_update",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_boss_timeline_update",
+  "parent":{
+    "name":"Scripts_Enemy",
+    "path":"folders/Enemies/Scripts_Enemy.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

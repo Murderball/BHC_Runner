@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"snd_boss_music_level1",
+  "audioGroupId":{
+    "name":"audiogroup_default",
+    "path":"audiogroups/audiogroup_default",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":3,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":131.16081,
+  "exportDir":"",
+  "name":"snd_boss_music_level1",
+  "parent":{
+    "name":"Level_1_Master",
+    "path":"folders/Level_1_Master.yy",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"snd_boss_music_level1.mp3",
+  "volume":1.0,
+}

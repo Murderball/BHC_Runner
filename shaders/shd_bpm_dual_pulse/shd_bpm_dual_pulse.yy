@@ -1,0 +1,12 @@
+{
+  "$GMShader":"",
+  "%Name":"shd_bpm_dual_pulse",
+  "name":"shd_bpm_dual_pulse",
+  "parent":{
+    "name":"Shaders",
+    "path":"folders/Level_1_Master/Shaders.yy",
+  },
+  "resourceType":"GMShader",
+  "resourceVersion":"2.0",
+  "type":1,
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_tileset_prewarm_textures",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_tileset_prewarm_textures",
+  "parent":{
+    "name":"Warmup",
+    "path":"folders/Scripts/Warmup.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

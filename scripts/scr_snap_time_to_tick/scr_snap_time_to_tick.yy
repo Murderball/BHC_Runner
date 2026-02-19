@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_snap_time_to_tick",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_snap_time_to_tick",
+  "parent":{
+    "name":"Scripts_Notes_Charts",
+    "path":"folders/Scripts/Scripts_Notes_Charts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

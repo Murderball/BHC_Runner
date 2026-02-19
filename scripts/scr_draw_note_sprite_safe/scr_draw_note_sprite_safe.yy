@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_draw_note_sprite_safe",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_draw_note_sprite_safe",
+  "parent":{
+    "name":"Scripts_Editor",
+    "path":"folders/Scripts/Scripts_Editor.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,18 @@
+# --- Ignore PNGs (your request) ---
+*.png
+
+# --- Common GameMaker / build / cache ---
+*.yyz
+*.yyp~*
+*.bak
+*.tmp
+*.temp
+
+# GameMaker cache folders (may vary by version/project)
+cache/
+Cache/
+local_settings.json
+
+# OS junk
+.DS_Store
+Thumbs.db

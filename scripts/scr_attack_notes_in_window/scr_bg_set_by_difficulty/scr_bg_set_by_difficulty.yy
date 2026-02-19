@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_bg_set_by_difficulty",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_bg_set_by_difficulty",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

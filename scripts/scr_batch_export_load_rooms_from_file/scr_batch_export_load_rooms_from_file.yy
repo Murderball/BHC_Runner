@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_batch_export_load_rooms_from_file",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_batch_export_load_rooms_from_file",
+  "parent":{
+    "name":"Scripts_Batch_Export",
+    "path":"folders/Scripts/Scripts_Batch_Export.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_fx_level01_hard_begin",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_fx_level01_hard_begin",
+  "parent":{
+    "name":"Shaders",
+    "path":"folders/Level_1_Master/Shaders.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

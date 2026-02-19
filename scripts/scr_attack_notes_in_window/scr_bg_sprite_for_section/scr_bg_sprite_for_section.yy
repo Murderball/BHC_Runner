@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_bg_sprite_for_section",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_bg_sprite_for_section",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

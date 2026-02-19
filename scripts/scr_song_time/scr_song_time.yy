@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_song_time",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_song_time",
+  "parent":{
+    "name":"Scripts_Audio",
+    "path":"folders/Scripts/Scripts_Audio.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

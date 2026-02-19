@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_anim_subimg",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_anim_subimg",
+  "parent":{
+    "name":"Notes",
+    "path":"folders/Notes.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

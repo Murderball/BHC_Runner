@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_set_difficulty_band",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_set_difficulty_band",
+  "parent":{
+    "name":"Scripts_Chunks",
+    "path":"folders/Scripts_Chunks.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

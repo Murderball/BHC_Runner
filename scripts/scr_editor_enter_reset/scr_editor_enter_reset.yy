@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_editor_enter_reset",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_editor_enter_reset",
+  "parent":{
+    "name":"Scripts_Editor",
+    "path":"folders/Scripts/Scripts_Editor.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

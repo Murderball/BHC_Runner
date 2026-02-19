@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_find_hittable_note_in_lane",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_find_hittable_note_in_lane",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

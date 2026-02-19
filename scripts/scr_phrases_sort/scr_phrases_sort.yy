@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_phrases_sort",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_phrases_sort",
+  "parent":{
+    "name":"Scripts_Phrases",
+    "path":"folders/Scripts/Scripts_Phrases.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

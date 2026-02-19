@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_difficulty_events_from_markers",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_difficulty_events_from_markers",
+  "parent":{
+    "name":"Scripts_Difficulty",
+    "path":"folders/Scripts/Scripts_Difficulty.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

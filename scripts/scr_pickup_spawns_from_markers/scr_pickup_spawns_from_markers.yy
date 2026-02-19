@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_pickup_spawns_from_markers",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_pickup_spawns_from_markers",
+  "parent":{
+    "name":"Scripts_Pickups",
+    "path":"folders/Scripts/Scripts_Pickups.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

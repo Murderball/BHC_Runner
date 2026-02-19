@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_load_text_prefer_sandbox",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_load_text_prefer_sandbox",
+  "parent":{
+    "name":"Scripts_Chunks",
+    "path":"folders/Scripts/Scripts_Chunks.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

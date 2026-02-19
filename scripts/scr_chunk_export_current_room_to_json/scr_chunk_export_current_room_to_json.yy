@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_chunk_export_current_room_to_json",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_chunk_export_current_room_to_json",
+  "parent":{
+    "name":"Scripts_Chunks",
+    "path":"folders/Scripts/Scripts_Chunks.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

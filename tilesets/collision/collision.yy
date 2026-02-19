@@ -1,0 +1,38 @@
+{
+  "$GMTileSet":"v1",
+  "%Name":"collision",
+  "autoTileSets":[],
+  "macroPageTiles":{
+    "SerialiseHeight":0,
+    "SerialiseWidth":0,
+    "TileSerialiseData":[],
+  },
+  "name":"collision",
+  "out_columns":32,
+  "out_tilehborder":0,
+  "out_tilevborder":0,
+  "parent":{
+    "name":"Tile Sets",
+    "path":"folders/Level_3_Master/Tile Sets.yy",
+  },
+  "resourceType":"GMTileSet",
+  "resourceVersion":"2.0",
+  "spriteId":{
+    "name":"bricks_bnw",
+    "path":"sprites/bricks_bnw/bricks_bnw.yy",
+  },
+  "spriteNoExport":false,
+  "textureGroupId":{
+    "name":"Default",
+    "path":"texturegroups/Default",
+  },
+  "tileAnimationFrames":[],
+  "tileAnimationSpeed":15.0,
+  "tileHeight":32,
+  "tilehsep":0,
+  "tilevsep":0,
+  "tileWidth":32,
+  "tilexoff":0,
+  "tileyoff":0,
+  "tile_count":1024,
+}

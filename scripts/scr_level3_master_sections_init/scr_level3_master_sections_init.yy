@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_level3_master_sections_init",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_level3_master_sections_init",
+  "parent":{
+    "name":"Level_3_Master",
+    "path":"folders/Level_3_Master.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

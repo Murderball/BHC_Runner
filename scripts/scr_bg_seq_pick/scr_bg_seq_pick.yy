@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_bg_seq_pick",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_bg_seq_pick",
+  "parent":{
+    "name":"Scripts_Backgrounds",
+    "path":"folders/Scripts/Scripts_Backgrounds.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

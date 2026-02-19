@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_layer_first_sprite_name",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_layer_first_sprite_name",
+  "parent":{
+    "name":"Scripts_Backgrounds",
+    "path":"folders/Scripts/Scripts_Backgrounds.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
