@@ -3,7 +3,7 @@
 /// Also sets:
 ///   global.master_sections_key
 ///   global.master_sections_chunks (via scr_master_sections_build_chunk_ranges if called later)
-function scr_level_master_sections_init(_level_key)
+function scr_level_master_sections_init(_level_key = undefined)
 {
     var key = (argument_count >= 1 && is_string(_level_key) && _level_key != "")
         ? _level_key
