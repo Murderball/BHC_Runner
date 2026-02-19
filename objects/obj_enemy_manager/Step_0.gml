@@ -3,7 +3,46 @@
 /// Lane-free enemy spawning:
 /// - Spawns enemies using per-spawn y_gui (generated if missing)
 /// - Does NOT set e.lane at all
-/// - Keeps editor behavior (clears enemies + resets state)
+/// - Rebuilds spawn list after leaving editor so newly placed markers are used
+
+function _enemy_spawns_build()
+{
+    var out = [];
+
+    if (script_exists(scr_enemy_spawns_from_markers))
+        out = scr_enemy_spawns_from_markers();
+
+    if (array_length(out) == 0)
+    {
+        if (variable_global_exists("chart") && is_array(global.chart))
+        {
+            var len = array_length(global.chart);
+            for (var i = 0; i < len; i++)
+            {
+                var n = global.chart[i];
+                if (!is_struct(n)) continue;
+                if (!variable_struct_exists(n, "type") || n.type != "enemy") continue;
+                if (!variable_struct_exists(n, "t")) continue;
+
+                var lane = 0;
+                if (variable_struct_exists(n, "lane")) lane = clamp(floor(n.lane), 0, global.LANE_COUNT - 1);
+
+                var kind = "poptarts";
+                if (variable_struct_exists(n, "enemy_kind")) kind = string(n.enemy_kind);
+
+                array_push(out, {
+                    t: n.t,
+                    lane: lane,
+                    kind: kind,
+                    y_gui: global.LANE_Y[lane],
+                    spawned: false
+                });
+            }
+        }
+    }
+
+    return out;
+}
 
 
 // ----------------------------------------------------
@@ -13,13 +52,20 @@ if (global.editor_on)
 {
     built_spawns = false;
     next_spawn_i = 0;
+    spawn_index = 0;
 
     with (obj_enemy) instance_destroy();
     exit;
 }
 
-// Do not spawn gameplay enemies while editing (redundant safety)
-if (global.editor_on) exit;
+// Rebuild spawn list once after leaving editor
+if (!built_spawns)
+{
+    enemy_spawns = _enemy_spawns_build();
+    next_spawn_i = 0;
+    spawn_index = 0;
+    built_spawns = true;
+}
 
 // Must have spawn list
 if (!is_array(enemy_spawns)) exit;
