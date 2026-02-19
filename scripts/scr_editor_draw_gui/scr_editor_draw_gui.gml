@@ -146,8 +146,9 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
                 if (mi == global.editor_marker_sel)
                 {
                     draw_set_alpha(1);
-                    draw_set_color(c_fuchsia);
-                    draw_line_width(gx, top_y, gx, bot_y, 4);
+                    if (is_camera) draw_set_color(make_color_rgb(0, 255, 255));
+                    else draw_set_color(c_fuchsia);
+                    draw_line_width(gx, top_y, gx, bot_y, (is_camera ? 6 : 4));
                 }
                 else
                 {
