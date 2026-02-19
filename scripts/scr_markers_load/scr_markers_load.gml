@@ -2,6 +2,21 @@
 /// Loads from persistent save first; falls back to Included Files default if present.
 function scr_markers_load()
 {
+    function _markers_from_payload(payload)
+    {
+        if (is_array(payload)) return payload;
+
+        // Backward-compatible format: { "markers": [...] }
+        if (is_struct(payload)
+            && variable_struct_exists(payload, "markers")
+            && is_array(payload.markers))
+        {
+            return payload.markers;
+        }
+
+        return undefined;
+    }
+
     var lvl = "global";
     if (variable_global_exists("LEVEL_KEY")) {
         lvl = string_lower(string(global.LEVEL_KEY));
@@ -31,13 +46,13 @@ function scr_markers_load()
             try {
                 var data = json_parse(json);
 
-                // Expecting array
-                if (is_array(data)) {
-                    global.markers = data;
+                var loaded_markers = _markers_from_payload(data);
+                if (is_array(loaded_markers)) {
+                    global.markers = loaded_markers;
                     show_debug_message("MARKERS LOAD <- SAVE " + fname_save + " count=" + string(array_length(global.markers)));
                     return;
                 } else {
-                    show_debug_message("MARKERS LOAD: save file parsed but not an array (resetting).");
+                    show_debug_message("MARKERS LOAD: save file parsed but markers array was not found (resetting).");
                 }
             }
             catch (e) {
@@ -72,8 +87,9 @@ function scr_markers_load()
         {
             try {
                 var data2 = json_parse(json2);
-                if (is_array(data2)) {
-                    global.markers = data2;
+                var loaded_markers2 = _markers_from_payload(data2);
+                if (is_array(loaded_markers2)) {
+                    global.markers = loaded_markers2;
                     show_debug_message("MARKERS LOAD <- DEFAULT " + fname_default + " count=" + string(array_length(global.markers)) + " ctx=" + lvl + "/" + d);
                     return;
                 }
