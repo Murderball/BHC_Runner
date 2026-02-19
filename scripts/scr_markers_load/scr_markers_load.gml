@@ -18,15 +18,26 @@ function scr_markers_load()
     }
 
     var lvl = "global";
-    if (variable_global_exists("LEVEL_KEY")) {
+    if (variable_global_exists("LEVEL_KEY"))
+    {
         lvl = string_lower(string(global.LEVEL_KEY));
         if (lvl == "") lvl = "global";
     }
 
     var d = "normal";
-    if (variable_global_exists("DIFFICULTY")) d = string_lower(string(global.DIFFICULTY));
-    else if (variable_global_exists("difficulty")) d = string_lower(string(global.difficulty));
-    if (d != "easy" && d != "normal" && d != "hard") d = "normal";
+    if (variable_global_exists("DIFFICULTY"))
+    {
+        d = string_lower(string(global.DIFFICULTY));
+    }
+    else if (variable_global_exists("difficulty"))
+    {
+        d = string_lower(string(global.difficulty));
+    }
+
+    if (d != "easy" && d != "normal" && d != "hard")
+    {
+        d = "normal";
+    }
 
     var fname_save = "markers_save_" + lvl + "_" + d + ".json";
     global.MARKERS_FILE = fname_save;
@@ -43,8 +54,7 @@ function scr_markers_load()
 
         if (file_exists(save_name))
         {
-            try {
-                var data = json_parse(json);
+            var json_save = "";
 
                 var loaded_markers = _markers_from_payload(data);
                 if (is_array(loaded_markers)) {
