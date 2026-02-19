@@ -5,7 +5,7 @@
 /// - Otherwise it uses scr_chart_time() (play) or global.editor_time (editor).
 ///
 /// Safe against undefined globals / startup frames.
-function scr_note_screen_x(note_time, now_time_override)
+function scr_note_screen_x(note_time, now_time_override = undefined)
 {
     // If caller passes bad time, just put it far right (offscreen)
     if (!is_real(note_time)) return display_get_gui_width() + 9999;
