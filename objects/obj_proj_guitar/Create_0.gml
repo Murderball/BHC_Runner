@@ -30,6 +30,7 @@ gui_vy = 0;
 damage = 2;
 hit_radius = 24;     // projectile hit bubble in pixels (GUI)
 pierce = false;
+hit_x = 448;         // cached GUI hitline X used from enemy scope in Step
 
 // Lifetime
 life = 0;
