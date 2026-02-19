@@ -304,15 +304,18 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
                 var end_gy = p.gy;
 
                 // Body line
+                var note_col = c_white;
+                if (script_exists(scr_note_draw_color)) note_col = scr_note_draw_color(note_ref.act);
+
                 draw_set_alpha(1);
-                draw_set_color(make_color_rgb(0, 200, 200));
+                draw_set_color(note_col);
                 draw_line_width(p.gx, p.gy, end_gx, end_gy, 6);
 
                 // End ghost sprite
                 draw_set_alpha(global.hold_end_alpha);
                 var spr = scr_note_sprite_index(note_ref.act);
                 var subimg = scr_anim_subimg(spr, idx);
-                draw_sprite(spr, subimg, end_gx, end_gy);
+                draw_sprite_ext(spr, subimg, end_gx, end_gy, 1, 1, 0, note_col, 1);
 
                 draw_set_alpha(1);
             }
