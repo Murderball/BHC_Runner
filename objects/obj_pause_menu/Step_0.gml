@@ -2,8 +2,7 @@
 
 if (move_cd > 0) move_cd--;
 
-// Don't allow pause while editor is on
-if (variable_global_exists("editor_on") && global.editor_on) exit;
+// Allow pause menu in both gameplay and editor
 
 // inputs
 var ok    = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space);
