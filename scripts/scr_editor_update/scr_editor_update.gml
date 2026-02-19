@@ -278,16 +278,28 @@ function scr_editor_update() {
         if (mouse_check_button(mb_left) && global.editor_marker_drag &&
             global.editor_marker_sel >= 0 && global.editor_marker_sel < array_length(global.markers))
         {
-            var now_time2 = scr_chart_time();
-            var pps2 = scr_timeline_pps();
+            var mdrag = global.markers[global.editor_marker_sel];
+            var mdrag_type = variable_struct_exists(mdrag, "type") ? string(mdrag.type) : "";
 
-            // Convert mouse X back into time
-            var target_gx = mx_gui + global.editor_marker_drag_dx;
-            var target_t = now_time2 + (target_gx - global.HIT_X_GUI) / pps2;
+            // Shift-drag spawn marker to move Y instead of timeline time.
+            if (mdrag_type == "spawn" && keyboard_check(vk_shift))
+            {
+                mdrag.y_gui = clamp(my_gui, 40, display_get_gui_height() - 140);
+                global.markers[global.editor_marker_sel] = mdrag;
+            }
+            else
+            {
+                var now_time2 = scr_chart_time();
+                var pps2 = scr_timeline_pps();
 
-            if (global.editor_snap_on) target_t = scr_snap_time_to_tick(target_t);
+                // Convert mouse X back into time
+                var target_gx = mx_gui + global.editor_marker_drag_dx;
+                var target_t = now_time2 + (target_gx - global.HIT_X_GUI) / pps2;
 
-            global.markers[global.editor_marker_sel].t = max(0, target_t);
+                if (global.editor_snap_on) target_t = scr_snap_time_to_tick(target_t);
+
+                global.markers[global.editor_marker_sel].t = max(0, target_t);
+            }
 
             scr_markers_sort();
             scr_story_events_from_markers();
@@ -308,6 +320,35 @@ function scr_editor_update() {
 
 
 	// ----------------------------------------------------
+	// SPAWN MARKER (ENEMY) EDIT MODE
+	// ----------------------------------------------------
+	if (mm_type == "spawn")
+	{
+	    if (!variable_struct_exists(mm, "enemy_kind")) mm.enemy_kind = "poptart";
+	    if (!variable_struct_exists(mm, "y_gui"))      mm.y_gui = my_gui;
+
+	    // G cycles enemy kind
+	    if (keyboard_check_pressed(ord("G")))
+	    {
+	        if (script_exists(scr_enemy_kind_next)) mm.enemy_kind = scr_enemy_kind_next(mm.enemy_kind, 1);
+	    }
+
+	    // Shift + drag lets you move enemy spawn on Y axis
+	    if (keyboard_check(vk_shift) && mouse_check_button(mb_left))
+	    {
+	        mm.y_gui = my_gui;
+	    }
+
+	    // Up/Down nudges Y for fine-tune
+	    if (keyboard_check(vk_up))   mm.y_gui -= 4;
+	    if (keyboard_check(vk_down)) mm.y_gui += 4;
+
+	    mm.y_gui = clamp(mm.y_gui, 40, display_get_gui_height() - 140);
+	    global.markers[global.editor_marker_sel] = mm;
+	    exit;
+	}
+
+	// ----------------------------------------------------
 	// PICKUP MARKER EDIT MODE
 	// ----------------------------------------------------
 	if (mm_type == "pickup")
@@ -325,7 +366,7 @@ function scr_editor_update() {
 
 	    // Shift sets y to mouse (hold)
 	    if (keyboard_check(vk_shift) && mouse_check_button(mb_left))
-	        mm.y_gui = mouse_y;
+	        mm.y_gui = my_gui;
 
 	    // Clamp into GUI
 	    mm.y_gui = clamp(mm.y_gui, 40, display_get_gui_height() - 140);
