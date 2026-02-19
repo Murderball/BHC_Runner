@@ -31,6 +31,8 @@ if (gui_x < -200 || gui_x > display_get_gui_width() + 200) { instance_destroy();
 // --- GUI HIT TEST vs enemies ---
 var hit_eid = noone;
 var best_d2 = 999999;
+var hit_x = 448;
+if (variable_global_exists("HIT_X_GUI") && is_real(global.HIT_X_GUI)) hit_x = global.HIT_X_GUI;
 
 with (obj_enemy)
 {
@@ -38,6 +40,9 @@ with (obj_enemy)
     if (!variable_instance_exists(id, "t_anchor")) continue;
 
     var p = scr_enemy_gui_pos(id);
+
+    // Ignore enemies that already passed the hit line.
+    if (p.x < other.hit_x) continue;
 
     var enemy_r = 28;
     if (variable_instance_exists(id, "hit_radius")) enemy_r = id.hit_radius;
