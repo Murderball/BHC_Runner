@@ -165,6 +165,5 @@ function scr_markers_load()
         }
     }
 
-    // 3) Final fallback
     global.markers = [];
     show_debug_message("MARKERS LOAD: no save/default found. markers cleared.");
