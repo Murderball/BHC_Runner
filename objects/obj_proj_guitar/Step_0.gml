@@ -31,7 +31,7 @@ if (gui_x < -200 || gui_x > display_get_gui_width() + 200) { instance_destroy();
 // --- GUI HIT TEST vs enemies ---
 var hit_eid = noone;
 var best_d2 = 999999;
-var hit_x = 448;
+hit_x = 448;
 if (variable_global_exists("HIT_X_GUI") && is_real(global.HIT_X_GUI)) hit_x = global.HIT_X_GUI;
 
 with (obj_enemy)
