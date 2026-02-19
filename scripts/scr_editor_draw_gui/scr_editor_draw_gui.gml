@@ -113,13 +113,7 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
             draw_set_color(make_color_rgb(180, 180, 180));
             draw_line_width(grid_gx, 40, grid_gx, gui_h - 140, 1);
         }
-        else
-        {
-            // 1/16 subdivision
-            draw_set_alpha(1);
-            draw_set_color(make_color_rgb(110, 110, 110));
-            draw_line_width(grid_gx, 40, grid_gx, gui_h - 140, 1);
-        }
+
     }
 
 
