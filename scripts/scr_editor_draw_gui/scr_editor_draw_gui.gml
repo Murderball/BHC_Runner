@@ -152,10 +152,10 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
                 }
                 else
                 {
-                    draw_set_alpha(0.9);
-                    if (is_camera) draw_set_color(make_color_rgb(0, 200, 255));
+                    draw_set_alpha(0.85);
+                    if (is_camera) draw_set_color(make_color_rgb(120, 220, 255));
                     else draw_set_color(make_color_rgb(200, 120, 255));
-                    draw_line_width(gx, top_y, gx, bot_y, (is_camera ? 4 : 2));
+                    draw_line_width(gx, top_y, gx, bot_y, 2);
                 }
             }
 
@@ -192,7 +192,7 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
                     var cpx = (variable_struct_exists(m, "pan_x") ? string(round(real(m.pan_x))) : "0");
                     var cpy = (variable_struct_exists(m, "pan_y") ? string(round(real(m.pan_y))) : "0");
                     var ce = (variable_struct_exists(m, "ease") ? string_upper(string(m.ease)) : "SMOOTH");
-                    draw_text(gx + 6, bot_y - 24, "CAM z" + czoom + " x" + cpx + " y" + cpy + " " + ce);
+                    draw_text(gx + 6, top_y + 8, "CAM z" + czoom + " x" + cpx + " y" + cpy + " " + ce);
                 }
                 else
                 {
@@ -532,8 +532,6 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
 			"  Shift+LMB hold  set y to mouse\n" +
 
             "CAMERA MARKER (type=camera):\n" +
-            "  Alt+LMB        create camera marker\n" +
-            "  U              convert selected marker to camera\n" +
             "  Q / E          zoom -/+\n" +
             "  Arrows         pan x/y\n" +
             "  Shift+Arrows   fast pan x/y\n" +

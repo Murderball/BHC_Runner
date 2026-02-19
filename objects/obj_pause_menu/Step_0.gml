@@ -56,7 +56,8 @@ if (back && move_cd <= 0)
         paused = false;
         global.GAME_PAUSED = false;
 
-        if (variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
+        if (!(variable_global_exists("editor_on") && global.editor_on) &&
+            variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
             if (variable_global_exists("song_handle") && global.song_handle >= 0) {
                 audio_resume_sound(global.song_handle);
             }
@@ -166,7 +167,8 @@ if (activate)
             paused = false;
             global.GAME_PAUSED = false;
 
-            if (variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
+            if (!(variable_global_exists("editor_on") && global.editor_on) &&
+                variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
                 if (variable_global_exists("song_handle") && global.song_handle >= 0) {
                     audio_resume_sound(global.song_handle);
                 }
