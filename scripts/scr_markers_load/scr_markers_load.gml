@@ -2,7 +2,19 @@
 /// Loads from persistent save first; falls back to Included Files default if present.
 function scr_markers_load()
 {
-    var fname_save = global.MARKERS_FILE;
+    var lvl = "global";
+    if (variable_global_exists("LEVEL_KEY")) {
+        lvl = string_lower(string(global.LEVEL_KEY));
+        if (lvl == "") lvl = "global";
+    }
+
+    var d = "normal";
+    if (variable_global_exists("DIFFICULTY")) d = string_lower(string(global.DIFFICULTY));
+    else if (variable_global_exists("difficulty")) d = string_lower(string(global.difficulty));
+    if (d != "easy" && d != "normal" && d != "hard") d = "normal";
+
+    var fname_save = "markers_save_" + lvl + "_" + d + ".json";
+    global.MARKERS_FILE = fname_save;
 
     // 1) Try persistent save file
     if (file_exists(fname_save))
@@ -35,10 +47,21 @@ function scr_markers_load()
         else show_debug_message("MARKERS LOAD: save file empty " + fname_save);
     }
 
-    // 2) Fallback to default markers.json from Included Files (optional)
-    var fname_default = "markers.json"; // your included default (if you have it)
-    if (file_exists(fname_default))
+    // 2) Fallback to level/difficulty defaults from Included Files
+    var defaults = [
+        "story_markers/" + lvl + "_" + d + ".json",
+        "story_markers/" + lvl + ".json",
+        "story_markers_" + lvl + "_" + d + ".json",
+        "story_markers_" + lvl + ".json",
+        "story_markers.json",
+        "markers.json"
+    ];
+
+    for (var i = 0; i < array_length(defaults); i++)
     {
+        var fname_default = defaults[i];
+        if (!file_exists(fname_default)) continue;
+
         var buf = buffer_load(fname_default);
         var json2 = buffer_read(buf, buffer_text);
         buffer_delete(buf);
@@ -51,7 +74,7 @@ function scr_markers_load()
                 var data2 = json_parse(json2);
                 if (is_array(data2)) {
                     global.markers = data2;
-                    show_debug_message("MARKERS LOAD <- DEFAULT " + fname_default + " count=" + string(array_length(global.markers)));
+                    show_debug_message("MARKERS LOAD <- DEFAULT " + fname_default + " count=" + string(array_length(global.markers)) + " ctx=" + lvl + "/" + d);
                     return;
                 }
             } catch (e2) {
