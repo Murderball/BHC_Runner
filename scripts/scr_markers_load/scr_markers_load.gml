@@ -1,5 +1,5 @@
 /// scr_markers_load()
-/// Loads from persistent save first; falls back to Included Files default if present.
+/// Loads from persistent save first; falls back to Included Files/defaults if present.
 function scr_markers_load()
 {
     function _markers_from_payload(payload)
@@ -31,15 +31,15 @@ function scr_markers_load()
     var fname_save = "markers_save_" + lvl + "_" + d + ".json";
     global.MARKERS_FILE = fname_save;
 
-    // 1) Try persistent save file
-    if (file_exists(fname_save))
-    {
-        var f = file_text_open_read(fname_save);
-        var json = "";
-        while (!file_text_eof(f)) json += file_text_read_string(f);
-        file_text_close(f);
+    // 1) Try persistent save files (level+difficulty first, then legacy names)
+    var save_candidates = [
+        fname_save,
+        "markers_save.json"
+    ];
 
-        json = string_trim(json);
+    if (variable_global_exists("markers_file") && is_string(global.markers_file) && global.markers_file != "") {
+        array_push(save_candidates, global.markers_file);
+    }
 
         if (json != "")
         {
@@ -62,7 +62,7 @@ function scr_markers_load()
         else show_debug_message("MARKERS LOAD: save file empty " + fname_save);
     }
 
-    // 2) Fallback to level/difficulty defaults from Included Files
+    // 2) Fallback defaults
     var defaults = [
         "story_markers/" + lvl + "_" + d + ".json",
         "story_markers/" + lvl + ".json",
