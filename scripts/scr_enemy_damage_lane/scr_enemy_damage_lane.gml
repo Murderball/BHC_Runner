@@ -28,6 +28,9 @@ function scr_enemy_damage_lane(_dmg, _lane)
         if (xg < -e.margin_px) continue;
         if (xg > gw + e.margin_px) continue;
 
+        // Only allow hits on enemies that are still ahead of the hit line.
+        if (xg < global.HIT_X_GUI) continue;
+
         var d = abs(xg - global.HIT_X_GUI);
         if (d < best_dist) {
             best_dist = d;
