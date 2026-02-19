@@ -47,3 +47,8 @@ target = noone;
 homing = true;
 turn_speed = 18;
 speed_gui = 900;
+
+// Visuals
+proj_act = "atk1";
+proj_color = c_aqua;
+if (script_exists(scr_note_draw_color)) proj_color = scr_note_draw_color(proj_act);

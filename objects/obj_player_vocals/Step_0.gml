@@ -251,6 +251,8 @@ if (!editor_on)
 
         p.damage = dmg1;
         p.life_max = 1.2;
+        p.proj_act = "atk1";
+        p.proj_color = c_aqua;
     }
 
     // --- ATK2 ---
@@ -307,6 +309,8 @@ if (!editor_on)
         p2.damage = dmg2;
         p2.life_max = 1.2;
         p2.pierce = true;
+        p2.proj_act = "atk2";
+        p2.proj_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(p2.proj_act) : make_color_rgb(0, 200, 255);
     }
 
     // --- ATK3 ---
@@ -362,6 +366,8 @@ if (!editor_on)
         p3.damage = dmg3;
         p3.life_max = 1.4;
         p3.hit_radius = 22;
+        p3.proj_act = "atk3";
+        p3.proj_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(p3.proj_act) : make_color_rgb(190, 95, 255);
     }
 
 // --- ULT (manual OR note-triggered) ---
