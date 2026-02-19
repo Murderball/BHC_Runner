@@ -17,53 +17,6 @@ function scr_markers_load()
         return undefined;
     }
 
-    function _read_text_file(fname)
-    {
-        if (!file_exists(fname)) return "";
-
-        if (script_exists(scr_load_text_file)) {
-            return string_trim(scr_load_text_file(fname));
-        }
-
-        var f = file_text_open_read(fname);
-        if (f < 0) return "";
-
-        var txt = "";
-        while (!file_text_eof(f)) {
-            txt += file_text_read_string(f);
-            if (!file_text_eof(f)) file_text_readln(f);
-        }
-        file_text_close(f);
-
-        return string_trim(txt);
-    }
-
-    function _try_load_file(fname, from_save)
-    {
-        var json = _read_text_file(fname);
-        if (json == "") return false;
-
-        try {
-            var data = json_parse(json);
-            var loaded = _markers_from_payload(data);
-            if (is_array(loaded)) {
-                global.markers = loaded;
-                if (from_save)
-                    show_debug_message("MARKERS LOAD <- SAVE " + fname + " count=" + string(array_length(global.markers)));
-                else
-                    show_debug_message("MARKERS LOAD <- DEFAULT " + fname + " count=" + string(array_length(global.markers)));
-                return true;
-            }
-
-            show_debug_message("MARKERS LOAD: parsed " + fname + " but markers array was not found.");
-        }
-        catch (e) {
-            show_debug_message("MARKERS LOAD: parse failed for " + fname);
-        }
-
-        return false;
-    }
-
     var lvl = "global";
     if (variable_global_exists("LEVEL_KEY")) {
         lvl = string_lower(string(global.LEVEL_KEY));
@@ -88,9 +41,25 @@ function scr_markers_load()
         array_push(save_candidates, global.markers_file);
     }
 
-    for (var si = 0; si < array_length(save_candidates); si++)
-    {
-        if (_try_load_file(save_candidates[si], true)) return;
+        if (json != "")
+        {
+            try {
+                var data = json_parse(json);
+
+                var loaded_markers = _markers_from_payload(data);
+                if (is_array(loaded_markers)) {
+                    global.markers = loaded_markers;
+                    show_debug_message("MARKERS LOAD <- SAVE " + fname_save + " count=" + string(array_length(global.markers)));
+                    return;
+                } else {
+                    show_debug_message("MARKERS LOAD: save file parsed but markers array was not found (resetting).");
+                }
+            }
+            catch (e) {
+                show_debug_message("MARKERS LOAD: parse failed for save file " + fname_save);
+            }
+        }
+        else show_debug_message("MARKERS LOAD: save file empty " + fname_save);
     }
 
     // 2) Fallback defaults
@@ -105,7 +74,29 @@ function scr_markers_load()
 
     for (var i = 0; i < array_length(defaults); i++)
     {
-        if (_try_load_file(defaults[i], false)) return;
+        var fname_default = defaults[i];
+        if (!file_exists(fname_default)) continue;
+
+        var buf = buffer_load(fname_default);
+        var json2 = buffer_read(buf, buffer_text);
+        buffer_delete(buf);
+
+        json2 = string_trim(json2);
+
+        if (json2 != "")
+        {
+            try {
+                var data2 = json_parse(json2);
+                var loaded_markers2 = _markers_from_payload(data2);
+                if (is_array(loaded_markers2)) {
+                    global.markers = loaded_markers2;
+                    show_debug_message("MARKERS LOAD <- DEFAULT " + fname_default + " count=" + string(array_length(global.markers)) + " ctx=" + lvl + "/" + d);
+                    return;
+                }
+            } catch (e2) {
+                show_debug_message("MARKERS LOAD: parse failed for default " + fname_default);
+            }
+        }
     }
 
     // 3) Final fallback
