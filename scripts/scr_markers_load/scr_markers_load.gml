@@ -59,6 +59,9 @@ function scr_markers_load()
         d = "normal";
     }
 
+    global.MARKERS_LEVEL_KEY = lvl;
+    global.MARKERS_DIFFICULTY = d;
+
     var fname_save = "markers_save_" + lvl + "_" + d + ".json";
     global.MARKERS_FILE = fname_save;
 
