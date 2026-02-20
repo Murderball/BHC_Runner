@@ -30,5 +30,11 @@ scr_chunk_build_section_sequences();
 scr_chart_load();
 scr_phrases_load();
 
+
+// Ensure exactly one persistent post FX compositor exists
+if (!instance_exists(obj_post_fx)) {
+    instance_create_depth(0, 0, -1000000, obj_post_fx);
+}
+
 // Done
 instance_destroy();
