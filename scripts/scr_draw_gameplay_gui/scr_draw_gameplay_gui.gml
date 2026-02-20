@@ -130,9 +130,9 @@ function scr_draw_gameplay_gui()
         }
 
         var was_hit = (variable_struct_exists(nref, "hit") && nref.hit);
+        var note_alpha = was_hit ? 0.35 : 1;
 
-        if (was_hit) draw_set_alpha(0.35);
-        else         draw_set_alpha(1);
+        draw_set_alpha(note_alpha);
 
         // Cull far off-screen
         if (start_gx < -400) continue;
@@ -141,6 +141,9 @@ function scr_draw_gameplay_gui()
         // Choose sprite per action (falls back to spr_note if missing)
         var spr = spr_note_atk1;
         if (script_exists(scr_note_sprite_index)) spr = scr_note_sprite_index(nref.act);
+
+        var note_col = c_white;
+        if (script_exists(scr_note_draw_color)) note_col = scr_note_draw_color(nref.act);
 
         // Animated subimages (real-time, so they animate during pause overlay too)
         var subimg_start = 0;
@@ -156,23 +159,23 @@ function scr_draw_gameplay_gui()
             var end_t = nref.t + nref.dur;
             var end_gx = scr_note_screen_x(end_t, now_time);
 
-            draw_set_color(make_color_rgb(200,200,200));
+            draw_set_color(note_col);
             draw_line_width(start_gx, start_gy, end_gx, start_gy, 6);
 
             // Hold end marker
             draw_set_alpha(global.hold_end_alpha);
-            if (spr != -1) draw_sprite(spr, subimg_end, end_gx, start_gy);
+            if (spr != -1) draw_sprite_ext(spr, subimg_end, end_gx, start_gy, 1, 1, 0, note_col, note_alpha);
             else {
-                draw_set_color(c_aqua);
+                draw_set_color(note_col);
                 draw_rectangle(end_gx - 10, start_gy - 10, end_gx + 10, start_gy + 10, false);
             }
             draw_set_alpha(1);
         }
 
         // Start note marker
-        if (spr != -1) draw_sprite(spr, subimg_start, start_gx, start_gy);
+        if (spr != -1) draw_sprite_ext(spr, subimg_start, start_gx, start_gy, 1, 1, 0, note_col, note_alpha);
         else {
-            draw_set_color(c_aqua);
+            draw_set_color(note_col);
             draw_rectangle(start_gx - 10, start_gy - 10, start_gx + 10, start_gx + 10, false);
             draw_set_color(c_black);
         }

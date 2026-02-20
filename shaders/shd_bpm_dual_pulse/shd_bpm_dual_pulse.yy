@@ -4,7 +4,7 @@
   "name":"shd_bpm_dual_pulse",
   "parent":{
     "name":"Shaders",
-    "path":"folders/Level_1_Master/Shaders.yy",
+    "path":"folders/Shaders.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",

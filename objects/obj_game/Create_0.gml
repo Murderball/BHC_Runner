@@ -69,6 +69,17 @@ global.WORLD_PPS = 448;
 global.song_playing = false;
 global.song_handle = -1;
 
+// Level01 Hard: wrap tile layer draw with shader
+if (room == rm_level01) {
+    var lid = layer_get_id("TL_Visual_Hard");
+    if (lid != -1) {
+        layer_script_begin(lid, scr_fx_level01_hard_begin);
+        layer_script_end(lid,   scr_fx_level01_hard_end);
+
+        // IMPORTANT: do NOT use layer_shader at the same time
+        layer_shader(lid, -1);
+    }
+}
 if (!variable_global_exists("editor_time")) global.editor_time = 0;
 
 // START_AT_S logic (kept as-is)

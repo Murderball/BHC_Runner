@@ -2,11 +2,13 @@ function scr_story_events_from_markers()
 {
     // Build global.story_events from marker data
     global.story_events = [];
+    global.camera_events = [];
 
     // Hard rule: only markers explicitly placed by the editor become events
     if (!is_array(global.markers) || array_length(global.markers) == 0) {
-        // Also rebuild difficulty events even if we have no story events
+        // Also rebuild marker-driven systems even if we have no story events
         if (script_exists(scr_difficulty_events_from_markers)) scr_difficulty_events_from_markers();
+        scr_camera_events_from_markers();
         return;
     }
 
@@ -74,6 +76,56 @@ function scr_story_events_from_markers()
         }
     }
 
-    // ALSO rebuild difficulty events (from the same global.markers list)
+    // ALSO rebuild marker-driven systems (from the same global.markers list)
     if (script_exists(scr_difficulty_events_from_markers)) scr_difficulty_events_from_markers();
+    scr_camera_events_from_markers();
+}
+
+function scr_camera_events_from_markers()
+{
+    global.camera_events = [];
+
+    if (!is_array(global.markers) || array_length(global.markers) == 0) return;
+
+    for (var i = 0; i < array_length(global.markers); i++)
+    {
+        var m = global.markers[i];
+        if (!is_struct(m)) continue;
+        if (!variable_struct_exists(m, "type") || string(m.type) != "camera") continue;
+        if (!variable_struct_exists(m, "t")) continue;
+
+        var ev_zoom = (variable_struct_exists(m, "zoom") ? real(m.zoom) : 1.0);
+        if (!is_real(ev_zoom) || is_nan(ev_zoom)) ev_zoom = 1.0;
+
+        var ev_pan_x = (variable_struct_exists(m, "pan_x") ? real(m.pan_x) : 0.0);
+        if (!is_real(ev_pan_x) || is_nan(ev_pan_x)) ev_pan_x = 0.0;
+
+        var ev_pan_y = (variable_struct_exists(m, "pan_y") ? real(m.pan_y) : 0.0);
+        if (!is_real(ev_pan_y) || is_nan(ev_pan_y)) ev_pan_y = 0.0;
+
+        var ev_ease = (variable_struct_exists(m, "ease") ? string_lower(string(m.ease)) : "smooth");
+        if (ev_ease != "smooth" && ev_ease != "linear" && ev_ease != "hold") ev_ease = "smooth";
+
+        array_push(global.camera_events, {
+            t: max(0, m.t),
+            zoom: clamp(ev_zoom, 0.35, 3.0),
+            pan_x: clamp(ev_pan_x, -2500, 2500),
+            pan_y: clamp(ev_pan_y, -1800, 1800),
+            ease: ev_ease
+        });
+    }
+
+    var n = array_length(global.camera_events);
+    for (var a = 0; a < n - 1; a++)
+    {
+        for (var b = a + 1; b < n; b++)
+        {
+            if (global.camera_events[a].t > global.camera_events[b].t)
+            {
+                var tmp = global.camera_events[a];
+                global.camera_events[a] = global.camera_events[b];
+                global.camera_events[b] = tmp;
+            }
+        }
+    }
 }

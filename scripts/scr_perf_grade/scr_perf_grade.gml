@@ -54,7 +54,7 @@ function scr_perf_grade(judge) {
 
         if (target != global.diff_mode) {
             global.diff_mode = target;
-            global.diff_lock_timer = room_speed * 2; // 2 seconds lock
+            global.diff_lock_timer = game_get_speed(gamespeed_fps) * 2; // 2 seconds lock
         }
     }
 }

@@ -15,6 +15,8 @@ function scr_find_nearest_enemy_gui(from_x, from_y, max_range)
 
     var w = display_get_gui_width();
     var h = display_get_gui_height();
+    var hit_x = 448;
+    if (variable_global_exists("HIT_X_GUI") && is_real(global.HIT_X_GUI)) hit_x = global.HIT_X_GUI;
 
     var mr = max_range;
     if (!is_real(mr) || mr <= 0) mr = 2500;
@@ -34,6 +36,9 @@ function scr_find_nearest_enemy_gui(from_x, from_y, max_range)
         // Optional: ignore way-offscreen enemies (keeps targeting sane)
         if (p.x < -400 || p.x > w + 400) continue;
         if (p.y < -400 || p.y > h + 400) continue;
+
+        // Ignore enemies that already passed the hit line.
+        if (p.x < hit_x) continue;
 
         var dx = p.x - fx;
         var dy = p.y - fy;

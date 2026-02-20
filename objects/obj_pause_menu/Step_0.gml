@@ -2,8 +2,7 @@
 
 if (move_cd > 0) move_cd--;
 
-// Don't allow pause while editor is on
-if (variable_global_exists("editor_on") && global.editor_on) exit;
+// Allow pause menu in both gameplay and editor
 
 // inputs
 var ok    = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space);
@@ -57,7 +56,8 @@ if (back && move_cd <= 0)
         paused = false;
         global.GAME_PAUSED = false;
 
-        if (variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
+        if (!(variable_global_exists("editor_on") && global.editor_on) &&
+            variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
             if (variable_global_exists("song_handle") && global.song_handle >= 0) {
                 audio_resume_sound(global.song_handle);
             }
@@ -167,7 +167,8 @@ if (activate)
             paused = false;
             global.GAME_PAUSED = false;
 
-            if (variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
+            if (!(variable_global_exists("editor_on") && global.editor_on) &&
+                variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
                 if (variable_global_exists("song_handle") && global.song_handle >= 0) {
                     audio_resume_sound(global.song_handle);
                 }

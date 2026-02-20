@@ -1,7 +1,7 @@
 /// obj_lightning_strike : Create
 if (!variable_instance_exists(id, "target_id")) target_id = noone;
 
-life = room_speed * 0.20;
+life = game_get_speed(gamespeed_fps) * 0.20;
 hit_done = false;
 
 top_y_offset = 180;

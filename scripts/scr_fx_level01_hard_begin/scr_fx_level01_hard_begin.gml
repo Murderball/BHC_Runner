@@ -20,11 +20,13 @@ var spb = (variable_global_exists("SEC_PER_BEAT") && is_real(global.SEC_PER_BEAT
 shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_time_s"), t);
 shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_spb"), spb);
 
+// MAKE IT OBVIOUS (debug strong settings)
+// Once you see it, dial these back.
+shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_tol"), 1.25);
+shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_str_blue"), 1.25);
+shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_str_pink"), 1.25);
+shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_decay"), 6.0);
 
-// Channel toggles
-shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_enable_blue"), 0);
-shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_enable_pink"), 1);
-
-
-shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_blue_key"), blue_r, blue_g, blue_b);
-shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_pink_key"), pink_r, pink_g, pink_b);
+// Key colors (0..1) — tweak later
+shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_blue_key"), 0.30, 0.75, 1.00);
+shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_pink_key"), 1.00, 0.30, 0.85);

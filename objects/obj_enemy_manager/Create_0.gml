@@ -4,37 +4,49 @@ enemy_margin_px = 96;
 
 enemy_spawns = [];
 next_spawn_i = 0;
+spawn_index = 0;
+built_spawns = false;
 
-// 1) PRIMARY: spawn from editor markers of type "spawn"
-enemy_spawns = scr_enemy_spawns_from_markers();
-
-// 2) FALLBACK: if no spawn markers, use chart entries type == "enemy"
-if (array_length(enemy_spawns) == 0)
+function _enemy_spawns_build()
 {
-    if (variable_global_exists("chart") && is_array(global.chart))
+    var out = [];
+
+    // 1) PRIMARY: spawn from editor markers of type "spawn"
+    if (script_exists(scr_enemy_spawns_from_markers))
+        out = scr_enemy_spawns_from_markers();
+
+    // 2) FALLBACK: if no spawn markers, use chart entries type == "enemy"
+    if (array_length(out) == 0)
     {
-        var len = array_length(global.chart);
-        for (var i = 0; i < len; i++)
+        if (variable_global_exists("chart") && is_array(global.chart))
         {
-            var n = global.chart[i];
-            if (!is_struct(n)) continue;
-            if (!variable_struct_exists(n, "type") || n.type != "enemy") continue;
-            if (!variable_struct_exists(n, "t")) continue;
+            var len = array_length(global.chart);
+            for (var i = 0; i < len; i++)
+            {
+                var n = global.chart[i];
+                if (!is_struct(n)) continue;
+                if (!variable_struct_exists(n, "type") || n.type != "enemy") continue;
+                if (!variable_struct_exists(n, "t")) continue;
 
-            var lane = 0;
-            if (variable_struct_exists(n, "lane")) lane = clamp(floor(n.lane), 0, global.LANE_COUNT - 1);
+                var lane = 0;
+                if (variable_struct_exists(n, "lane")) lane = clamp(floor(n.lane), 0, global.LANE_COUNT - 1);
 
-            var kind = "poptarts";
-            if (variable_struct_exists(n, "enemy_kind")) kind = string(n.enemy_kind);
+                var kind = "poptarts";
+                if (variable_struct_exists(n, "enemy_kind")) kind = string(n.enemy_kind);
 
-            array_push(enemy_spawns, {
-                t: n.t,
-                lane: lane,
-                kind: kind,
-                y_gui: global.LANE_Y[lane],
-                spawned: false
-            });
+                array_push(out, {
+                    t: n.t,
+                    lane: lane,
+                    kind: kind,
+                    y_gui: global.LANE_Y[lane],
+                    spawned: false
+                });
+            }
         }
     }
+
+    return out;
 }
 
+enemy_spawns = _enemy_spawns_build();
+built_spawns = true;

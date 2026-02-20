@@ -25,3 +25,25 @@ function scr_note_sprite_index(act)
             return spr_note_atk1;
     }
 }
+
+/// scr_note_draw_color(act)
+/// Per-action note tint. Keep atk1 at the default color.
+function scr_note_draw_color(act)
+{
+    switch (act)
+    {
+        case "atk2":
+            return make_color_rgb(0, 200, 255);
+
+        case "atk3":
+            return make_color_rgb(190, 95, 255);
+
+        case "ult":
+        case "ultimate":
+            return make_color_rgb(255, 170, 40);
+
+        case "atk1":
+        default:
+            return c_white;
+    }
+}

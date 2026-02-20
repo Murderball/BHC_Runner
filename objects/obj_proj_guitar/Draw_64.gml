@@ -1,6 +1,8 @@
 /// obj_proj_guitar : Draw GUI
 
-draw_set_color(c_aqua);
+var bolt_col = c_aqua;
+if (variable_instance_exists(id, "proj_color")) bolt_col = proj_color;
+draw_set_color(bolt_col);
 draw_set_alpha(0.9);
 
 // Use GUI-space position instead of room-space x/y

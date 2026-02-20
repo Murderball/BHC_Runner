@@ -88,5 +88,7 @@ function scr_player_ultimate_guitar(_pl, _judge)
         p.life_max   = 1.4;
         p.pierce     = true;
         p.hit_radius = 26;
+        p.proj_act   = "ult";
+        p.proj_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(p.proj_act) : make_color_rgb(255, 170, 40);
     }
 }
