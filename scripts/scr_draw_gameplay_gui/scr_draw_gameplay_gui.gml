@@ -130,9 +130,9 @@ function scr_draw_gameplay_gui()
         }
 
         var was_hit = (variable_struct_exists(nref, "hit") && nref.hit);
+        var note_alpha = was_hit ? 0.35 : 1;
 
-        if (was_hit) draw_set_alpha(0.35);
-        else         draw_set_alpha(1);
+        draw_set_alpha(note_alpha);
 
         // Cull far off-screen
         if (start_gx < -400) continue;
@@ -164,7 +164,7 @@ function scr_draw_gameplay_gui()
 
             // Hold end marker
             draw_set_alpha(global.hold_end_alpha);
-            if (spr != -1) draw_sprite_ext(spr, subimg_end, end_gx, start_gy, 1, 1, 0, note_col, 1);
+            if (spr != -1) draw_sprite_ext(spr, subimg_end, end_gx, start_gy, 1, 1, 0, note_col, note_alpha);
             else {
                 draw_set_color(note_col);
                 draw_rectangle(end_gx - 10, start_gy - 10, end_gx + 10, start_gy + 10, false);
@@ -173,7 +173,7 @@ function scr_draw_gameplay_gui()
         }
 
         // Start note marker
-        if (spr != -1) draw_sprite_ext(spr, subimg_start, start_gx, start_gy, 1, 1, 0, note_col, 1);
+        if (spr != -1) draw_sprite_ext(spr, subimg_start, start_gx, start_gy, 1, 1, 0, note_col, note_alpha);
         else {
             draw_set_color(note_col);
             draw_rectangle(start_gx - 10, start_gy - 10, start_gx + 10, start_gx + 10, false);
