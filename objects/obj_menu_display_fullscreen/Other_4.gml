@@ -8,8 +8,10 @@ var VIEW_H = 768;
 view_enabled = true;
 view_visible[0] = true;
 
-view_wview[0] = VIEW_W;
-view_hview[0] = VIEW_H;
+var cam = view_camera[0];
+if (cam != noone) {
+    camera_set_view_size(cam, VIEW_W, VIEW_H);
+}
 
 // Make window fullscreen
 if (!window_get_fullscreen()) window_set_fullscreen(true);
@@ -37,11 +39,6 @@ view_yport[0] = port_y;
 // GUI should match the camera size so your UI coordinates stay consistent
 display_set_gui_size(VIEW_W, VIEW_H);
 
-// Ensure camera matches the view size
-var cam = view_camera[0];
-if (cam != noone) {
-    camera_set_view_size(cam, VIEW_W, VIEW_H);
-}
 
 // Optional: black bars look correct
 application_surface_draw_enable(true);

@@ -8,9 +8,9 @@ function scr_apply_viewport_fit(_view_w, _view_h)
     view_enabled = true;
     view_visible[0] = true;
 
-    // Legacy view size values (still important for some systems)
-    view_wview[0] = _view_w;
-    view_hview[0] = _view_h;
+    // Keep camera 0 aligned to the intended logical view size
+    var cam = view_camera[0];
+    if (cam != noone) camera_set_view_size(cam, _view_w, _view_h);
 
     // Determine backbuffer size
     var SW, SH;

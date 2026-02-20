@@ -80,7 +80,7 @@ if (!variable_global_exists("player_world_y")) global.player_world_y = p.y;
 // Let your existing snap system do the final placement using scr_solid_at + player_world_y
 if (script_exists(scr_player_snap_to_spawn))
 {
-    scr_player_snap_to_spawn();
+    script_execute(scr_player_snap_to_spawn);
 }
 
 instance_destroy();
