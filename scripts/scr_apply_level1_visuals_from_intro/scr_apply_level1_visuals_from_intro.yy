@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"scr_apply_level1_visuals_from_intro",
   "parent":{
-    "name":"Scripts",
-    "path":"folders/Scripts.yy",
+    "name":"Scripts_Chunks",
+    "path":"folders/Scripts_Chunks.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
