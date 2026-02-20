@@ -63,9 +63,9 @@ if (use_pulse)
 
     shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_time_s"), t);
     shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_spb"), spb);
-    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_tol"), 0.10);
-    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_str_blue"), 0.35);
-    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_str_pink"), 0.35);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_tol"), 1.10);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_str_blue"), 1.35);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_str_pink"), 1.35);
     shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_decay"), 8.0);
     shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_enable_blue"), 1.0);
     shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_enable_pink"), 1.0);
