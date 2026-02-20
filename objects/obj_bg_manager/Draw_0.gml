@@ -34,7 +34,11 @@ if (use_pulse)
         ? global.SEC_PER_BEAT
         : (60.0 / 165.0);
 
-    var pink_col = $C01AA1;
+    var blue_col = $2FD9DF;
+    var pink_col = $FF09E8;
+    var blue_r = colour_get_red(blue_col) / 255.0;
+    var blue_g = colour_get_green(blue_col) / 255.0;
+    var blue_b = colour_get_blue(blue_col) / 255.0;
     var pink_r = colour_get_red(pink_col) / 255.0;
     var pink_g = colour_get_green(pink_col) / 255.0;
     var pink_b = colour_get_blue(pink_col) / 255.0;
@@ -42,12 +46,12 @@ if (use_pulse)
     shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_time_s"), t);
     shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_spb"), spb);
     shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_tol"), 0.10);
-    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_str_blue"), 0.0);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_str_blue"), 0.35);
     shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_str_pink"), 0.35);
     shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_decay"), 8.0);
-    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_enable_blue"), 0.0);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_enable_blue"), 1.0);
     shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_enable_pink"), 1.0);
-    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_blue_key"), 0.0, 0.0, 0.0);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_blue_key"), blue_r, blue_g, blue_b);
     shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_pink_key"), pink_r, pink_g, pink_b);
 }
 
