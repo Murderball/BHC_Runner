@@ -68,5 +68,27 @@ function scr_tilemaps_init()
 
     // --- (Optional) compatibility for any remaining legacy code ---
     // Do NOT rely on these long term. This just prevents old checks from exiting.
-    global.tm_visual  = global.tm_vis_normal; // legacy "visual" = normal
+    var d = "";
+    if (variable_global_exists("difficulty")) d = string(global.difficulty);
+    else if (variable_global_exists("DIFFICULTY")) d = string(global.DIFFICULTY);
+    d = string_lower(string_replace_all(d, " ", ""));
+
+    var want_hard   = (d == "hard"   || d == "2");
+    var want_normal = (d == "normal" || d == "1");
+    var want_easy   = (d == "easy"   || d == "0");
+
+    global.tm_visual = -1;
+    if (want_hard && global.tm_vis_hard != -1) {
+        global.tm_visual = global.tm_vis_hard;
+    } else if (want_normal && global.tm_vis_normal != -1) {
+        global.tm_visual = global.tm_vis_normal;
+    } else if (want_easy && global.tm_vis_easy != -1) {
+        global.tm_visual = global.tm_vis_easy;
+    } else if (global.tm_vis_hard != -1) {
+        global.tm_visual = global.tm_vis_hard;
+    } else if (global.tm_vis_normal != -1) {
+        global.tm_visual = global.tm_vis_normal;
+    } else if (global.tm_vis_easy != -1) {
+        global.tm_visual = global.tm_vis_easy;
+    }
 }
