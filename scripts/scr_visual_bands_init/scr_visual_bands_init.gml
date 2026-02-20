@@ -8,15 +8,19 @@ function scr_visual_bands_init()
     // Master tileset width (pixels)
     global.VIS_TS_W_PX = 1024;
 
+    // Guard against uninitialized or invalid tile sizes to avoid div-by-zero at startup.
+    var tile_w = (variable_global_exists("TILE_W") && is_real(global.TILE_W) && global.TILE_W > 0) ? global.TILE_W : 32;
+    var tile_h = (variable_global_exists("TILE_H") && is_real(global.TILE_H) && global.TILE_H > 0) ? global.TILE_H : 32;
+
     // Tiles per row (1024 / 32 = 32)
-    global.VIS_TILES_PER_ROW = global.VIS_TS_W_PX div global.TILE_W;
+    global.VIS_TILES_PER_ROW = max(1, global.VIS_TS_W_PX div tile_w);
 
     // Convert Y px -> tile index offsets
     global.VIS_BAND_INDEX_OFF = array_create(array_length(global.VIS_BAND_Y_PX), 0);
 
     for (var i = 0; i < array_length(global.VIS_BAND_Y_PX); i++)
     {
-        var row_off = global.VIS_BAND_Y_PX[i] div global.TILE_H; // 768/32=24, 1760/32=55
+        var row_off = global.VIS_BAND_Y_PX[i] div tile_h; // 768/32=24, 1760/32=55
         global.VIS_BAND_INDEX_OFF[i] = row_off * global.VIS_TILES_PER_ROW;
     }
 
