@@ -1,6 +1,6 @@
 /// obj_proj_guitar : Step
 
-var dt = 1 / room_speed;
+var dt = 1 / game_get_speed(gamespeed_fps);
 
 // If we have a target, steer toward it (GUI space)
 if (homing && instance_exists(target))

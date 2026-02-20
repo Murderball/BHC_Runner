@@ -201,7 +201,7 @@ if (__prime_first_chunk())
     global.level_stream_ready = true;
 
     // Now that ground exists, snap player properly (safe)
-    if (script_exists(scr_player_snap_to_spawn)) scr_player_snap_to_spawn();
+    if (script_exists(scr_player_snap_to_spawn)) script_execute(scr_player_snap_to_spawn);
 }
 else
 {
