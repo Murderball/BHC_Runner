@@ -39,6 +39,31 @@ function scr_apply_difficulty(_diff, _reason, _swap_visual, _swap_audio)
         if (script_exists(scr_chart_load)) scr_chart_load();
     }
 
+    // Story markers are level+difficulty scoped; refresh when context changes.
+    var lvl = "global";
+    if (variable_global_exists("LEVEL_KEY")) {
+        lvl = string_lower(string(global.LEVEL_KEY));
+        if (lvl == "") lvl = "global";
+    }
+
+    var markers_level = "";
+    if (variable_global_exists("MARKERS_LEVEL_KEY")) {
+        markers_level = string_lower(string(global.MARKERS_LEVEL_KEY));
+    }
+
+    var markers_diff = "";
+    if (variable_global_exists("MARKERS_DIFFICULTY")) {
+        markers_diff = string_lower(string(global.MARKERS_DIFFICULTY));
+    }
+
+    var marker_context_changed = (markers_level != lvl) || (markers_diff != d);
+    if (!same || marker_context_changed)
+    {
+        if (script_exists(scr_markers_load)) scr_markers_load();
+        if (script_exists(scr_story_events_from_markers)) scr_story_events_from_markers();
+        if (script_exists(scr_difficulty_events_from_markers)) scr_difficulty_events_from_markers();
+    }
+
     // -----------------
     // 2) Visual domain (GATED)
     // -----------------

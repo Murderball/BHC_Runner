@@ -8,7 +8,7 @@
 /// - visuals -> EASY/NORMAL/HARD global tilemaps if available
 ///   If only legacy chunk_data.vis exists, it is used for all 3.
 
-function scr_chunk_stamp_to_maps(chunk_data, slot, tm_vis_id, tm_col_id)
+function scr_chunk_stamp_to_maps(chunk_data, slot, tm_vis_id = undefined, tm_col_id = undefined)
 {
     if (is_undefined(chunk_data)) return;
 

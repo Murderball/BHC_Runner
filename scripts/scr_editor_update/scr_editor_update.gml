@@ -212,8 +212,8 @@ function scr_editor_update() {
 				var making_spawn  = keyboard_check(vk_shift) && !keyboard_check(vk_alt); // Alt
 				// SHIFT+ALT places a PICKUP marker with free Y
 				var making_pickup = keyboard_check(vk_shift) && keyboard_check(vk_alt);
-
-
+				// ALT places a CAMERA marker
+				var making_camera = keyboard_check(vk_alt) && !keyboard_check(vk_shift);
 
 				var m;
 
@@ -224,6 +224,18 @@ function scr_editor_update() {
 				        type: "pickup",
 				        pickup_kind: "shard",
 				        y_gui: my_gui
+				    };
+				}
+				else if (making_camera)
+				{
+				    m = {
+				        t: place_t,
+				        type: "camera",
+				        zoom: 1.0,
+				        pan_x: 0,
+				        pan_y: 0,
+				        ease: "smooth",
+				        caption: "CAM: z1.00 x0 y0"
 				    };
 				}
 				else if (making_spawn)
@@ -278,16 +290,28 @@ function scr_editor_update() {
         if (mouse_check_button(mb_left) && global.editor_marker_drag &&
             global.editor_marker_sel >= 0 && global.editor_marker_sel < array_length(global.markers))
         {
-            var now_time2 = scr_chart_time();
-            var pps2 = scr_timeline_pps();
+            var mdrag = global.markers[global.editor_marker_sel];
+            var mdrag_type = variable_struct_exists(mdrag, "type") ? string(mdrag.type) : "";
 
-            // Convert mouse X back into time
-            var target_gx = mx_gui + global.editor_marker_drag_dx;
-            var target_t = now_time2 + (target_gx - global.HIT_X_GUI) / pps2;
+            // Shift-drag spawn marker to move Y instead of timeline time.
+            if (mdrag_type == "spawn" && keyboard_check(vk_shift))
+            {
+                mdrag.y_gui = clamp(my_gui, 40, display_get_gui_height() - 140);
+                global.markers[global.editor_marker_sel] = mdrag;
+            }
+            else
+            {
+                var now_time2 = scr_chart_time();
+                var pps2 = scr_timeline_pps();
 
-            if (global.editor_snap_on) target_t = scr_snap_time_to_tick(target_t);
+                // Convert mouse X back into time
+                var target_gx = mx_gui + global.editor_marker_drag_dx;
+                var target_t = now_time2 + (target_gx - global.HIT_X_GUI) / pps2;
 
-            global.markers[global.editor_marker_sel].t = max(0, target_t);
+                if (global.editor_snap_on) target_t = scr_snap_time_to_tick(target_t);
+
+                global.markers[global.editor_marker_sel].t = max(0, target_t);
+            }
 
             scr_markers_sort();
             scr_story_events_from_markers();
@@ -308,6 +332,35 @@ function scr_editor_update() {
 
 
 	// ----------------------------------------------------
+	// SPAWN MARKER (ENEMY) EDIT MODE
+	// ----------------------------------------------------
+	if (mm_type == "spawn")
+	{
+	    if (!variable_struct_exists(mm, "enemy_kind")) mm.enemy_kind = "poptart";
+	    if (!variable_struct_exists(mm, "y_gui"))      mm.y_gui = my_gui;
+
+	    // G cycles enemy kind
+	    if (keyboard_check_pressed(ord("G")))
+	    {
+	        if (script_exists(scr_enemy_kind_next)) mm.enemy_kind = scr_enemy_kind_next(mm.enemy_kind, 1);
+	    }
+
+	    // Shift + drag lets you move enemy spawn on Y axis
+	    if (keyboard_check(vk_shift) && mouse_check_button(mb_left))
+	    {
+	        mm.y_gui = my_gui;
+	    }
+
+	    // Up/Down nudges Y for fine-tune
+	    if (keyboard_check(vk_up))   mm.y_gui -= 4;
+	    if (keyboard_check(vk_down)) mm.y_gui += 4;
+
+	    mm.y_gui = clamp(mm.y_gui, 40, display_get_gui_height() - 140);
+	    global.markers[global.editor_marker_sel] = mm;
+	    exit;
+	}
+
+	// ----------------------------------------------------
 	// PICKUP MARKER EDIT MODE
 	// ----------------------------------------------------
 	if (mm_type == "pickup")
@@ -325,13 +378,73 @@ function scr_editor_update() {
 
 	    // Shift sets y to mouse (hold)
 	    if (keyboard_check(vk_shift) && mouse_check_button(mb_left))
-	        mm.y_gui = mouse_y;
+	        mm.y_gui = my_gui;
 
 	    // Clamp into GUI
 	    mm.y_gui = clamp(mm.y_gui, 40, display_get_gui_height() - 140);
 
 	    global.markers[global.editor_marker_sel] = mm;
 	    exit;
+	}
+
+
+	// ----------------------------------------------------
+	// CAMERA MARKER EDIT MODE
+	// ----------------------------------------------------
+	if (mm_type == "camera")
+	{
+	    if (!variable_struct_exists(mm, "zoom")) mm.zoom = 1.0;
+	    if (!variable_struct_exists(mm, "pan_x")) mm.pan_x = 0;
+	    if (!variable_struct_exists(mm, "pan_y")) mm.pan_y = 0;
+	    if (!variable_struct_exists(mm, "ease")) mm.ease = "smooth";
+
+	    var changed_cam = false;
+	    var pan_step = keyboard_check(vk_shift) ? 16 : 4;
+
+	    if (keyboard_check(vk_left))  { mm.pan_x -= pan_step; changed_cam = true; }
+	    if (keyboard_check(vk_right)) { mm.pan_x += pan_step; changed_cam = true; }
+	    if (keyboard_check(vk_up))    { mm.pan_y -= pan_step; changed_cam = true; }
+	    if (keyboard_check(vk_down))  { mm.pan_y += pan_step; changed_cam = true; }
+
+	    if (keyboard_check_pressed(ord("Q"))) { mm.zoom -= 0.02; changed_cam = true; }
+	    if (keyboard_check_pressed(ord("E"))) { mm.zoom += 0.02; changed_cam = true; }
+
+	    if (keyboard_check_pressed(ord("R")))
+	    {
+	        mm.zoom = 1.0;
+	        mm.pan_x = 0;
+	        mm.pan_y = 0;
+	        changed_cam = true;
+	    }
+
+	    if (keyboard_check_pressed(ord("C")) || keyboard_check_pressed(ord("V")))
+	    {
+	        var ease_modes = ["smooth", "linear", "hold"];
+	        var ease_i = 0;
+	        for (var ci = 0; ci < array_length(ease_modes); ci++) {
+	            if (ease_modes[ci] == string_lower(string(mm.ease))) { ease_i = ci; break; }
+	        }
+
+	        if (keyboard_check_pressed(ord("C"))) ease_i = (ease_i - 1 + array_length(ease_modes)) mod array_length(ease_modes);
+	        else ease_i = (ease_i + 1) mod array_length(ease_modes);
+
+	        mm.ease = ease_modes[ease_i];
+	        changed_cam = true;
+	    }
+
+	    mm.zoom = clamp(real(mm.zoom), 0.35, 3.0);
+	    mm.pan_x = clamp(real(mm.pan_x), -2500, 2500);
+	    mm.pan_y = clamp(real(mm.pan_y), -1800, 1800);
+	    mm.caption = "CAM: z" + string_format(mm.zoom, 1, 2) + " x" + string(round(mm.pan_x)) + " y" + string(round(mm.pan_y)) + " [" + string(mm.ease) + "]";
+
+	    if (changed_cam)
+	    {
+	        global.markers[global.editor_marker_sel] = mm;
+	        scr_story_events_from_markers();
+	        if (script_exists(scr_difficulty_events_from_markers)) scr_difficulty_events_from_markers();
+	    }
+
+	    return;
 	}
 
 // ----------------------------------------------------
@@ -385,6 +498,25 @@ if (mm_type == "difficulty" || mm_type == "diff")
     if (!variable_struct_exists(mm, "snd_name")) mm.snd_name = global.marker_default.snd_name;
     if (!variable_struct_exists(mm, "caption"))  mm.caption  = global.marker_default.caption;
     if (!variable_struct_exists(mm, "choices"))  mm.choices  = global.marker_default.choices;
+
+			// Toggle marker to CAMERA (U)
+			if (keyboard_check_pressed(ord("U")))
+			{
+			    mm.type = "camera";
+			    mm.zoom = 1.0;
+			    mm.pan_x = 0;
+			    mm.pan_y = 0;
+			    mm.ease = "smooth";
+			    mm.caption = "CAM: z1.00 x0 y0";
+			    mm.wait_confirm = false;
+			    mm.loop = false;
+			    mm.choices = [];
+
+			    global.markers[global.editor_marker_sel] = mm;
+			    scr_story_events_from_markers();
+			    if (script_exists(scr_difficulty_events_from_markers)) scr_difficulty_events_from_markers();
+			    exit;
+			}
 
 			// Toggle marker to DIFFICULTY (T)
 			if (keyboard_check_pressed(ord("T")))

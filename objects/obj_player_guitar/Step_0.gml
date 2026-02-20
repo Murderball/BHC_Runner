@@ -23,6 +23,9 @@ var paused = false;
 if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED) paused = true;
 if (variable_global_exists("STORY_PAUSED") && global.STORY_PAUSED) paused = true;
 
+// Attack flash decay (seconds)
+atk_flash_t = max(0, atk_flash_t - (1 / game_get_speed(gamespeed_fps)));
+
 // ----------------------------------------------------
 // Pin X to camera (runner)
 // ----------------------------------------------------
@@ -54,7 +57,7 @@ if (just_spawned)
     image_index = 0;
     image_speed = 1;
 
-    if (script_exists(scr_player_snap_to_spawn)) scr_player_snap_to_spawn();
+    if (script_exists(scr_player_snap_to_spawn)) script_execute(scr_player_snap_to_spawn);
     just_spawned = false;
 }
 
@@ -77,7 +80,7 @@ if (!prev_editor_on && global.editor_on)
     spawn_y = player_world_y;
     y = spawn_y;
 
-    if (script_exists(scr_player_snap_to_spawn)) scr_player_snap_to_spawn();
+    if (script_exists(scr_player_snap_to_spawn)) script_execute(scr_player_snap_to_spawn);
 }
 
 if (prev_editor_on && !global.editor_on)
@@ -87,7 +90,7 @@ if (prev_editor_on && !global.editor_on)
     spawn_y = player_world_y;
     y = spawn_y;
 
-    if (script_exists(scr_player_snap_to_spawn)) scr_player_snap_to_spawn();
+    if (script_exists(scr_player_snap_to_spawn)) script_execute(scr_player_snap_to_spawn);
 
     grounded = true;
     vsp = 0;
@@ -150,7 +153,7 @@ if (!global.editor_on)
         vsp = jump_v;
         grounded = false;
 
-        lock_anim("jump", ceil(room_speed * 0.10));
+        lock_anim("jump", ceil(game_get_speed(gamespeed_fps) * 0.10));
     }
 
     // Duck / slide hold
@@ -162,7 +165,7 @@ if (!global.editor_on)
             global.last_duck_judge = judgeD;
             if (judgeD != "miss") scr_perf_grade(judgeD);
         }
-        duck_timer = max(duck_timer, ceil(room_speed * 0.20));
+        duck_timer = max(duck_timer, ceil(game_get_speed(gamespeed_fps) * 0.20));
     }
 
     // --- ATK1 ---
@@ -170,9 +173,13 @@ if (!global.editor_on)
     {
         var judgeA1 = scr_try_trigger(global.ACT_ATK1);
         global.last_atk1_judge = judgeA1;
-        if (judgeA1 != "miss") scr_perf_grade(judgeA1);
+        if (judgeA1 != "miss") {
+            scr_perf_grade(judgeA1);
+            atk_flash_t = 0.12;
+            atk_flash_color = c_black;
+        }
 
-        lock_anim("attack", ceil(room_speed * 0.15));
+        lock_anim("attack", ceil(game_get_speed(gamespeed_fps) * 0.15));
 
         var dmg1 = 1;
         if (judgeA1 == "perfect") dmg1 = 3;
@@ -214,6 +221,8 @@ if (!global.editor_on)
 
         p.damage = dmg1;
         p.life_max = 1.2;
+        p.proj_act = "atk1";
+        p.proj_color = c_aqua;
     }
 
     // --- ATK2 ---
@@ -221,9 +230,13 @@ if (!global.editor_on)
     {
         var judgeA2 = scr_try_trigger(global.ACT_ATK2);
         global.last_atk2_judge = judgeA2;
-        if (judgeA2 != "miss") scr_perf_grade(judgeA2);
+        if (judgeA2 != "miss") {
+            scr_perf_grade(judgeA2);
+            atk_flash_t = 0.14;
+            atk_flash_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(global.ACT_ATK2) : make_color_rgb(0, 200, 255);
+        }
 
-        lock_anim("attack", ceil(room_speed * 0.15));
+        lock_anim("attack", ceil(game_get_speed(gamespeed_fps) * 0.15));
 
         var dmg2 = 2;
         if (judgeA2 == "perfect") dmg2 = 4;
@@ -265,6 +278,8 @@ if (!global.editor_on)
         p2.damage = dmg2;
         p2.life_max = 1.2;
         p2.pierce = true;
+        p2.proj_act = "atk2";
+        p2.proj_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(p2.proj_act) : make_color_rgb(0, 200, 255);
     }
 
     // --- ATK3 ---
@@ -272,9 +287,13 @@ if (!global.editor_on)
     {
         var judgeA3 = scr_try_trigger(global.ACT_ATK3);
         global.last_atk3_judge = judgeA3;
-        if (judgeA3 != "miss") scr_perf_grade(judgeA3);
+        if (judgeA3 != "miss") {
+            scr_perf_grade(judgeA3);
+            atk_flash_t = 0.16;
+            atk_flash_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(global.ACT_ATK3) : make_color_rgb(190, 95, 255);
+        }
 
-        lock_anim("attack", ceil(room_speed * 0.15));
+        lock_anim("attack", ceil(game_get_speed(gamespeed_fps) * 0.15));
 
         var dmg3 = 3;
         if (judgeA3 == "perfect") dmg3 = 6;
@@ -317,6 +336,8 @@ if (!global.editor_on)
         p3.damage = dmg3;
         p3.life_max = 1.4;
         p3.hit_radius = 22;
+        p3.proj_act = "atk3";
+        p3.proj_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(p3.proj_act) : make_color_rgb(190, 95, 255);
     }
 
     // --- ULT (manual OR note-triggered) ---
@@ -341,6 +362,8 @@ if (!global.editor_on)
         if (judgeU != "miss")
         {
             scr_perf_grade(judgeU);
+            atk_flash_t = 0.20;
+            atk_flash_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(global.ACT_ULT) : make_color_rgb(255, 170, 40);
             if (script_exists(scr_player_ultimate_guitar)) scr_player_ultimate_guitar(id, judgeU);
         }
     }

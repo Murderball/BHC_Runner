@@ -30,6 +30,7 @@ gui_vy = 0;
 damage = 2;
 hit_radius = 24;     // projectile hit bubble in pixels (GUI)
 pierce = false;
+hit_x = 448;         // cached GUI hitline X used from enemy scope in Step
 
 // Lifetime
 life = 0;
@@ -46,3 +47,8 @@ target = noone;
 homing = true;
 turn_speed = 18;
 speed_gui = 900;
+
+// Visuals
+proj_act = "atk1";
+proj_color = c_aqua;
+if (script_exists(scr_note_draw_color)) proj_color = scr_note_draw_color(proj_act);

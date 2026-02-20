@@ -30,5 +30,11 @@ scr_chunk_build_section_sequences();
 scr_chart_load();
 scr_phrases_load();
 
+// Application surface must remain enabled for normal gameplay rendering.
+application_surface_enable(true);
+application_surface_draw_enable(true);
+
+// Explicitly do not spawn post FX compositor.
+
 // Done
 instance_destroy();

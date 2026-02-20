@@ -61,5 +61,9 @@ lock_anim = function(_s, _frames)
     set_state(_s);
 };
 
+// Attack color flash
+atk_flash_t = 0;
+atk_flash_color = c_black;
+
 just_spawned = true;
 sprite_index = SPR_IDLE;
