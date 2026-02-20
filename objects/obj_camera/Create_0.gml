@@ -53,5 +53,6 @@ if (script_exists(scr_apply_viewport_fit)) {
     view_wport[0] = global.BASE_W;
     view_hport[0] = global.BASE_H;
     display_set_gui_size(global.BASE_W, global.BASE_H);
+    application_surface_enable(true);
     application_surface_draw_enable(true);
 }

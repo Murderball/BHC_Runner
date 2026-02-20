@@ -39,6 +39,5 @@ view_yport[0] = port_y;
 // GUI should match the camera size so your UI coordinates stay consistent
 display_set_gui_size(VIEW_W, VIEW_H);
 
-
-// Optional: black bars look correct
+application_surface_enable(true);
 application_surface_draw_enable(true);
