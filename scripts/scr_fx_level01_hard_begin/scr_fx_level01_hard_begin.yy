@@ -6,7 +6,7 @@
   "name":"scr_fx_level01_hard_begin",
   "parent":{
     "name":"Shaders",
-    "path":"folders/Level_1_Master/Shaders.yy",
+    "path":"folders/Shaders.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

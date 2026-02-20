@@ -3,8 +3,8 @@
   "%Name":"shd_bpm_dual_pulse",
   "name":"shd_bpm_dual_pulse",
   "parent":{
-    "name":"BHC Runner",
-    "path":"BHC Runner.yyp",
+    "name":"Shaders",
+    "path":"folders/Shaders.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",
