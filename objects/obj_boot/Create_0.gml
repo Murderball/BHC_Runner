@@ -30,11 +30,11 @@ scr_chunk_build_section_sequences();
 scr_chart_load();
 scr_phrases_load();
 
+// Application surface must remain enabled for normal gameplay rendering.
+application_surface_enable(true);
+application_surface_draw_enable(true);
 
-// Ensure exactly one persistent post FX compositor exists
-if (!instance_exists(obj_post_fx)) {
-    instance_create_depth(0, 0, -1000000, obj_post_fx);
-}
+// Explicitly do not spawn post FX compositor.
 
 // Done
 instance_destroy();

@@ -41,6 +41,7 @@ function scr_apply_viewport_fit(_view_w, _view_h)
     // GUI space must match gameplay design coords
     display_set_gui_size(_view_w, _view_h);
 
-    // Keep application surface enabled (needed for scaling / post)
+    // Keep application surface enabled and drawable.
+    application_surface_enable(true);
     application_surface_draw_enable(true);
 }

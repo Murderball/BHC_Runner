@@ -16,6 +16,41 @@ var x_abs = (variable_global_exists("WORLD_X_ABS")) ? global.WORLD_X_ABS : cx;
 var cam_bg = (x_abs * parallax) mod strip_w_px;
 if (cam_bg < 0) cam_bg += strip_w_px;
 
+var d = "";
+if (variable_global_exists("difficulty")) d = string(global.difficulty);
+else if (variable_global_exists("DIFFICULTY")) d = string(global.DIFFICULTY);
+d = string_lower(string_replace_all(d, " ", ""));
+
+var use_pulse = (room == rm_level01) && (d == "hard");
+var shader_is_on = false;
+
+if (use_pulse)
+{
+    shader_set(shd_bpm_dual_pulse);
+    shader_is_on = true;
+
+    var t = (script_exists(scr_chart_time)) ? scr_chart_time() : 0.0;
+    var spb = (variable_global_exists("SEC_PER_BEAT") && is_real(global.SEC_PER_BEAT) && global.SEC_PER_BEAT > 0)
+        ? global.SEC_PER_BEAT
+        : (60.0 / 165.0);
+
+    var pink_col = $C01AA1;
+    var pink_r = colour_get_red(pink_col) / 255.0;
+    var pink_g = colour_get_green(pink_col) / 255.0;
+    var pink_b = colour_get_blue(pink_col) / 255.0;
+
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_time_s"), t);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_spb"), spb);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_tol"), 0.10);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_str_blue"), 0.0);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_str_pink"), 0.35);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_decay"), 8.0);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_enable_blue"), 0.0);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_enable_pink"), 1.0);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_blue_key"), 0.0, 0.0, 0.0);
+    shader_set_uniform_f(shader_get_uniform(shd_bpm_dual_pulse, "u_pink_key"), pink_r, pink_g, pink_b);
+}
+
 // Draw each slot's painted sprite across its chunk width
 for (var slot = 0; slot < global.BUFFER_CHUNKS; slot++)
 {
@@ -48,3 +83,5 @@ for (var slot = 0; slot < global.BUFFER_CHUNKS; slot++)
         draw_sprite_stretched(spr, 0, xw, cy, chunk_w_px, vh);
     }
 }
+
+if (shader_is_on) shader_reset();
