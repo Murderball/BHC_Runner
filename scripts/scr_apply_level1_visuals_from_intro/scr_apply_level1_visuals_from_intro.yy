@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_apply_level1_visuals_from_intro",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_apply_level1_visuals_from_intro",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
