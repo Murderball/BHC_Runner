@@ -6,7 +6,7 @@
   "name":"scr_apply_level1_visuals_from_intro",
   "parent":{
     "name":"Scripts_Chunks",
-    "path":"folders/Scripts/Scripts_Chunks.yy",
+    "path":"folders/Scripts_Chunks.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
