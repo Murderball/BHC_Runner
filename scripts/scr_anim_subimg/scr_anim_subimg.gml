@@ -16,7 +16,7 @@ function scr_anim_subimg(_spr, _seed)
     var anim_fps = spd;
     if (styp != spritespeed_framespersecond) {
         // frames-per-game-frame -> fps
-        anim_fps = spd * room_speed;
+        anim_fps = spd * game_get_speed(gamespeed_fps);
     }
 
     // Fallback if speed is 0
