@@ -21,8 +21,7 @@ if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED) paused = true;
 if (variable_global_exists("STORY_PAUSED") && global.STORY_PAUSED) paused = true;
 
 // Attack flash decay (seconds)
-var __fps = max(1, game_get_speed(gamespeed_fps));
-atk_flash_t = max(0, atk_flash_t - (1 / __fps));
+atk_flash_t = max(0, atk_flash_t - (1 / game_get_speed(gamespeed_fps)));
 
 var cam = view_camera[0];
 x = camera_get_view_x(cam) + player_screen_x;

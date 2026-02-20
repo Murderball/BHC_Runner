@@ -50,7 +50,7 @@ function scr_story_pause_update()
 
     // Countdown timers
     if (global.story_timer > 0) {
-        global.story_timer -= (1.0 / max(1, game_get_speed(gamespeed_fps)));
+        global.story_timer -= (1.0 / game_get_speed(gamespeed_fps));
         if (global.story_timer < 0) global.story_timer = 0;
     }
 
