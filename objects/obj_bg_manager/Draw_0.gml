@@ -1,19 +1,31 @@
 /// obj_bg_manager : Draw (PAINTED TO CHUNKS) — no inner function
 
 var cam = view_camera[0];
+if (cam == noone) exit;
+
+if (!variable_global_exists("CHUNK_W_TILES")
+ || !variable_global_exists("TILE_W")
+ || !variable_global_exists("BUFFER_CHUNKS")) exit;
+
+var chunk_tiles = max(0, global.CHUNK_W_TILES);
+var tile_w      = max(0, global.TILE_W);
+var buf_chunks  = max(0, global.BUFFER_CHUNKS);
+
+var chunk_w_px = chunk_tiles * tile_w;
+var strip_w_px = buf_chunks * chunk_w_px;
+if (chunk_w_px <= 0 || strip_w_px <= 0 || buf_chunks <= 0) exit;
+
 var cx  = camera_get_view_x(cam);
 var cy  = camera_get_view_y(cam);
 var vw  = camera_get_view_width(cam);
 var vh  = camera_get_view_height(cam);
 
-var chunk_w_px = global.CHUNK_W_TILES * global.TILE_W;
-var strip_w_px = global.BUFFER_CHUNKS * chunk_w_px;
-
 // Parallax scroll source
 var x_abs = (variable_global_exists("WORLD_X_ABS")) ? global.WORLD_X_ABS : cx;
+var par = (variable_instance_exists(id, "parallax") && is_real(parallax)) ? parallax : 1.0;
 
 // Camera position in BG-space (ring wrapped)
-var cam_bg = (x_abs * parallax) mod strip_w_px;
+var cam_bg = (x_abs * par) mod strip_w_px;
 if (cam_bg < 0) cam_bg += strip_w_px;
 
 var d = "";
@@ -56,7 +68,7 @@ if (use_pulse)
 }
 
 // Draw each slot's painted sprite across its chunk width
-for (var slot = 0; slot < global.BUFFER_CHUNKS; slot++)
+for (var slot = 0; slot < buf_chunks; slot++)
 {
     // Choose which painted array this manager uses
     // Near by default; set bg_profile="far" on the far instance
