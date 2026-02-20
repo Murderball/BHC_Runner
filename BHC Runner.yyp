@@ -272,6 +272,7 @@
   },
   "name":"BHC Runner",
   "resources":[
+    {"id":{"name":"obj_apply_level1_visuals","path":"objects/obj_apply_level1_visuals/obj_apply_level1_visuals.yy",},},
     {"id":{"name":"obj_bg_manager","path":"objects/obj_bg_manager/obj_bg_manager.yy",},},
     {"id":{"name":"obj_boot","path":"objects/obj_boot/obj_boot.yy",},},
     {"id":{"name":"obj_boss_punky_level3","path":"objects/obj_boss_punky_level3/obj_boss_punky_level3.yy",},},
@@ -558,6 +559,7 @@
     {"id":{"name":"rm1_chunk_verse_2_05","path":"rooms/rm1_chunk_verse_2_05/rm1_chunk_verse_2_05.yy",},},
     {"id":{"name":"rm1_chunk_verse_2_06","path":"rooms/rm1_chunk_verse_2_06/rm1_chunk_verse_2_06.yy",},},
     {"id":{"name":"rm1_chunk_verse_2_07","path":"rooms/rm1_chunk_verse_2_07/rm1_chunk_verse_2_07.yy",},},
+    {"id":{"name":"scr_apply_level1_visuals_from_intro","path":"scripts/scr_apply_level1_visuals_from_intro/scr_apply_level1_visuals_from_intro.yy",},},
     {"id":{"name":"scr_anim_subimg","path":"scripts/scr_anim_subimg/scr_anim_subimg.yy",},},
     {"id":{"name":"scr_apply_difficulty_change","path":"scripts/scr_apply_difficulty_change/scr_apply_difficulty_change.yy",},},
     {"id":{"name":"scr_apply_difficulty","path":"scripts/scr_apply_difficulty/scr_apply_difficulty.yy",},},
