@@ -9,10 +9,12 @@ function scr_editor_delete_enemy_at_cursor()
     var t_now = global.editor_time;
     var lane_now = scr_editor_lane_from_mouse();
 
-    var beat_s = 60.0 / global.BPM;
+    var bpm = 140.0;
+    if (variable_global_exists("BPM") && is_real(global.BPM) && global.BPM > 0) bpm = global.BPM;
+    var beat_s = 60.0 / bpm;
 
     var tol_t = beat_s / 8.0;
-    if (variable_global_exists("SNAP_DIV"))
+    if (variable_global_exists("SNAP_DIV") && is_real(global.SNAP_DIV) && global.SNAP_DIV > 0)
     {
         tol_t = (beat_s * (4.0 / global.SNAP_DIV)) * 0.5;
     }
