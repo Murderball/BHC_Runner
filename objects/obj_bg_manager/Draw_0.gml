@@ -34,6 +34,12 @@ else if (variable_global_exists("DIFFICULTY")) d = string(global.DIFFICULTY);
 d = string_lower(string_replace_all(d, " ", ""));
 
 var use_pulse = (room == rm_level01) && (d == "hard");
+
+
+var _old_col = draw_get_color();
+var _old_alpha = draw_get_alpha();
+draw_set_color(c_white);
+draw_set_alpha(1.0);
 var shader_is_on = false;
 
 if (use_pulse)
@@ -101,3 +107,6 @@ for (var slot = 0; slot < buf_chunks; slot++)
 }
 
 if (shader_is_on) shader_reset();
+
+draw_set_color(_old_col);
+draw_set_alpha(_old_alpha);

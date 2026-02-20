@@ -18,7 +18,8 @@ float color_mask(vec3 rgb, vec3 key, float tol) {
 }
 
 void main() {
-    vec4 base = v_vColour * texture2D(gm_BaseTexture, v_vTexcoord);
+    vec4 tex  = texture2D(gm_BaseTexture, v_vTexcoord);
+    vec4 base = v_vColour * tex;
     vec3 rgb  = base.rgb;
 
     float spb  = max(u_spb, 0.0001);
@@ -31,8 +32,10 @@ void main() {
     float is_even = 1.0 - mod(idx, 2.0);
     float is_odd  = 1.0 - is_even;
 
-    float blueMask = color_mask(rgb, u_blue_key, u_tol);
-    float pinkMask = color_mask(rgb, u_pink_key, u_tol);
+    // Key matching must use texture color (not vertex-tinted color),
+    // otherwise draw_color/draw_alpha state can null the mask.
+    float blueMask = color_mask(tex.rgb, u_blue_key, u_tol);
+    float pinkMask = color_mask(tex.rgb, u_pink_key, u_tol);
 
     rgb += rgb * (
         env * is_even * u_enable_blue * u_str_blue * blueMask +
