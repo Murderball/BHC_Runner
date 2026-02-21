@@ -52,7 +52,7 @@ if (variable_global_exists("editor_on") && global.editor_on) {
     if (instance_exists(obj_input_recorder)) with (obj_input_recorder) instance_destroy();
 }
 
-if (keyboard_check_pressed(vk_f11)) global.DEBUG_CHUNK_BOXES = !global.DEBUG_CHUNK_BOXES;
+if (keyboard_check_pressed(vk_f7)) global.DEBUG_CHUNK_BOXES = !global.DEBUG_CHUNK_BOXES;
 
 // --------------------------------------------------
 // F12: Toggle window between monitor 1 and monitor 2
