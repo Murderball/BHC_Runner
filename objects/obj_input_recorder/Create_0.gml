@@ -13,13 +13,13 @@ if (!variable_global_exists("input_recorder") || !is_struct(global.input_recorde
 
 editor_mode = (variable_global_exists("editor_on") && global.editor_on);
 
-ui_x = 24;
-ui_y = 24;
-ui_w = 110;
-ui_h = 44;
-ui_gap = 8;
+ui_x = 80;
+ui_y = 120;
+ui_w = 120;
+ui_h = 40;
+ui_gap = 10;
 
-box_labels = ["JUMP", "DUCK", "ATK1", "ATK2", "ATK3", "ULT"];
+box_labels = ["jump", "duck", "atk1", "atk2", "atk3", "ult"];
 
 prev_jump_kb = false;
 prev_duck_kb = false;
