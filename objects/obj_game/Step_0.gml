@@ -43,6 +43,15 @@ if (variable_global_exists("STARTUP_LOADING") && global.STARTUP_LOADING)
     exit;
 }
 
+// Editor-only overlay spawn (self-gated object, never active outside editor)
+if (variable_global_exists("editor_on") && global.editor_on) {
+    if (!instance_exists(obj_input_recorder)) {
+        instance_create_layer(0, 0, "Instances", obj_input_recorder);
+    }
+} else {
+    if (instance_exists(obj_input_recorder)) with (obj_input_recorder) instance_destroy();
+}
+
 if (keyboard_check_pressed(vk_f11)) global.DEBUG_CHUNK_BOXES = !global.DEBUG_CHUNK_BOXES;
 
 // --------------------------------------------------
