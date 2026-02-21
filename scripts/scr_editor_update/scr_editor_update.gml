@@ -69,19 +69,6 @@ function scr_editor_update() {
     }
 
     // ----------------------------
-    // P / Shift+P : editor-pause transport mode
-    // ----------------------------
-    if (keyboard_check_pressed(ord("P")) && (global.EDITOR_PAUSE_OPEN || !global.editor_on)) {
-        if (global.EDITOR_PAUSE_OPEN) {
-            scr_editor_pause_exit();
-        } else {
-            var rewind_on_exit = !keyboard_check(vk_shift);
-            scr_editor_pause_enter(rewind_on_exit);
-        }
-        return;
-    }
-
-    // ----------------------------
     // Toggle editor on/off
     // ----------------------------
     if (keyboard_check_pressed(global.editor_toggle_key)) {
@@ -1189,61 +1176,4 @@ if (keyboard_check_pressed(vk_delete) || keyboard_check_pressed(vk_backspace))
             scr_editor_selection_clear();
         }
     }
-}
-
-
-function scr_editor_pause_enter(rewind_on_exit)
-{
-    if (variable_global_exists("EDITOR_PAUSE_OPEN") && global.EDITOR_PAUSE_OPEN) return;
-
-    var t0 = 0.0;
-    if (script_exists(scr_chart_time)) t0 = scr_chart_time();
-
-    global.editor_on = true;
-    global.EDITOR_PAUSE_OPEN = true;
-    global.EDITOR_PAUSE_REWIND_ON_EXIT = (rewind_on_exit == true);
-    global.EDITOR_PAUSE_T0 = t0;
-    global.EDITOR_PAUSE_ROOM = room;
-    global.EDITOR_PAUSE_VALID = true;
-
-    global.pause_song_time = scr_song_time();
-    global.pause_song_was_playing = false;
-
-    if (variable_global_exists("song_handle") && global.song_handle >= 0) {
-        global.pause_song_was_playing = audio_is_playing(global.song_handle);
-        audio_pause_sound(global.song_handle);
-    }
-
-    if (variable_global_exists("story_npc_handle") && global.story_npc_handle >= 0) {
-        audio_pause_sound(global.story_npc_handle);
-    }
-
-    global.GAME_PAUSED = true;
-}
-
-
-function scr_editor_pause_exit()
-{
-    if (!variable_global_exists("EDITOR_PAUSE_OPEN") || !global.EDITOR_PAUSE_OPEN) return;
-
-    global.GAME_PAUSED = false;
-
-    if (variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
-        if (variable_global_exists("song_handle") && global.song_handle >= 0) {
-            audio_resume_sound(global.song_handle);
-        }
-    }
-
-    if (variable_global_exists("story_npc_handle") && global.story_npc_handle >= 0) {
-        audio_resume_sound(global.story_npc_handle);
-    }
-
-    if (global.EDITOR_PAUSE_REWIND_ON_EXIT && global.EDITOR_PAUSE_VALID) {
-        scr_set_playhead_time(global.EDITOR_PAUSE_T0);
-    }
-
-    global.pause_song_time = 0.0;
-    global.editor_on = false;
-    global.EDITOR_PAUSE_OPEN = false;
-    global.EDITOR_PAUSE_VALID = false;
 }
