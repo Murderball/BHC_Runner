@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_input_recorder_variant_sprite",
+  "%Name":"scr_recorder_save_chart",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_input_recorder_variant_sprite",
+  "name":"scr_recorder_save_chart",
   "parent":{
     "name":"Scripts",
     "path":"folders/Scripts.yy",
