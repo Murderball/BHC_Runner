@@ -65,56 +65,8 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
     // Requires:
     // scr_time_to_tick(), scr_tick_to_time(), scr_timeline_pps(), scr_note_screen_x()
 
-    var pps_val = scr_timeline_pps();
-
-    // Visible time range based on zoom
-    var left_time  = now_time + (0 - global.HIT_X_GUI) / pps_val;
-    var right_time = now_time + (gui_w - global.HIT_X_GUI) / pps_val;
-
-    var left_tick  = scr_time_to_tick(left_time) - 8;
-    var right_tick = scr_time_to_tick(right_time) + 8;
-
-    // 4/4 assumption: 4 beats per bar
-    var ticks_per_bar = global.TICKS_PER_BEAT * 4;
-
-    var step_ticks = max(1, global.editor_grid_step_ticks);
-
-    // Align start tick so the grid doesn't "crawl"
-    var start_tick = left_tick - (left_tick mod step_ticks);
-
-    for (var tick_i = start_tick; tick_i <= right_tick; tick_i += step_ticks)
-    {
-        var t_sec = scr_tick_to_time(tick_i);
-        var grid_gx = scr_note_screen_x(t_sec, now_time);
-
-        if (grid_gx < 0 || grid_gx > gui_w) continue;
-
-        var is_bar  = ((tick_i mod ticks_per_bar) == 0);
-        var is_beat = ((tick_i mod global.TICKS_PER_BEAT) == 0);
-
-        if (is_bar)
-        {
-            // Bar line
-            draw_set_alpha(1);
-            draw_set_color(c_black);
-            draw_line_width(grid_gx, 40, grid_gx, gui_h - 140, 2);
-
-            // Measure number (1-based)
-            var bar_num = floor(tick_i / ticks_per_bar) + 1;
-            if (bar_num < 1) bar_num = 1;
-
-            draw_set_color(c_black);
-            draw_text(grid_gx + 6, 45, string(bar_num));
-        }
-        else if (is_beat)
-        {
-            // Beat line
-            draw_set_alpha(1);
-            draw_set_color(make_color_rgb(180, 180, 180));
-            draw_line_width(grid_gx, 40, grid_gx, gui_h - 140, 1);
-        }
-
-    }
+    // Divisional lines are now drawn from scr_draw_gameplay_gui()
+    // with a pause gate so they appear even when editor overlay is off.
 
 
     // ==================================================
