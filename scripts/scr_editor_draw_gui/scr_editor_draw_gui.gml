@@ -82,38 +82,41 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
     // Align start tick so the grid doesn't "crawl"
     var start_tick = left_tick - (left_tick mod step_ticks);
 
-    for (var tick_i = start_tick; tick_i <= right_tick; tick_i += step_ticks)
+    var show_divisions = (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED);
+    if (show_divisions)
     {
-        var t_sec = scr_tick_to_time(tick_i);
-        var grid_gx = scr_note_screen_x(t_sec, now_time);
-
-        if (grid_gx < 0 || grid_gx > gui_w) continue;
-
-        var is_bar  = ((tick_i mod ticks_per_bar) == 0);
-        var is_beat = ((tick_i mod global.TICKS_PER_BEAT) == 0);
-
-        if (is_bar)
+        for (var tick_i = start_tick; tick_i <= right_tick; tick_i += step_ticks)
         {
-            // Bar line
-            draw_set_alpha(1);
-            draw_set_color(c_black);
-            draw_line_width(grid_gx, 40, grid_gx, gui_h - 140, 2);
+            var t_sec = scr_tick_to_time(tick_i);
+            var grid_gx = scr_note_screen_x(t_sec, now_time);
 
-            // Measure number (1-based)
-            var bar_num = floor(tick_i / ticks_per_bar) + 1;
-            if (bar_num < 1) bar_num = 1;
+            if (grid_gx < 0 || grid_gx > gui_w) continue;
 
-            draw_set_color(c_black);
-            draw_text(grid_gx + 6, 45, string(bar_num));
+            var is_bar  = ((tick_i mod ticks_per_bar) == 0);
+            var is_beat = ((tick_i mod global.TICKS_PER_BEAT) == 0);
+
+            if (is_bar)
+            {
+                // Bar line
+                draw_set_alpha(1);
+                draw_set_color(c_black);
+                draw_line_width(grid_gx, 40, grid_gx, gui_h - 140, 2);
+
+                // Measure number (1-based)
+                var bar_num = floor(tick_i / ticks_per_bar) + 1;
+                if (bar_num < 1) bar_num = 1;
+
+                draw_set_color(c_black);
+                draw_text(grid_gx + 6, 45, string(bar_num));
+            }
+            else if (is_beat)
+            {
+                // Beat line
+                draw_set_alpha(1);
+                draw_set_color(make_color_rgb(180, 180, 180));
+                draw_line_width(grid_gx, 40, grid_gx, gui_h - 140, 1);
+            }
         }
-        else if (is_beat)
-        {
-            // Beat line
-            draw_set_alpha(1);
-            draw_set_color(make_color_rgb(180, 180, 180));
-            draw_line_width(grid_gx, 40, grid_gx, gui_h - 140, 1);
-        }
-
     }
 
 
