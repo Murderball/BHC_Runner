@@ -70,7 +70,7 @@ function scr_input_update()
         // Attack 3 = 3
         // Ultimate = 4 (NOTE-ONLY; tracked as manual)
         // Duck     = Shift
-        // Pause    = ESC
+        // Pause    = ESC / P
 
         global.in_jump = keyboard_check_pressed(vk_space);
 
@@ -84,7 +84,7 @@ function scr_input_update()
         global.in_ult_manual = keyboard_check_pressed(ord("4"));
 
         // Pause
-        global.in_pause = keyboard_check_pressed(vk_escape);
+        global.in_pause = keyboard_check_pressed(vk_escape) || keyboard_check_pressed(ord("P"));
 
         // Confirm / Cancel
         global.in_confirm = keyboard_check_pressed(vk_enter);
