@@ -70,7 +70,7 @@ function scr_input_update()
         // Attack 3 = 3
         // Ultimate = 4 (NOTE-ONLY; tracked as manual)
         // Duck     = Shift
-        // Pause    = ESC / P
+        // Pause    = ESC
 
         global.in_jump = keyboard_check_pressed(vk_space);
 
@@ -84,7 +84,7 @@ function scr_input_update()
         global.in_ult_manual = keyboard_check_pressed(ord("4"));
 
         // Pause
-        global.in_pause = keyboard_check_pressed(vk_escape) || keyboard_check_pressed(ord("P"));
+        global.in_pause = keyboard_check_pressed(vk_escape);
 
         // Confirm / Cancel
         global.in_confirm = keyboard_check_pressed(vk_enter);
@@ -112,5 +112,10 @@ function scr_input_update()
         global.hold_duck = false;
 
         // NOTE: do NOT clear global.in_pause/global.in_confirm/global.in_cancel
+    }
+
+    // Editor-pause mode owns the pause hotkey path and should not stack with pause menu.
+    if (variable_global_exists("EDITOR_PAUSE_OPEN") && global.EDITOR_PAUSE_OPEN) {
+        global.in_pause = false;
     }
 }
