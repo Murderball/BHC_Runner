@@ -10,11 +10,6 @@ function scr_note_sprite_index(act)
     if (act_norm == "atk2") {
         var spr_atk2 = spr_note_attk2;
 
-        // If resource ids drift, prefer a name lookup of the canonical sprite.
-        if (spr_atk2 == spr_note_attk3 || sprite_get_name(spr_atk2) == "spr_note_attk3") {
-            var s_fix = asset_get_index("spr_note_attk2");
-            if (s_fix != -1) spr_atk2 = s_fix;
-        }
 
         return spr_atk2;
     }
