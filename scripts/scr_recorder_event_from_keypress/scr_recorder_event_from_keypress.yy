@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_recorder_event_from_keypress",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_recorder_event_from_keypress",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

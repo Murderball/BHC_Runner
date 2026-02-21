@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_recorder_quantize_to_eighth",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_recorder_quantize_to_eighth",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

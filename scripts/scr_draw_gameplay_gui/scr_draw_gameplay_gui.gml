@@ -171,6 +171,8 @@ function scr_draw_gameplay_gui()
     {
         var nref = global.chart[i];
 
+        if (script_exists(scr_note_is_editor_only) && scr_note_is_editor_only(nref.act)) continue;
+
         // Always define these before any drawing
         var start_gx = scr_note_screen_x(nref.t, now_time);
 
