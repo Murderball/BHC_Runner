@@ -57,8 +57,9 @@ if (variable_global_exists("song_playing") && global.song_playing
 
 var now_t = scr_chart_time();
 var chart_advancing = (prev_chart_time >= 0 && now_t > prev_chart_time + 0.00001);
+var bpm_now = scr_recorder_get_bpm();
 
-if (recording_enabled && song_is_playing && chart_advancing)
+if (recording_enabled && song_is_playing && chart_advancing && bpm_now > 0)
 {
     var pushed = scr_recorder_event_from_keypress(now_t);
     for (var i = 0; i < array_length(pushed); i++) {

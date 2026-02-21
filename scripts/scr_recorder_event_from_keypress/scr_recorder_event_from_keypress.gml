@@ -2,13 +2,12 @@ function scr_recorder_event_from_keypress(t)
 {
     var events = [];
 
-    var bpm = (variable_global_exists("chart_bpm") && is_real(global.chart_bpm) && global.chart_bpm > 0)
-        ? global.chart_bpm
-        : ((variable_global_exists("BPM") && is_real(global.BPM) && global.BPM > 0) ? global.BPM : 120);
+    var bpm_now = scr_recorder_get_bpm();
+    if (bpm_now <= 0) return events;
 
     var push_event = function(_kind, _act, _spr, _lane)
     {
-        var q = scr_recorder_quantize_to_eighth(t, bpm);
+        var q = scr_recorder_quantize_to_eighth(t, bpm_now);
         var ev = {
             t: real(t),
             kind: _kind,

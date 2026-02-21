@@ -671,6 +671,7 @@
     {"id":{"name":"scr_player_ultimate_guitar","path":"scripts/scr_player_ultimate_guitar/scr_player_ultimate_guitar.yy",},},
     {"id":{"name":"scr_player_unstick_y","path":"scripts/scr_player_unstick_y/scr_player_unstick_y.yy",},},
     {"id":{"name":"scr_recorder_event_from_keypress","path":"scripts/scr_recorder_event_from_keypress/scr_recorder_event_from_keypress.yy",},},
+    {"id":{"name":"scr_recorder_get_bpm","path":"scripts/scr_recorder_get_bpm/scr_recorder_get_bpm.yy",},},
     {"id":{"name":"scr_recorder_merge_take_into_chart","path":"scripts/scr_recorder_merge_take_into_chart/scr_recorder_merge_take_into_chart.yy",},},
     {"id":{"name":"scr_recorder_quantize_to_eighth","path":"scripts/scr_recorder_quantize_to_eighth/scr_recorder_quantize_to_eighth.yy",},},
     {"id":{"name":"scr_recorder_save_chart","path":"scripts/scr_recorder_save_chart/scr_recorder_save_chart.yy",},},

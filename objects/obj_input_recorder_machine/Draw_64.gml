@@ -13,6 +13,10 @@ draw_circle(gui_x, gui_y, 10, false);
 draw_set_color(c_white);
 draw_text(gui_x + 20, gui_y - 8, "Record");
 
+if (scr_recorder_get_bpm() <= 0) {
+    draw_text(gui_x + 20, gui_y + 10, "No BPM");
+}
+
 // Reset state
 draw_set_alpha(1);
 draw_set_color(c_white);
