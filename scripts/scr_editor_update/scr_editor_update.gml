@@ -655,8 +655,10 @@ if (mm_type == "difficulty" || mm_type == "diff")
     if (keyboard_check_pressed(ord("["))) global.timeline_zoom *= 0.90;
     if (keyboard_check_pressed(ord("]"))) global.timeline_zoom *= 1.10;
 
+    var wheel_delta = mouse_wheel_up() - mouse_wheel_down();
+
     if (keyboard_check(vk_control)) {
-        var wheel_delta_zoom = (mouse_wheel_up ? 1 : 0) - (mouse_wheel_down ? 1 : 0);
+        var wheel_delta_zoom = wheel_delta;
         if (wheel_delta_zoom != 0) {
             if (wheel_delta_zoom > 0) global.timeline_zoom *= 1.10;
             else global.timeline_zoom *= 0.90;
@@ -716,7 +718,7 @@ if (mm_type == "difficulty" || mm_type == "diff")
         if (keyboard_check(vk_right)) global.editor_time = global.editor_time + step;
     }
 
-    var wheel_delta_time = mouse_wheel_up() - mouse_wheel_down();
+    var wheel_delta_time = wheel_delta;
     if (wheel_delta_time != 0) global.editor_time = max(0, global.editor_time + wheel_delta_time * step);
 
     if (global.editor_snap_on) {
