@@ -6,13 +6,16 @@ function scr_note_sprite_index(act)
 
     var act_norm = string_lower(string(act));
 
-    // Hard safety: ATK2 must resolve to spr_note_attk2, never ATK3.
-    if (act_norm == "atk2") {
-        var spr_atk2 = spr_note_attk2;
-
-
-        return spr_atk2;
-    }
+// Hard safety: ATK2 must resolve to spr_note_attk2, never ATK3.
+var is_atk2 = (act_norm == "atk2" || act_norm == "attk2" || act_norm == "attack2");
+if (!is_atk2 && variable_global_exists("ACT_ATK2")) {
+    is_atk2 = (act_norm == string_lower(string(global.ACT_ATK2)));
+}
+if (is_atk2) {
+    var spr_atk2 = asset_get_index("spr_note_attk2");
+    if (spr_atk2 == -1) spr_atk2 = spr_note_attk2;
+    return spr_atk2;
+}
 
     switch (act_norm)
     {
@@ -30,13 +33,14 @@ function scr_note_sprite_index(act)
     }
 }
 
-/// scr_note_draw_color(act)
-/// Per-action note tint. Keep atk1 at the default color.
 function scr_note_draw_color(act)
 {
-    switch (act)
+    var a = string_lower(string(act));
+    switch (a)
     {
         case "atk2":
+        case "attk2":
+        case "attack2":
             return make_color_rgb(0, 200, 255);
 
         case "atk3":

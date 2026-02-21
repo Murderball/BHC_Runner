@@ -195,6 +195,11 @@ function scr_draw_gameplay_gui()
 
         // Choose sprite per action (falls back to spr_note if missing)
         var note_act = string_lower(string(nref.act));
+		if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS) {
+    if (string_pos("2", note_act) > 0) {
+        show_debug_message("[ACT_DUMP] raw=" + string(nref.act) + " norm=" + note_act);
+    }
+}
         var spr = spr_note_attk1;
         if (script_exists(scr_note_sprite_index)) spr = scr_note_sprite_index(note_act);
 
@@ -233,7 +238,7 @@ function scr_draw_gameplay_gui()
 
             // Hold end marker
             draw_set_alpha(global.hold_end_alpha);
-            if (spr != -1) draw_sprite_ext(spr, subimg_end, end_gx, start_gy, 1, 1, 0, note_col, note_alpha);
+            if (spr != -1) draw_sprite_ext(spr, subimg_end, end_gx, start_gy, 1, 1, 0, note_col, 1);
             else {
                 draw_set_color(note_col);
                 draw_rectangle(end_gx - 10, start_gy - 10, end_gx + 10, start_gy + 10, false);
@@ -242,7 +247,7 @@ function scr_draw_gameplay_gui()
         }
 
         // Start note marker
-        if (spr != -1) draw_sprite_ext(spr, subimg_start, start_gx, start_gy, 1, 1, 0, note_col, note_alpha);
+        if (spr != -1) draw_sprite_ext(spr, subimg_start, start_gx, start_gy, 1, 1, 0, note_col, 1);
         else {
             draw_set_color(note_col);
             draw_rectangle(start_gx - 10, start_gy - 10, start_gx + 10, start_gx + 10, false);
