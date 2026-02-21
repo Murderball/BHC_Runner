@@ -75,16 +75,22 @@ function scr_editor_update() {
         global.editor_on = !global.editor_on;
 
         if (global.editor_on) {
-            // Enter editor
-            if (global.song_handle >= 0) audio_pause_sound(global.song_handle);
+            // Enter editor overlay (live gameplay continues)
+            if (variable_global_exists("song_handle") && global.song_handle >= 0) {
+                var t_live = audio_sound_get_track_position(global.song_handle);
+                if (is_undefined(t_live)) t_live = 0.0;
+
+                var off_live = 0.0;
+                if (variable_global_exists("OFFSET") && !is_undefined(global.OFFSET)) off_live = global.OFFSET;
+
+                global.editor_time = max(0.0, t_live - off_live);
+            }
         } else {
-            // Exit editor
+            // Exit editor overlay
             scr_chart_sort();
             scr_markers_sort();
             scr_story_events_from_markers();
 			if (script_exists(scr_difficulty_events_from_markers)) scr_difficulty_events_from_markers();
-            if (global.song_handle >= 0) audio_stop_sound(global.song_handle);
-            scr_song_play_from(global.editor_time);
 			return;
         }
     }
@@ -674,6 +680,17 @@ if (mm_type == "difficulty" || mm_type == "diff")
         else if (global.editor_tool == "hold") global.editor_tool = "tap";
     }
 
+    // Keep editor timeline synced to live song while overlay is active
+    if (variable_global_exists("song_handle") && global.song_handle >= 0) {
+        var live_t = audio_sound_get_track_position(global.song_handle);
+        if (is_undefined(live_t)) live_t = 0.0;
+
+        var live_off = 0.0;
+        if (variable_global_exists("OFFSET") && !is_undefined(global.OFFSET)) live_off = global.OFFSET;
+
+        global.editor_time = max(0.0, live_t - live_off);
+    }
+
     // ----------------------------
     // Scrub time (arrow keys + wheel)
     // ----------------------------
@@ -693,6 +710,35 @@ if (mm_type == "difficulty" || mm_type == "diff")
         var t = global.editor_time;
         t = scr_editor_snap_time(t);
         global.editor_time = t;
+    }
+
+    // ----------------------------
+    // Quick place notes from keyboard (1/2/3/4)
+    // ----------------------------
+    if (!keyboard_check(vk_control) && !keyboard_check(vk_shift) && global.editor_tool != "marker" && global.editor_tool != "phrase") {
+        var k_place = -1;
+        if (keyboard_check_pressed(ord("1"))) k_place = 0;
+        if (keyboard_check_pressed(ord("2"))) k_place = 1;
+        if (keyboard_check_pressed(ord("3"))) k_place = 2;
+        if (keyboard_check_pressed(ord("4"))) k_place = 3;
+
+        if (k_place >= 0) {
+            if (k_place == 0) { global.editor_act = global.ACT_ATK1; global.editor_act_i = 0; }
+            if (k_place == 1) { global.editor_act = global.ACT_ATK2; global.editor_act_i = 1; }
+            if (k_place == 2) { global.editor_act = global.ACT_ATK3; global.editor_act_i = 2; }
+            if (k_place == 3) { global.editor_act = global.ACT_ULT;  global.editor_act_i = 3; }
+
+            var place_t_key = scr_chart_time();
+            if (global.editor_snap_on) place_t_key = scr_snap_time_to_tick(place_t_key);
+
+            var place_y_key = (display_get_gui_height() * 0.5);
+            if (variable_instance_exists(id, "editor_last_place_y")) place_y_key = editor_last_place_y;
+
+            var add_note = { t: place_t_key, lane: 0, y_gui: clamp(place_y_key, 0, display_get_gui_height()), type: "tap", act: global.editor_act };
+            array_push(global.chart, add_note);
+            scr_editor_selection_clear();
+            scr_editor_selection_add(array_length(global.chart) - 1);
+        }
     }
 
     // ----------------------------
@@ -1087,6 +1133,7 @@ if (keyboard_check_pressed(vk_delete) || keyboard_check_pressed(vk_backspace))
             if (dxm < 8 && dym < 8) {
                 var place_lane = 0;
 				var place_y = clamp(my_gui, 0, display_get_gui_height());
+				editor_last_place_y = place_y;
 
                 var place_t = scr_chart_time();
                 if (global.editor_snap_on) place_t = scr_snap_time_to_tick(place_t);
