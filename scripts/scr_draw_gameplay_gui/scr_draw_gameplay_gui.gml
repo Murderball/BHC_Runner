@@ -185,18 +185,31 @@ function scr_draw_gameplay_gui()
             start_gy = global.LANE_Y[clamp(floor(nref.lane), 0, array_length(global.LANE_Y)-1)];
         }
 
-        var was_hit = (variable_struct_exists(nref, "hit") && nref.hit);
-        var note_alpha = was_hit ? 0.35 : 1;
-
-        draw_set_alpha(note_alpha);
-
         // Cull far off-screen
         if (start_gx < -400) continue;
         if (start_gx > gw + 400) continue;
 
+        var was_hit = (variable_struct_exists(nref, "hit") && nref.hit);
+        var note_alpha = was_hit ? 0.35 : 1;
+        draw_set_alpha(note_alpha);
+
         // Choose sprite per action (falls back to spr_note if missing)
+        var note_act = string_lower(string(nref.act));
         var spr = spr_note_attk1;
-        if (script_exists(scr_note_sprite_index)) spr = scr_note_sprite_index(nref.act);
+        if (script_exists(scr_note_sprite_index)) spr = scr_note_sprite_index(note_act);
+
+        // Editor safety: keep ATK2 icon/preview bound to the canonical ATK2 sprite.
+        if (variable_global_exists("editor_on") && global.editor_on
+            && variable_global_exists("ACT_ATK2") && note_act == global.ACT_ATK2
+            && spr != spr_note_attk2)
+        {
+            if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS) {
+                show_debug_message("[EDITOR_ICONS] remap ATK2 sprite mismatch act=" + string(note_act)
+                    + " resolved=" + string(spr)
+                    + " expected=" + string(spr_note_attk2));
+            }
+            spr = spr_note_attk2;
+        }
 
         var note_col = c_white;
         if (script_exists(scr_note_draw_color)) note_col = scr_note_draw_color(nref.act);
@@ -234,6 +247,26 @@ function scr_draw_gameplay_gui()
             draw_set_color(note_col);
             draw_rectangle(start_gx - 10, start_gy - 10, start_gx + 10, start_gx + 10, false);
             draw_set_color(c_black);
+        }
+
+        if (variable_global_exists("editor_on") && global.editor_on
+            && variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS
+            && variable_global_exists("ACT_ATK2") && note_act == global.ACT_ATK2)
+        {
+            var spr_name = (spr != -1) ? sprite_get_name(spr) : "(none)";
+            show_debug_message("[EDITOR_ICONS] ATK2 draw act=" + string(note_act)
+                + " sprite_name=" + spr_name
+                + " sprite_index=" + string(spr)
+                + " alpha=" + string(note_alpha));
+
+            draw_set_alpha(1);
+            draw_set_color(c_yellow);
+            draw_text(start_gx + 28, start_gy - 14,
+                "ATK2 -> " + spr_name + " (" + string(spr) + ") a=" + string_format(note_alpha, 1, 2));
+
+            // Restore note draw state so the debug label cannot leak state into other UI.
+            draw_set_alpha(note_alpha);
+            draw_set_color(note_col);
         }
     }
 
