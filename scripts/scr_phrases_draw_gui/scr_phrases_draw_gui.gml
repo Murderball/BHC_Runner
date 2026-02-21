@@ -1,6 +1,7 @@
 function scr_phrases_draw_gui() {
     var now_time = scr_song_time();
     var gui_w = display_get_gui_width();
+    draw_set_alpha(1);
 
     // Track label
     draw_set_color(c_black);
@@ -34,10 +35,47 @@ function scr_phrases_draw_gui() {
             if (gx > -200 && gx < gui_w + 200) {
                 var btn_lane = clamp(st.b - 1, 0, 3);
                 var gy = global.LANE_Y[btn_lane];
-                var act = global.LANE_TO_ACT[btn_lane]; // maps 0..3 to atk1/atk2/atk3/jump in your globals
-				var spr = scr_note_sprite_index(act);
+                var act = global.LANE_TO_ACT[btn_lane];
+                var act_norm = string_lower(string(act));
+
+                // Canonical editor lane mapping safety (lane 1 must always be ATK2)
+                if (btn_lane == 1 && variable_global_exists("ACT_ATK2") && act_norm != global.ACT_ATK2) {
+                    if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS) {
+                        show_debug_message("[EDITOR_ICONS] LANE_TO_ACT mismatch lane=1 act=" + string(act_norm)
+                            + " -> forcing " + string(global.ACT_ATK2));
+                    }
+                    act_norm = global.ACT_ATK2;
+                }
+
+				var spr = scr_note_sprite_index(act_norm);
+                if (variable_global_exists("ACT_ATK2") && act_norm == global.ACT_ATK2 && spr != spr_note_attk2) {
+                    if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS) {
+                        show_debug_message("[EDITOR_ICONS] Phrase ATK2 sprite mismatch act=" + string(act_norm)
+                            + " resolved=" + string(spr)
+                            + " expected=" + string(spr_note_attk2));
+                    }
+                    spr = spr_note_attk2;
+                }
+
 				var subimg = scr_anim_subimg(spr, phr_i * 1000 + step_i);
 				draw_sprite(spr, subimg, gx, gy);
+
+                if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS
+                    && variable_global_exists("ACT_ATK2") && act_norm == global.ACT_ATK2)
+                {
+                    var cur_a = draw_get_alpha();
+                    var spr_name = (spr != -1) ? sprite_get_name(spr) : "(none)";
+                    show_debug_message("[EDITOR_ICONS] Phrase ATK2 draw act=" + string(act_norm)
+                        + " sprite_name=" + spr_name
+                        + " sprite_index=" + string(spr)
+                        + " alpha=" + string(cur_a));
+
+                    draw_set_alpha(1);
+                    draw_set_color(c_yellow);
+                    draw_text(gx + 26, gy - 12, "ATK2 -> " + spr_name + " (" + string(spr) + ") a=" + string_format(cur_a, 1, 2));
+                    draw_set_alpha(1);
+                    draw_set_color(c_black);
+                }
 
 
             }
@@ -58,4 +96,6 @@ function scr_phrases_draw_gui() {
             " M:" + string(global.phrase_hits_miss)
         );
     }
+
+    draw_set_alpha(1);
 }
