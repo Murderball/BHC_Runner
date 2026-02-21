@@ -11,9 +11,9 @@ var held_duck = keyboard_check(vk_shift);
 var held_ult  = keyboard_check(ord("4"));
 
 var icon_data = [
-    { spr: spr_jump, held: held_jump },
-    { spr: spr_duck, held: held_duck },
-    { spr: spr_ult,  held: held_ult }
+    { spr: spr_note_jump, held: held_jump },
+    { spr: spr_note_duck, held: held_duck },
+    { spr: spr_note_ultimate,  held: held_ult }
 ];
 
 for (var i = 0; i < array_length(icon_data); i++)
