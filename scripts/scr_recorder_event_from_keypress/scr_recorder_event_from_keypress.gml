@@ -1,32 +1,114 @@
-function scr_recorder_event_from_keypress(t)
+function scr_recorder_event_from_keypress(_t, _take_events)
 {
-    var events = [];
-
     var bpm_now = scr_recorder_get_bpm();
-    if (bpm_now <= 0) return events;
+    if (!is_real(bpm_now) || bpm_now <= 0) return false;
+    if (!is_array(_take_events)) return false;
 
-    var push_event = function(_kind, _act, _spr, _lane)
+    var pushed_any = false;
+    var q;
+    var ev;
+
+    if (keyboard_check_pressed(vk_space))
     {
-        var q = scr_recorder_quantize_to_eighth(t, bpm_now);
-        var ev = {
-            t: real(t),
-            kind: _kind,
-            act: _act,
-            spr: _spr,
-            lane: _lane,
+        q = scr_recorder_quantize_to_eighth(_t, bpm_now);
+        ev = {
+            t: real(_t),
+            kind: "jump",
+            act: global.ACT_JUMP,
+            spr: spr_note_jump,
+            lane: 0,
             grid8: q.grid8,
             err: q.err,
             grid_time: q.grid_time
         };
-        array_push(events, ev);
-    };
+        array_push(_take_events, ev);
+        pushed_any = true;
+    }
 
-    if (keyboard_check_pressed(vk_space)) push_event("jump", global.ACT_JUMP, spr_note_jump, 0);
-    if (keyboard_check_pressed(vk_shift)) push_event("duck", global.ACT_DUCK, spr_note_duck, 0);
-    if (keyboard_check_pressed(ord("1"))) push_event("atk1", global.ACT_ATK1, spr_note_atk1, 0);
-    if (keyboard_check_pressed(ord("2"))) push_event("atk2", global.ACT_ATK2, spr_note_atk2, 1);
-    if (keyboard_check_pressed(ord("3"))) push_event("atk3", global.ACT_ATK3, spr_note_atk3, 2);
-    if (keyboard_check_pressed(ord("4"))) push_event("ult",  global.ACT_ULT,  spr_note_ultimate, 3);
+    if (keyboard_check_pressed(vk_lshift) || keyboard_check_pressed(vk_rshift))
+    {
+        q = scr_recorder_quantize_to_eighth(_t, bpm_now);
+        ev = {
+            t: real(_t),
+            kind: "duck",
+            act: global.ACT_DUCK,
+            spr: spr_note_duck,
+            lane: 0,
+            grid8: q.grid8,
+            err: q.err,
+            grid_time: q.grid_time
+        };
+        array_push(_take_events, ev);
+        pushed_any = true;
+    }
 
-    return events;
+    if (keyboard_check_pressed(ord("1")))
+    {
+        q = scr_recorder_quantize_to_eighth(_t, bpm_now);
+        ev = {
+            t: real(_t),
+            kind: "atk1",
+            act: global.ACT_ATK1,
+            spr: spr_note_atk1,
+            lane: 0,
+            grid8: q.grid8,
+            err: q.err,
+            grid_time: q.grid_time
+        };
+        array_push(_take_events, ev);
+        pushed_any = true;
+    }
+
+    if (keyboard_check_pressed(ord("2")))
+    {
+        q = scr_recorder_quantize_to_eighth(_t, bpm_now);
+        ev = {
+            t: real(_t),
+            kind: "atk2",
+            act: global.ACT_ATK2,
+            spr: spr_note_atk2,
+            lane: 1,
+            grid8: q.grid8,
+            err: q.err,
+            grid_time: q.grid_time
+        };
+        array_push(_take_events, ev);
+        pushed_any = true;
+    }
+
+    if (keyboard_check_pressed(ord("3")))
+    {
+        q = scr_recorder_quantize_to_eighth(_t, bpm_now);
+        ev = {
+            t: real(_t),
+            kind: "atk3",
+            act: global.ACT_ATK3,
+            spr: spr_note_atk3,
+            lane: 2,
+            grid8: q.grid8,
+            err: q.err,
+            grid_time: q.grid_time
+        };
+        array_push(_take_events, ev);
+        pushed_any = true;
+    }
+
+    if (keyboard_check_pressed(ord("4")))
+    {
+        q = scr_recorder_quantize_to_eighth(_t, bpm_now);
+        ev = {
+            t: real(_t),
+            kind: "ultimate",
+            act: global.ACT_ULT,
+            spr: spr_note_ultimate,
+            lane: 3,
+            grid8: q.grid8,
+            err: q.err,
+            grid_time: q.grid_time
+        };
+        array_push(_take_events, ev);
+        pushed_any = true;
+    }
+
+    return pushed_any;
 }
