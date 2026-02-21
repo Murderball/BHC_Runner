@@ -69,41 +69,22 @@ function scr_editor_update() {
     }
 
     // ----------------------------
-    // P / Shift+P : editor-pause transport mode
-    // ----------------------------
-    if (keyboard_check_pressed(ord("P")) && (global.EDITOR_PAUSE_OPEN || !global.editor_on)) {
-        if (global.EDITOR_PAUSE_OPEN) {
-            scr_editor_pause_exit();
-        } else {
-            var rewind_on_exit = !keyboard_check(vk_shift);
-            scr_editor_pause_enter(rewind_on_exit);
-        }
-        return;
-    }
-
-    // ----------------------------
     // Toggle editor on/off
     // ----------------------------
     if (keyboard_check_pressed(global.editor_toggle_key)) {
         global.editor_on = !global.editor_on;
 
         if (global.editor_on) {
-            // Enter editor overlay (live gameplay continues)
-            if (variable_global_exists("song_handle") && global.song_handle >= 0) {
-                var t_live = audio_sound_get_track_position(global.song_handle);
-                if (is_undefined(t_live)) t_live = 0.0;
-
-                var off_live = 0.0;
-                if (variable_global_exists("OFFSET") && !is_undefined(global.OFFSET)) off_live = global.OFFSET;
-
-                global.editor_time = max(0.0, t_live - off_live);
-            }
+            // Enter editor
+            if (global.song_handle >= 0) audio_pause_sound(global.song_handle);
         } else {
-            // Exit editor overlay
+            // Exit editor
             scr_chart_sort();
             scr_markers_sort();
             scr_story_events_from_markers();
 			if (script_exists(scr_difficulty_events_from_markers)) scr_difficulty_events_from_markers();
+            if (global.song_handle >= 0) audio_stop_sound(global.song_handle);
+            scr_song_play_from(global.editor_time);
 			return;
         }
     }
@@ -655,10 +636,8 @@ if (mm_type == "difficulty" || mm_type == "diff")
     if (keyboard_check_pressed(ord("["))) global.timeline_zoom *= 0.90;
     if (keyboard_check_pressed(ord("]"))) global.timeline_zoom *= 1.10;
 
-    var wheel_delta = mouse_wheel_up_value - mouse_wheel_down_value;
-
     if (keyboard_check(vk_control)) {
-        var wheel_delta_zoom = wheel_delta;
+        var wheel_delta_zoom = (mouse_wheel_up ? 1 : 0) - (mouse_wheel_down ? 1 : 0);
         if (wheel_delta_zoom != 0) {
             if (wheel_delta_zoom > 0) global.timeline_zoom *= 1.10;
             else global.timeline_zoom *= 0.90;
@@ -695,17 +674,6 @@ if (mm_type == "difficulty" || mm_type == "diff")
         else if (global.editor_tool == "hold") global.editor_tool = "tap";
     }
 
-    // Keep editor timeline synced to live song while overlay is active
-    if (variable_global_exists("song_handle") && global.song_handle >= 0) {
-        var live_t = audio_sound_get_track_position(global.song_handle);
-        if (is_undefined(live_t)) live_t = 0.0;
-
-        var live_off = 0.0;
-        if (variable_global_exists("OFFSET") && !is_undefined(global.OFFSET)) live_off = global.OFFSET;
-
-        global.editor_time = max(0.0, live_t - live_off);
-    }
-
     // ----------------------------
     // Scrub time (arrow keys + wheel)
     // ----------------------------
@@ -718,42 +686,13 @@ if (mm_type == "difficulty" || mm_type == "diff")
         if (keyboard_check(vk_right)) global.editor_time = global.editor_time + step;
     }
 
-    var wheel_delta_time = wheel_delta;
+    var wheel_delta_time = mouse_wheel_up() - mouse_wheel_down();
     if (wheel_delta_time != 0) global.editor_time = max(0, global.editor_time + wheel_delta_time * step);
 
     if (global.editor_snap_on) {
         var t = global.editor_time;
         t = scr_editor_snap_time(t);
         global.editor_time = t;
-    }
-
-    // ----------------------------
-    // Quick place notes from keyboard (1/2/3/4)
-    // ----------------------------
-    if (!keyboard_check(vk_control) && !keyboard_check(vk_shift) && global.editor_tool != "marker" && global.editor_tool != "phrase") {
-        var k_place = -1;
-        if (keyboard_check_pressed(ord("1"))) k_place = 0;
-        if (keyboard_check_pressed(ord("2"))) k_place = 1;
-        if (keyboard_check_pressed(ord("3"))) k_place = 2;
-        if (keyboard_check_pressed(ord("4"))) k_place = 3;
-
-        if (k_place >= 0) {
-            if (k_place == 0) { global.editor_act = global.ACT_ATK1; global.editor_act_i = 0; }
-            if (k_place == 1) { global.editor_act = global.ACT_ATK2; global.editor_act_i = 1; }
-            if (k_place == 2) { global.editor_act = global.ACT_ATK3; global.editor_act_i = 2; }
-            if (k_place == 3) { global.editor_act = global.ACT_ULT;  global.editor_act_i = 3; }
-
-            var place_t_key = scr_chart_time();
-            if (global.editor_snap_on) place_t_key = scr_snap_time_to_tick(place_t_key);
-
-            var place_y_key = (display_get_gui_height() * 0.5);
-            if (variable_instance_exists(id, "editor_last_place_y")) place_y_key = editor_last_place_y;
-
-            var add_note = { t: place_t_key, lane: 0, y_gui: clamp(place_y_key, 0, display_get_gui_height()), type: "tap", act: global.editor_act };
-            array_push(global.chart, add_note);
-            scr_editor_selection_clear();
-            scr_editor_selection_add(array_length(global.chart) - 1);
-        }
     }
 
     // ----------------------------
@@ -1148,7 +1087,6 @@ if (keyboard_check_pressed(vk_delete) || keyboard_check_pressed(vk_backspace))
             if (dxm < 8 && dym < 8) {
                 var place_lane = 0;
 				var place_y = clamp(my_gui, 0, display_get_gui_height());
-				editor_last_place_y = place_y;
 
                 var place_t = scr_chart_time();
                 if (global.editor_snap_on) place_t = scr_snap_time_to_tick(place_t);
@@ -1189,61 +1127,4 @@ if (keyboard_check_pressed(vk_delete) || keyboard_check_pressed(vk_backspace))
             scr_editor_selection_clear();
         }
     }
-}
-
-
-function scr_editor_pause_enter(rewind_on_exit)
-{
-    if (variable_global_exists("EDITOR_PAUSE_OPEN") && global.EDITOR_PAUSE_OPEN) return;
-
-    var t0 = 0.0;
-    if (script_exists(scr_chart_time)) t0 = scr_chart_time();
-
-    global.editor_on = true;
-    global.EDITOR_PAUSE_OPEN = true;
-    global.EDITOR_PAUSE_REWIND_ON_EXIT = (rewind_on_exit == true);
-    global.EDITOR_PAUSE_T0 = t0;
-    global.EDITOR_PAUSE_ROOM = room;
-    global.EDITOR_PAUSE_VALID = true;
-
-    global.pause_song_time = scr_song_time();
-    global.pause_song_was_playing = false;
-
-    if (variable_global_exists("song_handle") && global.song_handle >= 0) {
-        global.pause_song_was_playing = audio_is_playing(global.song_handle);
-        audio_pause_sound(global.song_handle);
-    }
-
-    if (variable_global_exists("story_npc_handle") && global.story_npc_handle >= 0) {
-        audio_pause_sound(global.story_npc_handle);
-    }
-
-    global.GAME_PAUSED = true;
-}
-
-
-function scr_editor_pause_exit()
-{
-    if (!variable_global_exists("EDITOR_PAUSE_OPEN") || !global.EDITOR_PAUSE_OPEN) return;
-
-    global.GAME_PAUSED = false;
-
-    if (variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
-        if (variable_global_exists("song_handle") && global.song_handle >= 0) {
-            audio_resume_sound(global.song_handle);
-        }
-    }
-
-    if (variable_global_exists("story_npc_handle") && global.story_npc_handle >= 0) {
-        audio_resume_sound(global.story_npc_handle);
-    }
-
-    if (global.EDITOR_PAUSE_REWIND_ON_EXIT && global.EDITOR_PAUSE_VALID) {
-        scr_set_playhead_time(global.EDITOR_PAUSE_T0);
-    }
-
-    global.pause_song_time = 0.0;
-    global.editor_on = false;
-    global.EDITOR_PAUSE_OPEN = false;
-    global.EDITOR_PAUSE_VALID = false;
 }
