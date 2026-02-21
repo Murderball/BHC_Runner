@@ -28,12 +28,6 @@ if (kb_nav_timer > 0) kb_nav_timer--;
 kb_dash_phase = (kb_dash_phase + 1) & 15;
 
 
-// Editor-pause is a separate mode; do not stack pause menu on top of it.
-if (variable_global_exists("EDITOR_PAUSE_OPEN") && global.EDITOR_PAUSE_OPEN) {
-    paused = false;
-    exit;
-}
-
 // Toggle pause with ESC
 if (back && move_cd <= 0)
 {

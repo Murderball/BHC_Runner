@@ -16,11 +16,6 @@ function scr_globals_init()
 
     if (!variable_global_exists("GAME_PAUSED"))  global.GAME_PAUSED  = false;
     if (!variable_global_exists("STORY_PAUSED")) global.STORY_PAUSED = false;
-    if (!variable_global_exists("EDITOR_PAUSE_OPEN")) global.EDITOR_PAUSE_OPEN = false;
-    if (!variable_global_exists("EDITOR_PAUSE_REWIND_ON_EXIT")) global.EDITOR_PAUSE_REWIND_ON_EXIT = false;
-    if (!variable_global_exists("EDITOR_PAUSE_T0")) global.EDITOR_PAUSE_T0 = 0.0;
-    if (!variable_global_exists("EDITOR_PAUSE_ROOM")) global.EDITOR_PAUSE_ROOM = room;
-    if (!variable_global_exists("EDITOR_PAUSE_VALID")) global.EDITOR_PAUSE_VALID = false;
 
     // Input edge flags (must exist before ANY player Step runs)
     if (!variable_global_exists("in_jump")) global.in_jump = false;
