@@ -655,7 +655,7 @@ if (mm_type == "difficulty" || mm_type == "diff")
     if (keyboard_check_pressed(ord("["))) global.timeline_zoom *= 0.90;
     if (keyboard_check_pressed(ord("]"))) global.timeline_zoom *= 1.10;
 
-    var wheel_delta = mouse_wheel_up_value - mouse_wheel_down_value;
+    var wheel_delta = mouse_wheel_up() - mouse_wheel_down();
 
     if (keyboard_check(vk_control)) {
         var wheel_delta_zoom = wheel_delta;
