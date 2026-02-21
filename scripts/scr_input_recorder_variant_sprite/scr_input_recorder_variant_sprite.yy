@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"scr_input_recorder_variant_sprite",
   "isCompatibility":false,
   "isDnD":false,
