@@ -29,8 +29,8 @@ var gp_jump_raw = gp_face1;
 var gp_a1_raw = gp_face3;
 var gp_a2_raw = gp_face2;
 var gp_a3_raw = gp_face4;
-var gp_duck_raw = gp_triggerright;
-var gp_ult_raw = gp_triggerleft; // combo uses L2+R2 edge
+var gp_duck_raw = gamepad_button_value(0, gp_shoulderrb); // R2
+var gp_ult_raw  = gamepad_button_value(0, gp_shoulderlb); // L2
 
 var cur_jump_kb = keyboard_check(kb_jump_raw);
 var cur_duck_kb = keyboard_check(kb_duck_raw);

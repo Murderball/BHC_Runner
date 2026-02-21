@@ -6,7 +6,6 @@ if (!variable_global_exists("input_recorder") || !is_struct(global.input_recorde
 var xg = ui_x;
 var yg = ui_y;
 
-var col_bg  = make_color_rgba(0, 0, 0, 170);
 var col_on  = make_color_rgb(50, 210, 80);
 var col_off = make_color_rgb(170, 70, 70);
 
@@ -22,7 +21,6 @@ if (is_array(box_labels))
         var by2 = by1 + ui_h;
 
         draw_set_alpha(1);
-        draw_set_color(col_bg);
         draw_roundrect(bx1, by1, bx2, by2, false);
 
         draw_set_color(c_white);
