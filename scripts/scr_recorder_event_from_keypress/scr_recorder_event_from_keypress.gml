@@ -49,7 +49,7 @@ function scr_recorder_event_from_keypress(_t, _take_events)
             t: real(_t),
             kind: "atk1",
             act: global.ACT_ATK1,
-            spr: spr_note_atk1,
+            spr: spr_note_attk1,
             lane: 0,
             grid8: q.grid8,
             err: q.err,
@@ -61,7 +61,7 @@ function scr_recorder_event_from_keypress(_t, _take_events)
 
     if (keyboard_check_pressed(ord("2")))
     {
-        var atk2_spr = spr_note_atk2;
+        var atk2_spr = spr_note_attk2;
         if (script_exists(scr_note_sprite_index)) atk2_spr = scr_note_sprite_index(global.ACT_ATK2);
 
         q = scr_recorder_quantize_to_eighth(_t, bpm_now);
@@ -91,7 +91,7 @@ function scr_recorder_event_from_keypress(_t, _take_events)
             t: real(_t),
             kind: "atk3",
             act: global.ACT_ATK3,
-            spr: spr_note_atk3,
+            spr: spr_note_attk3,
             lane: 2,
             grid8: q.grid8,
             err: q.err,

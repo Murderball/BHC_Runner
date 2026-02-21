@@ -8,16 +8,16 @@ function scr_note_sprite_index(act)
     {
         case "jump": return spr_note_jump;
         case "duck": return spr_note_duck;
-        case "atk1": return spr_note_atk1;
-        case "atk2": return spr_note_atk2;
-        case "atk3": return spr_note_atk3;
+        case "atk1": return spr_note_attk1;
+        case "atk2": return spr_note_attk2;
+        case "atk3": return spr_note_attk3;
 
         case "ult":
         case "ultimate":
             return spr_note_ultimate;
 
         default:
-            return spr_note_atk1;
+            return spr_note_attk1;
     }
 }
 

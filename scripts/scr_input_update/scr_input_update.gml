@@ -80,7 +80,7 @@ function scr_input_update()
 
         if (global.in_atk2 && variable_global_exists("DEBUG_INPUT") && global.DEBUG_INPUT) {
             show_debug_message("ATK2 key pressed -> act=" + string(global.ACT_ATK2)
-                + " sprite=" + string(spr_note_atk2));
+                + " sprite=" + string(spr_note_attk2));
         }
 
         global.in_duck   = keyboard_check_pressed(vk_shift);

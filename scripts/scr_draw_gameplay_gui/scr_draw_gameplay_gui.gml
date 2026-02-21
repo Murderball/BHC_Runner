@@ -195,7 +195,7 @@ function scr_draw_gameplay_gui()
         if (start_gx > gw + 400) continue;
 
         // Choose sprite per action (falls back to spr_note if missing)
-        var spr = spr_note_atk1;
+        var spr = spr_note_attk1;
         if (script_exists(scr_note_sprite_index)) spr = scr_note_sprite_index(nref.act);
 
         var note_col = c_white;
