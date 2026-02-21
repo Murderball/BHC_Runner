@@ -78,6 +78,11 @@ function scr_input_update()
         global.in_atk2 = keyboard_check_pressed(ord("2"));
         global.in_atk3 = keyboard_check_pressed(ord("3"));
 
+        if (global.in_atk2 && variable_global_exists("DEBUG_INPUT") && global.DEBUG_INPUT) {
+            show_debug_message("ATK2 key pressed -> act=" + string(global.ACT_ATK2)
+                + " sprite=" + string(spr_note_atk2));
+        }
+
         global.in_duck   = keyboard_check_pressed(vk_shift);
         global.hold_duck = keyboard_check(vk_shift);
 

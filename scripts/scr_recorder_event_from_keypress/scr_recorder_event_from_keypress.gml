@@ -61,17 +61,25 @@ function scr_recorder_event_from_keypress(_t, _take_events)
 
     if (keyboard_check_pressed(ord("2")))
     {
+        var atk2_spr = spr_note_atk2;
+        if (script_exists(scr_note_sprite_index)) atk2_spr = scr_note_sprite_index(global.ACT_ATK2);
+
         q = scr_recorder_quantize_to_eighth(_t, bpm_now);
         ev = {
             t: real(_t),
             kind: "atk2",
             act: global.ACT_ATK2,
-            spr: spr_note_atk2,
+            spr: atk2_spr,
             lane: 1,
             grid8: q.grid8,
             err: q.err,
             grid_time: q.grid_time
         };
+        if (variable_global_exists("DEBUG_INPUT") && global.DEBUG_INPUT) {
+            show_debug_message("ATK2 key pressed -> kind=" + string(ev.kind)
+                + " act=" + string(ev.act)
+                + " sprite=" + string(ev.spr));
+        }
         array_push(_take_events, ev);
         pushed_any = true;
     }
