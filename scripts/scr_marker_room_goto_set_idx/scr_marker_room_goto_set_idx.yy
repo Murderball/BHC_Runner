@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_marker_room_goto_set_idx",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_marker_room_goto_set_idx",
+  "parent":{
+    "name":"Scripts_Story",
+    "path":"folders/Scripts/Scripts_Story.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
