@@ -344,11 +344,17 @@ function scr_globals_init()
 
     global.story_choice_last = "";
     global.story_choice_last_idx = -1;
+    global.story_marker_prev_t = 0.0;
 
     global.markers = [];
     global.markers_file = "story_markers.json";
 
     global.STORY_IGNORE_BEFORE_S = 1.50;
+
+    // Side-room marker destination naming (room_goto markers)
+    global.SIDE_ROOM_PREFIX = "rm_side_";
+    global.SIDE_ROOM_COUNT  = 10;
+    global.SIDE_ROOM_DIGITS = 2;
 
     // Default marker template (used by editor when placing new markers)
     if (!variable_global_exists("marker_default") || is_undefined(global.marker_default) || !is_struct(global.marker_default))
