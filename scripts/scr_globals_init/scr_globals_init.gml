@@ -225,6 +225,14 @@ function scr_globals_init()
     if (!variable_global_exists("chart") || !is_array(global.chart)) global.chart = [];
     if (!variable_global_exists("chart_file") || global.chart_file == "")
         global.chart_file = global.DIFF_CHART[$ global.DIFFICULTY];
+    if (!variable_global_exists("CHART_LEN_S")) global.CHART_LEN_S = 0.0;
+    if (!variable_global_exists("CHART_LEN_TAIL_MARGIN_S")) global.CHART_LEN_TAIL_MARGIN_S = 2.0;
+
+    // Song progress line UI
+    if (!variable_global_exists("PROGRESS_LINE_ENABLED")) global.PROGRESS_LINE_ENABLED = true;
+    if (!variable_global_exists("PROGRESS_PULSE_STRENGTH")) global.PROGRESS_PULSE_STRENGTH = 0.45;
+    if (!variable_global_exists("PROGRESS_LINE_THICKNESS")) global.PROGRESS_LINE_THICKNESS = 2;
+    if (!variable_global_exists("PROGRESS_LINE_MARGIN")) global.PROGRESS_LINE_MARGIN = 8;
 
     // ====================================================
     // PHRASE SYSTEM
