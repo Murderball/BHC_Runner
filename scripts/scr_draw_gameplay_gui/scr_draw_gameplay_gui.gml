@@ -18,7 +18,7 @@ function scr_draw_gameplay_gui()
     // --------------------------------------------------
     if (!variable_global_exists("PROGRESS_LINE_ENABLED") || global.PROGRESS_LINE_ENABLED)
     {
-        var frac = script_exists(scr_song_progress_frac) ? scr_song_progress_frac() : 0.0;
+        var progress_frac = script_exists(scr_song_progress_frac) ? scr_song_progress_frac() : 0.0;
 
         var bpm_prog = (variable_global_exists("chart_bpm") && is_real(global.chart_bpm) && global.chart_bpm > 0)
             ? global.chart_bpm
@@ -39,7 +39,7 @@ function scr_draw_gameplay_gui()
         var x0 = margin;
         var x1 = gw - margin;
         var y  = margin;
-        var x  = lerp(x0, x1, frac);
+        var x  = lerp(x0, x1, progress_frac);
 
         draw_set_color(c_white);
 
