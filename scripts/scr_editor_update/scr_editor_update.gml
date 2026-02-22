@@ -71,10 +71,6 @@ function scr_editor_update() {
 			"  J              cycle pickup_kind\n" +
 			"  Up/Down        nudge y\n" +
 			"  Shift+LMB hold  set y to mouse\n" +
-			"  \nROOM GOTO MARKER (type=room_goto):\n" +
-			"  Q / E          side room prev/next\n" +
-			"  I              convert selected to room_goto\n" +
-
 	        "CAMERA MARKER (type=camera):\n" +
 	        "  Q / E          zoom -/+\n" +
 	        "  Arrows         pan x/y\n" +
@@ -93,7 +89,7 @@ function scr_editor_update() {
 	}
 
 	if (!variable_global_exists("editor_marker_place_types") || !is_array(global.editor_marker_place_types) || array_length(global.editor_marker_place_types) == 0) {
-		global.editor_marker_place_types = ["pause", "room_goto", "spawn", "pickup", "camera", "difficulty"];
+		global.editor_marker_place_types = ["pause", "spawn", "pickup", "camera", "difficulty"];
 	}
 	if (!variable_global_exists("editor_marker_place_i")) global.editor_marker_place_i = 0;
 	global.editor_marker_place_i = clamp(global.editor_marker_place_i, 0, array_length(global.editor_marker_place_types) - 1);
@@ -411,21 +407,6 @@ function scr_editor_update() {
 				        y_gui: my_gui
 				    };
 				}
-				else if (place_type == "room_goto")
-				{
-				    m = {
-				        t: place_t,
-				        type: "room_goto",
-				        kind: "room_goto",
-				        side_idx: 0,
-				        one_shot: true,
-				        consumed: false,
-				        caption: ""
-				    };
-				    if (script_exists(scr_marker_room_goto_set_idx)) {
-				        scr_marker_room_goto_set_idx(m, m.side_idx);
-				    }
-				}
 				else if (place_type == "difficulty")
 				{
 				    m = {
@@ -682,29 +663,6 @@ if (mm_type == "difficulty" || mm_type == "diff")
 }
 
 // ----------------------------------------------------
-// ROOM GOTO MARKER EDIT MODE
-// ----------------------------------------------------
-if (mm_type == "room_goto")
-{
-    if (!variable_struct_exists(mm, "side_idx")) mm.side_idx = 0;
-    if (!variable_struct_exists(mm, "one_shot")) mm.one_shot = true;
-    if (!variable_struct_exists(mm, "consumed")) mm.consumed = false;
-
-    var idx = floor(real(mm.side_idx));
-    if (keyboard_check_pressed(ord("Q"))) idx -= 1;
-    if (keyboard_check_pressed(ord("E"))) idx += 1;
-
-    if (script_exists(scr_marker_room_goto_set_idx)) {
-        scr_marker_room_goto_set_idx(mm, idx);
-    } else {
-        mm.side_idx = idx;
-        mm.caption = "GOTO " + string(mm.side_idx);
-    }
-
-    global.markers[global.editor_marker_sel] = mm;
-    return;
-}
-
     // ----------------------------------------------------
     // PAUSE/STORY MARKER EDIT MODE (safe defaults)
     // ----------------------------------------------------
@@ -749,27 +707,6 @@ if (mm_type == "room_goto")
 			    exit;
 			}
 
-			// Toggle marker to ROOM_GOTO (I)
-			if (keyboard_check_pressed(ord("I")))
-			{
-			    mm.type = "room_goto";
-			    mm.kind = "room_goto";
-			    mm.side_idx = variable_struct_exists(mm, "side_idx") ? mm.side_idx : 0;
-			    mm.one_shot = true;
-			    mm.consumed = false;
-			    mm.wait_confirm = false;
-			    mm.loop = false;
-			    mm.choices = [];
-
-			    if (script_exists(scr_marker_room_goto_set_idx)) {
-			        scr_marker_room_goto_set_idx(mm, mm.side_idx);
-			    }
-
-			    global.markers[global.editor_marker_sel] = mm;
-			    scr_story_events_from_markers();
-				if (script_exists(scr_difficulty_events_from_markers)) scr_difficulty_events_from_markers();
-			    exit;
-			}
             // Toggle Yes/No choices (N)
             if (keyboard_check_pressed(ord("N"))) {
                 if (!is_array(mm.choices) || array_length(mm.choices) == 0) {

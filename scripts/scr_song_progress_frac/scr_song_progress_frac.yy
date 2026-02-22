@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_room_gate_make",
+  "%Name":"scr_song_progress_frac",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_room_gate_make",
+  "name":"scr_song_progress_frac",
   "parent":{
-    "name":"Scripts_Story",
-    "path":"folders/Scripts/Scripts_Story.yy",
+    "name":"Other",
+    "path":"folders/Scripts/Other.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

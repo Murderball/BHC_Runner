@@ -225,6 +225,14 @@ function scr_globals_init()
     if (!variable_global_exists("chart") || !is_array(global.chart)) global.chart = [];
     if (!variable_global_exists("chart_file") || global.chart_file == "")
         global.chart_file = global.DIFF_CHART[$ global.DIFFICULTY];
+    if (!variable_global_exists("CHART_LEN_S")) global.CHART_LEN_S = 0.0;
+    if (!variable_global_exists("CHART_LEN_TAIL_MARGIN_S")) global.CHART_LEN_TAIL_MARGIN_S = 2.0;
+
+    // Song progress line UI
+    if (!variable_global_exists("PROGRESS_LINE_ENABLED")) global.PROGRESS_LINE_ENABLED = true;
+    if (!variable_global_exists("PROGRESS_PULSE_STRENGTH")) global.PROGRESS_PULSE_STRENGTH = 0.45;
+    if (!variable_global_exists("PROGRESS_LINE_THICKNESS")) global.PROGRESS_LINE_THICKNESS = 2;
+    if (!variable_global_exists("PROGRESS_LINE_MARGIN")) global.PROGRESS_LINE_MARGIN = 8;
 
     // ====================================================
     // PHRASE SYSTEM
@@ -351,10 +359,6 @@ function scr_globals_init()
 
     global.STORY_IGNORE_BEFORE_S = 1.50;
 
-    // Side-room marker destination naming (room_goto markers)
-    global.SIDE_ROOM_PREFIX = "rm_side_";
-    global.SIDE_ROOM_COUNT  = 10;
-    global.SIDE_ROOM_DIGITS = 2;
 
     // Default marker template (used by editor when placing new markers)
     if (!variable_global_exists("marker_default") || is_undefined(global.marker_default) || !is_struct(global.marker_default))
@@ -490,7 +494,6 @@ function scr_globals_init()
     if (script_exists(scr_bg_debug_reverse_init)) scr_bg_debug_reverse_init();
 
     if (script_exists(scr_markers_load)) scr_markers_load();
-    if (script_exists(scr_story_router_init)) scr_story_router_init();
     if (script_exists(scr_story_events_from_markers)) scr_story_events_from_markers();
     if (script_exists(scr_perf_init)) scr_perf_init();
 }

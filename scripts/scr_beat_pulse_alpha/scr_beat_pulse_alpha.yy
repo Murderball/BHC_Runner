@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_story_gate_make",
+  "%Name":"scr_beat_pulse_alpha",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_story_gate_make",
+  "name":"scr_beat_pulse_alpha",
   "parent":{
-    "name":"Scripts_Story",
-    "path":"folders/Scripts/Scripts_Story.yy",
+    "name":"Other",
+    "path":"folders/Scripts/Other.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

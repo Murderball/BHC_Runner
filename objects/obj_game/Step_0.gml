@@ -46,8 +46,6 @@ if (variable_global_exists("STARTUP_LOADING") && global.STARTUP_LOADING)
 }
 
 
-if (variable_global_exists("COUNTDOWN_ACTIVE") && global.COUNTDOWN_ACTIVE) exit;
-
 // Input recorder manager (authoritative recorder)
 if (!instance_exists(obj_input_recorder_machine)) {
     instance_create_layer(0, 0, "Instances", obj_input_recorder_machine);
