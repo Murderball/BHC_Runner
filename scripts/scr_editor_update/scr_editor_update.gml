@@ -24,16 +24,6 @@ function scr_editor_update() {
 	if (!variable_global_exists("dbg_marker_track_y")) global.dbg_marker_track_y = 0;
 	if (!variable_global_exists("dbg_marker_track_h")) global.dbg_marker_track_h = 0;
 
-	if (keyboard_check_pressed(vk_f3))
-	{
-	    global.dbg_marker_keys_on = !global.dbg_marker_keys_on;
-	    if (global.dbg_marker_keys_on) {
-	        global.dbg_marker_scroll_y = 0;
-	    } else {
-	        global.dbg_marker_dragging_thumb = false;
-	    }
-	    show_debug_message("[DBG] marker keys = " + string(global.dbg_marker_keys_on));
-	}
 
 	if (!variable_global_exists("dbg_marker_txtL")) {
 	    global.dbg_marker_txtL =
@@ -49,8 +39,7 @@ function scr_editor_update() {
 	        "  Delete/Backsp  delete selected marker\n" +
 	        "  RMB            delete marker under mouse\n" +
 	        "  Shift+D        Swap Visual/Audio Modes\n" +
-	        "Master Hotkey DEBUG  (toggle: F3)\n" +
-	        " F12    :       Toggle Play Window between screens\n" +
+		        " F12    :       Toggle Play Window between screens\n" +
 	        " Tab    :       Play From Editor\n" +
 	        "Esc     :       Pause\n" +
 	        "[ or ]  :       Timeline Zoom\n" +
@@ -140,11 +129,6 @@ function scr_editor_update() {
 	// ============================================================
 	if (!variable_global_exists("dbg_editor")) global.dbg_editor = false;
 
-	if (keyboard_check_pressed(vk_f3))
-	{
-	    global.dbg_editor = !global.dbg_editor;
-	    show_debug_message("[EDITOR] dbg_editor = " + string(global.dbg_editor));
-	}
 
 	// Master debug panel scrolling (F3 panel): wheel + thumb drag + PgUp/PgDn
 	if (global.dbg_marker_keys_on)
