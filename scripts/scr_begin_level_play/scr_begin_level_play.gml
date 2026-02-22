@@ -70,6 +70,11 @@ function scr_begin_level_play(_start_t)
         if (_start_t < 0) _start_t = 0;
         var offb = (variable_global_exists("OFFSET")) ? global.OFFSET : 0.0;
         audio_sound_set_track_position(global.song_handle, _start_t + offb);
+
+        // Boss rooms should never auto-route to another boss.
+        if (script_exists(scr_disarm_boss_goto_on_song_end)) {
+            scr_disarm_boss_goto_on_song_end();
+        }
         return;
     }
 
@@ -110,6 +115,13 @@ function scr_begin_level_play(_start_t)
     }
 
     global.song_playing = true;
+
+    // Arm auto boss transition for this level + difficulty song.
+    if (script_exists(scr_arm_boss_goto_on_song_end) && script_exists(scr_boss_room_for_level)) {
+        var _lk = (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) ? global.LEVEL_KEY : "";
+        var _boss_room = scr_boss_room_for_level(_lk);
+        scr_arm_boss_goto_on_song_end(global.song_sound, _boss_room);
+    }
 
     // Seek
     if (_start_t < 0) _start_t = 0;

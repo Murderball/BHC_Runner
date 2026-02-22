@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_boss_room_for_level",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_boss_room_for_level",
+  "parent":{
+    "name":"Scripts_Level",
+    "path":"folders/Scripts/Scripts_Level.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
