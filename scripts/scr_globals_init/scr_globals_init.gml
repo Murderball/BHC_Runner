@@ -351,10 +351,6 @@ function scr_globals_init()
 
     global.STORY_IGNORE_BEFORE_S = 1.50;
 
-    // Side-room marker destination naming (room_goto markers)
-    global.SIDE_ROOM_PREFIX = "rm_side_";
-    global.SIDE_ROOM_COUNT  = 10;
-    global.SIDE_ROOM_DIGITS = 2;
 
     // Default marker template (used by editor when placing new markers)
     if (!variable_global_exists("marker_default") || is_undefined(global.marker_default) || !is_struct(global.marker_default))
@@ -490,7 +486,6 @@ function scr_globals_init()
     if (script_exists(scr_bg_debug_reverse_init)) scr_bg_debug_reverse_init();
 
     if (script_exists(scr_markers_load)) scr_markers_load();
-    if (script_exists(scr_story_router_init)) scr_story_router_init();
     if (script_exists(scr_story_events_from_markers)) scr_story_events_from_markers();
     if (script_exists(scr_perf_init)) scr_perf_init();
 }
