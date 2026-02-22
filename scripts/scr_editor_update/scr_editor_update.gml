@@ -906,21 +906,32 @@ if (mm_type == "difficulty" || mm_type == "diff")
 		    }
 		}
 
-		// CTRL + 1 / 2 / 3 switch difficulty (these explicitly switch files)
-		if (keyboard_check(vk_control) && keyboard_check_pressed(ord("1"))) {
-		    scr_chart_save_and_reload("level01_easy.json");
+		// CTRL + 1/2/3/4 = switch chart variant and force reload from disk
+		if (!variable_global_exists("_editor_ctrl_switch_prev")) global._editor_ctrl_switch_prev = [false, false, false, false];
+
+		var ctrl_down = keyboard_check(vk_control);
+		var hk1_now = ctrl_down && keyboard_check_direct(ord("1"));
+		var hk2_now = ctrl_down && keyboard_check_direct(ord("2"));
+		var hk3_now = ctrl_down && keyboard_check_direct(ord("3"));
+		var hk4_now = ctrl_down && keyboard_check_direct(ord("4"));
+
+		if (hk1_now && !global._editor_ctrl_switch_prev[0]) {
+		    if (script_exists(scr_editor_switch_chart_variant)) scr_editor_switch_chart_variant(1);
 		}
-		if (keyboard_check(vk_control) && keyboard_check_pressed(ord("2"))) {
-		    scr_chart_save_and_reload("charts/level03/normal_v2.json");
+		if (hk2_now && !global._editor_ctrl_switch_prev[1]) {
+		    if (script_exists(scr_editor_switch_chart_variant)) scr_editor_switch_chart_variant(2);
 		}
-		if (keyboard_check(vk_control) && keyboard_check_pressed(ord("3"))) {
-		    scr_chart_save_and_reload("charts/level03/hard_v2.json");
+		if (hk3_now && !global._editor_ctrl_switch_prev[2]) {
+		    if (script_exists(scr_editor_switch_chart_variant)) scr_editor_switch_chart_variant(3);
 		}
-		// CTRL + 4 = Boss chart
-		if (keyboard_check(vk_control) && keyboard_check_pressed(ord("4"))) {
-		    scr_chart_save_and_reload(global.BOSS_CHART_FILE);
-		    show_debug_message("[chart] Switched to BOSS: " + string(global.chart_file));
+		if (hk4_now && !global._editor_ctrl_switch_prev[3]) {
+		    if (script_exists(scr_editor_switch_chart_variant)) scr_editor_switch_chart_variant(4);
 		}
+
+		global._editor_ctrl_switch_prev[0] = hk1_now;
+		global._editor_ctrl_switch_prev[1] = hk2_now;
+		global._editor_ctrl_switch_prev[2] = hk3_now;
+		global._editor_ctrl_switch_prev[3] = hk4_now;
 
 
 
