@@ -64,53 +64,7 @@ if (menu_state == 0)
     var options_panel_visible = options_open || (start_open ? (sel_main == 3) : (sel_main == 1));
     if (options_panel_visible)
     {
-        var px = btn_options.x + btn_options.w + 20;
-        var py = btn_options.y - 12;
-        var pw = options_panel_w;
-        var ph = options_panel_h;
-
-        var slider_min_x = px + options_panel_pad;
-        var slider_max_x = px + pw - options_panel_pad - 80;
-        var slider_y = py + 102;
-        var knob_x = lerp(slider_min_x, slider_max_x, clamp(global.AUDIO_MASTER, 0, 1));
-        var panel_hi = make_color_rgb(138, 214, 255);
-
-        draw_set_alpha(0.28);
-        draw_set_color(c_black);
-        draw_roundrect(px - cx + 8, py - cy + 8, px - cx + pw + 8, py - cy + ph + 8, 10);
-
-        draw_set_alpha(0.85);
-        draw_set_color(make_color_rgb(16, 16, 20));
-        draw_roundrect(px - cx, py - cy, px - cx + pw, py - cy + ph, 10);
-
-        draw_set_alpha(1);
-        draw_set_color(make_color_rgb(90, 90, 110));
-        draw_roundrect(px - cx, py - cy, px - cx + pw, py - cy + ph, 10);
-
-        draw_set_color(c_white);
-        draw_text(px - cx + options_panel_pad, py - cy + 16, "GAME");
-        draw_text(px - cx + options_panel_pad, py - cy + 52, "Master Volume");
-
-        draw_set_halign(fa_right);
-        draw_text(px - cx + pw - options_panel_pad, py - cy + 52, string(floor(global.AUDIO_MASTER * 100)) + "%");
-        draw_set_halign(fa_left);
-
-        draw_set_color(make_color_rgb(75, 75, 90));
-        draw_line_width(slider_min_x - cx, slider_y - cy, slider_max_x - cx, slider_y - cy, 2);
-
-        draw_set_color(panel_hi);
-        draw_line_width(slider_min_x - cx, slider_y - cy, knob_x - cx, slider_y - cy, 3);
-
-        draw_set_color(make_color_rgb(110, 110, 130));
-        draw_line_width(lerp(slider_min_x, slider_max_x, 0.0) - cx, slider_y - cy - 5, lerp(slider_min_x, slider_max_x, 0.0) - cx, slider_y - cy + 5, 1);
-        draw_line_width(lerp(slider_min_x, slider_max_x, 0.5) - cx, slider_y - cy - 5, lerp(slider_min_x, slider_max_x, 0.5) - cx, slider_y - cy + 5, 1);
-        draw_line_width(lerp(slider_min_x, slider_max_x, 1.0) - cx, slider_y - cy - 5, lerp(slider_min_x, slider_max_x, 1.0) - cx, slider_y - cy + 5, 1);
-
-        draw_set_color(c_white);
-        draw_circle(knob_x - cx, slider_y - cy, 8, false);
-        draw_set_color(panel_hi);
-        draw_circle(knob_x - cx, slider_y - cy, 5, true);
-        draw_set_color(c_white);
+        scr_ui_master_volume_panel_draw(btn_options.x - cx, btn_options.y - cy, btn_options.w, btn_options.h, true);
     }
 
     if (options_open)

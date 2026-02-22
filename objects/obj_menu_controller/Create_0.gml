@@ -63,10 +63,16 @@ menu_game_sel = 0;
 menu_game_adjust = false;
 menu_game_step = 0.05;
 menu_game_slider_active = false;
+menu_game_anchor_x = 0;
+menu_game_anchor_y = 0;
+menu_game_anchor_w = 0;
+menu_game_anchor_h = 0;
 
 options_panel_pad = 18;
 options_panel_w = 380;
 options_panel_h = 160;
+options_panel_gap = 20;
+options_panel_align_y = -12;
 options_slider_drag = false;
 options_slider_step = 0.05;
 options_panel_x = 0;

@@ -11,21 +11,15 @@ function scr_menu_game_update(_inst, _ok, _back, _left, _right, _up, _down)
 
         if (_up || _down) menu_game_sel = (menu_game_sel + 1) mod 2;
 
-        var _changed = false;
-
         if (menu_game_sel == 0)
         {
             if (_right && !menu_game_adjust) menu_game_adjust = true;
 
-            if (_left || _right)
-            {
-                var _dir = (_right ? 1 : 0) - (_left ? 1 : 0);
-                if (_dir != 0)
-                {
-                    global.AUDIO_MASTER = clamp(global.AUDIO_MASTER + (menu_game_step * _dir), 0.0, 1.0);
-                    _changed = true;
-                }
-            }
+            ui_mouse_x = device_mouse_x_to_gui(0);
+            ui_mouse_y = device_mouse_y_to_gui(0);
+            ui_input_left = _left;
+            ui_input_right = _right;
+            scr_ui_master_volume_panel_update(menu_game_anchor_x, menu_game_anchor_y, menu_game_anchor_w, menu_game_anchor_h, true);
 
             if (_ok)
             {
@@ -36,12 +30,6 @@ function scr_menu_game_update(_inst, _ok, _back, _left, _right, _up, _down)
         else if (_ok || _left || _back)
         {
             menu_game_open = false;
-        }
-
-        if (_changed)
-        {
-            scr_audio_settings_apply();
-            scr_audio_settings_save();
         }
     }
 }
