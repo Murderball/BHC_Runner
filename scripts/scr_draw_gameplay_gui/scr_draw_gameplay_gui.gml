@@ -14,6 +14,52 @@ function scr_draw_gameplay_gui()
     var gh = display_get_gui_height();
 
     // --------------------------------------------------
+    // Song progress line (chart-time driven; syncs with editor/gameplay)
+    // --------------------------------------------------
+    if (!variable_global_exists("PROGRESS_LINE_ENABLED") || global.PROGRESS_LINE_ENABLED)
+    {
+        var song_progress = scr_song_progress_frac();
+
+        var bpm_prog = 140;
+        if (variable_global_exists("chart_bpm") && is_real(global.chart_bpm) && global.chart_bpm > 0)
+            bpm_prog = global.chart_bpm;
+        else if (variable_global_exists("BPM") && is_real(global.BPM) && global.BPM > 0)
+            bpm_prog = global.BPM;
+
+        var pulse_strength = 0.45;
+        if (variable_global_exists("PROGRESS_PULSE_STRENGTH") && is_real(global.PROGRESS_PULSE_STRENGTH))
+            pulse_strength = global.PROGRESS_PULSE_STRENGTH;
+
+        var alpha_prog = scr_beat_pulse_alpha(bpm_prog, now_time, pulse_strength);
+
+        var margin = 8;
+        if (variable_global_exists("PROGRESS_LINE_MARGIN") && is_real(global.PROGRESS_LINE_MARGIN))
+            margin = floor(global.PROGRESS_LINE_MARGIN);
+
+        var thick = 2;
+        if (variable_global_exists("PROGRESS_LINE_THICKNESS") && is_real(global.PROGRESS_LINE_THICKNESS))
+            thick = max(1, floor(global.PROGRESS_LINE_THICKNESS));
+
+        var x0 = margin;
+        var x1 = gw - margin;
+        var y  = margin;
+        var x  = lerp(x0, x1, song_progress);
+
+        draw_set_color(c_white);
+
+        // Baseline
+        draw_set_alpha(0.30);
+        draw_line_width(x0, y, x1, y, 1);
+
+        // Progress segment + tick (pulse alpha)
+        draw_set_alpha(alpha_prog);
+        draw_line_width(x0, y, x, y, thick);
+        draw_line_width(x, y - thick, x, y + thick, thick);
+
+        draw_set_alpha(1);
+    }
+
+    // --------------------------------------------------
     // Divisional lines (bar/beat): pause-only, independent of editor overlay
     // --------------------------------------------------
     if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED)
