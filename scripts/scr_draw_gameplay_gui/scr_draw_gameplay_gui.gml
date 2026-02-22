@@ -14,6 +14,46 @@ function scr_draw_gameplay_gui()
     var gh = display_get_gui_height();
 
     // --------------------------------------------------
+    // Song progress line (chart-time driven; syncs with editor/gameplay)
+    // --------------------------------------------------
+    if (!variable_global_exists("PROGRESS_LINE_ENABLED") || global.PROGRESS_LINE_ENABLED)
+    {
+        var progress_frac = scr_song_progress_frac();
+
+        var bpm_prog = (variable_global_exists("chart_bpm") && is_real(global.chart_bpm) && global.chart_bpm > 0)
+            ? global.chart_bpm
+            : ((variable_global_exists("BPM") && is_real(global.BPM) && global.BPM > 0) ? global.BPM : 140);
+
+        var pulse_strength = (variable_global_exists("PROGRESS_PULSE_STRENGTH") && is_real(global.PROGRESS_PULSE_STRENGTH))
+            ? global.PROGRESS_PULSE_STRENGTH : 0.45;
+
+        var alpha_prog = scr_beat_pulse_alpha(bpm_prog, now_time, pulse_strength);
+
+        var margin = (variable_global_exists("PROGRESS_LINE_MARGIN") && is_real(global.PROGRESS_LINE_MARGIN))
+            ? floor(global.PROGRESS_LINE_MARGIN) : 8;
+        var thick = (variable_global_exists("PROGRESS_LINE_THICKNESS") && is_real(global.PROGRESS_LINE_THICKNESS))
+            ? max(1, floor(global.PROGRESS_LINE_THICKNESS)) : 2;
+
+        var x0 = margin;
+        var x1 = gw - margin;
+        var y  = margin;
+        var x  = lerp(x0, x1, progress_frac);
+
+        draw_set_color(c_white);
+
+        // Baseline
+        draw_set_alpha(0.30);
+        draw_line_width(x0, y, x1, y, 1);
+
+        // Progress segment + tick (pulse alpha)
+        draw_set_alpha(alpha_prog);
+        draw_line_width(x0, y, x, y, thick);
+        draw_line_width(x, y - thick, x, y + thick, thick);
+
+        draw_set_alpha(1);
+    }
+
+    // --------------------------------------------------
     // Divisional lines (bar/beat): pause-only, independent of editor overlay
     // --------------------------------------------------
     if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED)

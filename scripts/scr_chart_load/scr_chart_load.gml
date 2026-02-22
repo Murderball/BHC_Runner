@@ -219,6 +219,27 @@ function scr_chart_load()
         }
     }
 
+    // Chart total length (seconds): latest note end + tail margin.
+    var chart_end_s = 0.0;
+    for (var ci = 0; ci < array_length(global.chart); ci++)
+    {
+        var cn = global.chart[ci];
+        if (!is_struct(cn) || !variable_struct_exists(cn, "t") || !is_real(cn.t)) continue;
+
+        var note_end_s = cn.t;
+        if (variable_struct_exists(cn, "dur") && is_real(cn.dur))
+            note_end_s += max(0, cn.dur);
+
+        if (note_end_s > chart_end_s) chart_end_s = note_end_s;
+    }
+
+    var tail_margin_s = 2.0;
+    if (variable_global_exists("CHART_LEN_TAIL_MARGIN_S") && is_real(global.CHART_LEN_TAIL_MARGIN_S))
+        tail_margin_s = max(0, global.CHART_LEN_TAIL_MARGIN_S);
+
+    global.CHART_LEN_S = chart_end_s + tail_margin_s;
+    global.chart_len_s = global.CHART_LEN_S;
+
     scr_chart_sort();
     scr_attack_timeline_build();
 
