@@ -47,4 +47,21 @@ function scr_master_keybind_debug_update()
             + " t=" + string(global.COUNTDOWN_TIMER_S)
             + " reason=" + string(global.COUNTDOWN_REASON));
     }
+    if (keyboard_check_pressed(vk_f10))
+    {
+        var m = scr_room_gate_make(scr_chart_time() + 2, "rm_miniboss_1");
+
+        if (variable_global_exists("CHART_MARKERS") && is_array(global.CHART_MARKERS))
+        {
+            array_push(global.CHART_MARKERS, m);
+        }
+
+        if (variable_global_exists("markers") && is_array(global.markers))
+        {
+            array_push(global.markers, m);
+        }
+
+        show_debug_message("Added room_gate marker.");
+    }
+
 }
