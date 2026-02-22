@@ -44,6 +44,7 @@ var hit_start   = (mx >= btn_start.x   && mx <= btn_start.x   + btn_start.w   &&
 var hit_story   = (mx >= btn_story.x   && mx <= btn_story.x   + btn_story.w   && my >= btn_story.y   && my <= btn_story.y   + btn_story.h);
 var hit_arcade  = (mx >= btn_arcade.x  && mx <= btn_arcade.x  + btn_arcade.w  && my >= btn_arcade.y  && my <= btn_arcade.y  + btn_arcade.h);
 var hit_options = (mx >= btn_options.x && mx <= btn_options.x + btn_options.w && my >= btn_options.y && my <= btn_options.y + btn_options.h);
+var hit_game    = (mx >= btn_game.x    && mx <= btn_game.x    + btn_game.w    && my >= btn_game.y    && my <= btn_game.y    + btn_game.h);
 var hit_exit    = (mx >= btn_exit.x    && mx <= btn_exit.x    + btn_exit.w    && my >= btn_exit.y    && my <= btn_exit.y    + btn_exit.h);
 
 // Left-page difficulty hits (BEFORE pan)
@@ -112,21 +113,54 @@ switch (menu_state)
         // -----------------------------
         if (options_open)
         {
+            if (menu_game_open)
+            {
+                scr_menu_game_update(id, ok, back, left, right, up, down);
+                if (!menu_game_open)
+                {
+                    sel_opt = 0;
+                }
+                break;
+            }
+
+            if (used_kb && sel_opt < 0) sel_opt = 0;
+
             if (kb_nav_timer <= 0)
             {
-                if (hit_exit) sel_opt = 0;
+                if (hit_game) sel_opt = 0;
+                else if (hit_exit) sel_opt = 1;
             }
+
+            if (up) sel_opt = (sel_opt - 1 + 2) mod 2;
+            if (down) sel_opt = (sel_opt + 1) mod 2;
 
             if (click)
             {
-                if (hit_exit) game_end();
+                if (hit_game)
+                {
+                    sel_opt = 0;
+                    scr_menu_game_open(id);
+                }
+                else if (hit_exit)
+                {
+                    sel_opt = 1;
+                    game_end();
+                }
                 else { options_open = false; sel_opt = -1; }
             }
 
             if (ok)
             {
                 if (sel_opt < 0) sel_opt = 0;
-                game_end();
+                if (sel_opt == 0) scr_menu_game_open(id);
+                else game_end();
+            }
+
+            if (back)
+            {
+                options_open = false;
+                menu_game_open = false;
+                sel_opt = -1;
             }
 
             break;
@@ -232,7 +266,7 @@ switch (menu_state)
             if (!start_open)
             {
                 if (hit_start)   { clicked_any = true; start_open = true; sel_main = 1; }
-                else if (hit_options) { clicked_any = true; options_open = true; sel_opt = 0; }
+                else if (hit_options) { clicked_any = true; options_open = true; menu_game_open = false; sel_opt = 0; }
             }
             else
             {
@@ -267,6 +301,7 @@ switch (menu_state)
                 {
                     clicked_any = true;
                     options_open = true;
+                    menu_game_open = false;
                     sel_opt = 0;
                 }
             }
@@ -288,7 +323,7 @@ switch (menu_state)
             if (!start_open)
             {
                 if (sel_main == 0) { start_open = true; sel_main = 1; }
-                else { options_open = true; sel_opt = 0; }
+                else { options_open = true; menu_game_open = false; sel_opt = 0; }
             }
             else
             {
@@ -318,6 +353,7 @@ switch (menu_state)
                 else if (sel_main == 3)
                 {
                     options_open = true;
+                    menu_game_open = false;
                     sel_opt = 0;
                 }
             }
@@ -634,7 +670,8 @@ var hov_start   = (menu_state == 0) && hit_start;
 var hov_story   = (menu_state == 0) && start_open && hit_story;
 var hov_arcade  = (menu_state == 0) && start_open && hit_arcade;
 var hov_options = (menu_state == 0) && hit_options;
-var hov_exit    = (menu_state == 0) && options_open && hit_exit;
+var hov_game    = (menu_state == 0) && options_open && !menu_game_open && hit_game;
+var hov_exit    = (menu_state == 0) && options_open && !menu_game_open && hit_exit;
 
 // Left-page diff hovers
 var hov_easyL   = (menu_state == 0) && arcade_diff_open && hit_easyL;
@@ -668,6 +705,7 @@ glow_start   = lerp(glow_start,   hov_start   ? 1 : 0, gs);
 glow_story   = lerp(glow_story,   hov_story   ? 1 : 0, gs);
 glow_arcade  = lerp(glow_arcade,  hov_arcade  ? 1 : 0, gs);
 glow_options = lerp(glow_options, hov_options ? 1 : 0, gs);
+glow_game    = lerp(glow_game,    hov_game    ? 1 : 0, gs);
 glow_exit    = lerp(glow_exit,    hov_exit    ? 1 : 0, gs);
 
 glow_easyL   = lerp(glow_easyL,   hov_easyL   ? 1 : 0, gs);

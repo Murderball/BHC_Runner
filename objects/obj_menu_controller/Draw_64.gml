@@ -63,7 +63,17 @@ if (menu_state == 0)
 
     if (options_open)
     {
-        draw_btn_glow(btn_exit.spr, btn_exit.x - cx, btn_exit.y - cy, glow_exit, g_a, g_off);
+        if (menu_game_open)
+        {
+            scr_menu_game_draw(id, btn_game.x - cx, btn_game.y - cy, BTN_W + 320);
+        }
+        else
+        {
+            draw_btn_glow(btn_game.spr, btn_game.x - cx, btn_game.y - cy, glow_game, g_a, g_off);
+            draw_set_color(c_white);
+            draw_text((btn_game.x + BTN_W + 20) - cx, (btn_game.y + 30) - cy, string(floor(global.AUDIO_MASTER * 100)) + "%");
+            draw_btn_glow(btn_exit.spr, btn_exit.x - cx, btn_exit.y - cy, glow_exit, g_a, g_off);
+        }
     }
 }
 

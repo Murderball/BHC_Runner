@@ -3,7 +3,7 @@
 paused = false;
 
 // Labels (only used for debug / fallback)
-items = ["RESUME", "RESTART LEVEL", "TITLE MENU", "EXIT GAME"];
+items = ["RESUME", "RESTART LEVEL", "GAME", "TITLE MENU", "EXIT GAME"];
 sel = 0;
 
 // repeat control
@@ -35,12 +35,21 @@ btn = [];
 spr_items = [
     asset_get_index("menu_resume"),
     asset_get_index("menu_restart"),
+    asset_get_index("menu_game"),
     asset_get_index("menu_main"),
     asset_get_index("menu_exit_game")
 ];
 
 // optional scaling (if needed later)
 spr_scale = 1.0;
+
+if (spr_items[2] < 0) spr_items[2] = asset_get_index("menu_options");
+
+menu_game_open = false;
+menu_game_sel = 0;
+menu_game_adjust = false;
+menu_game_step = 0.05;
+menu_game_slider_active = false;
 
 // Global pause flag (if used elsewhere)
 if (!variable_global_exists("GAME_PAUSED")) global.GAME_PAUSED = false;

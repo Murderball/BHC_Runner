@@ -12,13 +12,17 @@ var click = mouse_check_button_pressed(mb_left);
 
 var up    = keyboard_check_pressed(vk_up)   || keyboard_check_pressed(ord("W"));
 var down  = keyboard_check_pressed(vk_down) || keyboard_check_pressed(ord("S"));
+var left  = keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A"));
+var right = keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"));
 
 // --------------------------------------------------
 // Keyboard usage detection (drives dashed outline)
 // --------------------------------------------------
 var held_dir =
     keyboard_check(vk_up)   || keyboard_check(ord("W")) ||
-    keyboard_check(vk_down) || keyboard_check(ord("S"));
+    keyboard_check(vk_down) || keyboard_check(ord("S")) ||
+    keyboard_check(vk_left) || keyboard_check(ord("A")) ||
+    keyboard_check(vk_right) || keyboard_check(ord("D"));
 
 var used_kb = held_dir || ok || back;
 
@@ -35,7 +39,7 @@ if (variable_global_exists("EDITOR_PAUSE_OPEN") && global.EDITOR_PAUSE_OPEN) {
 }
 
 // Toggle pause with ESC
-if (back && move_cd <= 0)
+if (back && move_cd <= 0 && !menu_game_open)
 {
     if (!paused)
     {
@@ -81,6 +85,14 @@ if (back && move_cd <= 0)
 // Not paused? nothing else
 if (!paused) exit;
 
+
+// Shared Game submenu
+if (menu_game_open)
+{
+    scr_menu_game_update(id, ok, back, left, right, up, down);
+    move_cd = 6;
+    exit;
+}
 
 // --------------------------------------------------
 // Build button rects in GUI space (for hover/click)
@@ -201,12 +213,16 @@ if (activate)
             }
         break;
 
-        case 2: // TITLE MENU
+        case 2: // GAME
+            scr_menu_game_open(id);
+        break;
+
+        case 3: // TITLE MENU
             paused = false;
             scr_return_to_title();
         break;
 
-        case 3: // EXIT GAME
+        case 4: // EXIT GAME
             game_end();
         break;
     }

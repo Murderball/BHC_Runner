@@ -58,6 +58,11 @@ start_open = false;
 
 // Options submenu open/closed
 options_open = false;
+menu_game_open = false;
+menu_game_sel = 0;
+menu_game_adjust = false;
+menu_game_step = 0.05;
+menu_game_slider_active = false;
 
 // Arcade difficulty submenu open (LEFT page)
 arcade_diff_open = false;
@@ -82,7 +87,11 @@ btn_start   = { spr: menu_start,   x: left_x, y: y_start,  w: BTN_W, h: BTN_H };
 btn_story   = { spr: menu_story,   x: left_x, y: y_story,  w: BTN_W, h: BTN_H };
 btn_arcade  = { spr: menu_arcade,  x: left_x, y: y_arcade, w: BTN_W, h: BTN_H };
 btn_options = { spr: menu_options, x: left_x, y: y_opts,   w: BTN_W, h: BTN_H };
-btn_exit    = { spr: menu_exit,    x: left_x, y: y_exit,   w: BTN_W, h: BTN_H };
+
+var spr_menu_game = asset_get_index("menu_game");
+if (spr_menu_game < 0) spr_menu_game = menu_options;
+btn_game = { spr: spr_menu_game, x: left_x, y: y_opts + 100, w: BTN_W, h: BTN_H };
+btn_exit    = { spr: menu_exit,    x: left_x, y: y_exit + 100,   w: BTN_W, h: BTN_H };
 
 // ----------------------------
 // ARCADE DIFFICULTY (LEFT PAGE — shows BEFORE pan)
@@ -199,6 +208,7 @@ glow_start   = 0;
 glow_story   = 0;
 glow_arcade  = 0;
 glow_options = 0;
+glow_game    = 0;
 glow_exit    = 0;
 
 glow_back    = 0;
