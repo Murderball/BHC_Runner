@@ -1,5 +1,6 @@
 function scr_draw_gameplay_gui()
 {
+	
     // --------------------------------------------------
     // MENU GUARD: do not draw gameplay UI in menu/loading
     // --------------------------------------------------
@@ -195,23 +196,42 @@ function scr_draw_gameplay_gui()
 
         // Choose sprite per action (falls back to spr_note if missing)
         var note_act = string_lower(string(nref.act));
-		if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS) {
-    if (string_pos("2", note_act) > 0) {
-        show_debug_message("[ACT_DUMP] raw=" + string(nref.act) + " norm=" + note_act);
-    }
-}
+
+        // Existing act dump (optional)
+        if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS)
+        {
+            if (string_pos("2", note_act) > 0) {
+                show_debug_message("[ACT_DUMP] raw=" + string(nref.act) + " norm=" + note_act);
+            }
+        }
+
         var spr = spr_note_attk1;
         if (script_exists(scr_note_sprite_index)) spr = scr_note_sprite_index(note_act);
 
+        // -------- NEW: DRAW-TIME DEBUG (truth overlay via console) --------
+        if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS)
+        {
+            if (note_act == "atk2" || note_act == "atk3")
+            {
+                var _spr_name = (spr != -1) ? sprite_get_name(spr) : "(none)";
+                show_debug_message("[DRAW] act=" + note_act
+                    + " spr_id=" + string(spr)
+                    + " spr_name=" + _spr_name
+                    + " draw_alpha=" + string(draw_get_alpha()));
+            }
+        }
+        // ----------------------------------------------------------------
+
+        // Robust ATK2 check (string-based; avoids comparing to numeric constants)
+        var is_atk2 = (note_act == "atk2" || note_act == "attk2" || note_act == "attack2");
+		if (note_act == "atk2") subimg_start = 0;
         // Editor safety: keep ATK2 icon/preview bound to the canonical ATK2 sprite.
-        if (variable_global_exists("editor_on") && global.editor_on
-            && variable_global_exists("ACT_ATK2") && note_act == global.ACT_ATK2
-            && spr != spr_note_attk2)
+        if (variable_global_exists("editor_on") && global.editor_on && is_atk2 && spr != spr_note_attk2)
         {
             if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS) {
-                show_debug_message("[EDITOR_ICONS] remap ATK2 sprite mismatch act=" + string(note_act)
-                    + " resolved=" + string(spr)
-                    + " expected=" + string(spr_note_attk2));
+                show_debug_message("[EDITOR_ICONS] remap ATK2 sprite mismatch act=" + note_act
+                    + " resolved=" + string(spr) + " (" + sprite_get_name(spr) + ")"
+                    + " expected=" + string(spr_note_attk2) + " (" + sprite_get_name(spr_note_attk2) + ")");
             }
             spr = spr_note_attk2;
         }
@@ -219,7 +239,7 @@ function scr_draw_gameplay_gui()
         var note_col = c_white;
         if (script_exists(scr_note_draw_color)) note_col = scr_note_draw_color(nref.act);
 
-        // Animated subimages (real-time, so they animate during pause overlay too)
+        // Animated subimages
         var subimg_start = 0;
         var subimg_end   = 0;
         if (script_exists(scr_anim_subimg)) {
@@ -243,33 +263,29 @@ function scr_draw_gameplay_gui()
                 draw_set_color(note_col);
                 draw_rectangle(end_gx - 10, start_gy - 10, end_gx + 10, start_gy + 10, false);
             }
-            draw_set_alpha(1);
+            draw_set_alpha(note_alpha);
         }
 
         // Start note marker
         if (spr != -1) draw_sprite_ext(spr, subimg_start, start_gx, start_gy, 1, 1, 0, note_col, 1);
         else {
             draw_set_color(note_col);
-            draw_rectangle(start_gx - 10, start_gy - 10, start_gx + 10, start_gx + 10, false);
+            draw_rectangle(start_gx - 10, start_gy - 10, start_gx + 10, start_gy + 10, false);
             draw_set_color(c_black);
         }
 
+        // Optional on-screen label for ATK2 while debugging
         if (variable_global_exists("editor_on") && global.editor_on
             && variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS
-            && variable_global_exists("ACT_ATK2") && note_act == global.ACT_ATK2)
+            && is_atk2)
         {
             var spr_name = (spr != -1) ? sprite_get_name(spr) : "(none)";
-            show_debug_message("[EDITOR_ICONS] ATK2 draw act=" + string(note_act)
-                + " sprite_name=" + spr_name
-                + " sprite_index=" + string(spr)
-                + " alpha=" + string(note_alpha));
-
             draw_set_alpha(1);
             draw_set_color(c_yellow);
             draw_text(start_gx + 28, start_gy - 14,
                 "ATK2 -> " + spr_name + " (" + string(spr) + ") a=" + string_format(note_alpha, 1, 2));
 
-            // Restore note draw state so the debug label cannot leak state into other UI.
+            // Restore note draw state
             draw_set_alpha(note_alpha);
             draw_set_color(note_col);
         }

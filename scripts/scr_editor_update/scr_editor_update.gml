@@ -1105,7 +1105,8 @@ if (keyboard_check_pressed(vk_delete) || keyboard_check_pressed(vk_backspace))
 
                     array_push(global.chart, { t: place_t, lane: place_lane, y_gui: place_y, type: "hold", dur: dsec, act: global.editor_act });
                 }
-
+			show_debug_message("[PLACE] editor_act=" + string(global.editor_act)
+			    + " type=" + typeof(global.editor_act));
                 scr_editor_selection_clear();
                 scr_editor_selection_add(array_length(global.chart)-1);
             }

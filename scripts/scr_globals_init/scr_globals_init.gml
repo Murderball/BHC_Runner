@@ -40,7 +40,7 @@ function scr_globals_init()
     if (!variable_global_exists("last_atk2_judge")) global.last_atk2_judge = "miss";
     if (!variable_global_exists("last_atk3_judge")) global.last_atk3_judge = "miss";
     if (!variable_global_exists("last_ult_judge"))  global.last_ult_judge  = "miss";
-    if (!variable_global_exists("DEBUG_EDITOR_ICONS")) global.DEBUG_EDITOR_ICONS = false;
+    if (!variable_global_exists("DEBUG_EDITOR_ICONS")) global.DEBUG_EDITOR_ICONS = true;
 
     // Input/keybind debug gate
     if (!variable_global_exists("DEBUG_INPUT")) global.DEBUG_INPUT = false;
