@@ -193,6 +193,7 @@ function scr_draw_gameplay_gui()
         var was_hit = (variable_struct_exists(nref, "hit") && nref.hit);
         var note_alpha = was_hit ? 0.35 : 1;
         draw_set_alpha(note_alpha);
+        var alpha_arg = 1;
 
         // Choose sprite per action (falls back to spr_note if missing)
         var note_act = string_lower(string(nref.act));
@@ -239,6 +240,9 @@ function scr_draw_gameplay_gui()
         var note_col = c_white;
         if (script_exists(scr_note_draw_color)) note_col = scr_note_draw_color(nref.act);
 
+        var debug_note_alpha = (variable_global_exists("DEBUG_NOTE_ALPHA") && global.DEBUG_NOTE_ALPHA);
+        var is_atk3 = (note_act == "atk3");
+
         // Animated subimages
         var subimg_start = 0;
         var subimg_end   = 0;
@@ -258,7 +262,7 @@ function scr_draw_gameplay_gui()
 
             // Hold end marker
             draw_set_alpha(global.hold_end_alpha);
-            if (spr != -1) draw_sprite_ext(spr, subimg_end, end_gx, start_gy, 1, 1, 0, note_col, 1);
+            if (spr != -1) draw_sprite_ext(spr, subimg_end, end_gx, start_gy, 1, 1, 0, note_col, alpha_arg);
             else {
                 draw_set_color(note_col);
                 draw_rectangle(end_gx - 10, start_gy - 10, end_gx + 10, start_gy + 10, false);
@@ -266,8 +270,43 @@ function scr_draw_gameplay_gui()
             draw_set_alpha(note_alpha);
         }
 
+        if (debug_note_alpha && is_atk3)
+        {
+            var dbg_a_state = draw_get_alpha();
+            var dbg_col = draw_get_color();
+            var dbg_bm = gpu_get_blendmode();
+            show_debug_message("[ATK3_ALPHA] act=" + note_act
+                + " was_hit=" + string(was_hit)
+                + " note_a=" + string_format(note_alpha, 1, 3)
+                + " a_state=" + string_format(dbg_a_state, 1, 3)
+                + " color=" + string(dbg_col)
+                + " bm=" + string(dbg_bm)
+                + " shader=n/a"
+                + " a_arg=" + string_format(alpha_arg, 1, 3));
+
+            draw_set_alpha(1);
+            draw_set_color(c_yellow);
+            draw_text(start_gx + 24, start_gy - 34,
+                "ATK3 a_state=" + string_format(dbg_a_state, 1, 2)
+                + " a_arg=" + string_format(alpha_arg, 1, 2)
+                + " was_hit=" + string(was_hit)
+                + " note_a=" + string_format(note_alpha, 1, 2)
+                + " bm=" + string(dbg_bm));
+
+            // Raw compare draw to isolate sprite pixels vs draw-state influence.
+            gpu_set_blendmode(bm_normal);
+            draw_set_alpha(1);
+            draw_set_color(c_white);
+            if (spr == spr_note_attk3) draw_sprite(spr_note_attk3, 0, start_gx + 80, start_gy);
+
+            // Restore state for canonical draw path.
+            gpu_set_blendmode(bm_normal);
+            draw_set_alpha(note_alpha);
+            draw_set_color(note_col);
+        }
+
         // Start note marker
-        if (spr != -1) draw_sprite_ext(spr, subimg_start, start_gx, start_gy, 1, 1, 0, note_col, 1);
+        if (spr != -1) draw_sprite_ext(spr, subimg_start, start_gx, start_gy, 1, 1, 0, note_col, alpha_arg);
         else {
             draw_set_color(note_col);
             draw_rectangle(start_gx - 10, start_gy - 10, start_gx + 10, start_gy + 10, false);
@@ -292,5 +331,7 @@ function scr_draw_gameplay_gui()
     }
 
     draw_set_alpha(1);
-    draw_set_color(c_black);
+    draw_set_color(c_white);
+    gpu_set_blendmode(bm_normal);
+    shader_reset();
 }
