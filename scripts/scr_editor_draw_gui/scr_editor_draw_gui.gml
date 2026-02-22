@@ -142,7 +142,6 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
             var is_spawn = (mt == "spawn");
             var is_diff  = (mt == "difficulty" || mt == "diff");
             var is_camera = (mt == "camera");
-            var is_room_goto = (mt == "room_goto");
 
             // --- Main vertical line (for all non-spawn markers) ---
             if (!is_spawn)
@@ -189,14 +188,6 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
                 {
                     var d = (variable_struct_exists(m, "diff") ? string(m.diff) : "normal");
                     draw_text(gx + 6, top_y + 8, "DIFF  " + string_upper(d));
-                }
-                else if (is_room_goto)
-                {
-                    var _idx = variable_struct_exists(m, "side_idx") ? floor(real(m.side_idx)) : 0;
-                    var _dst = script_exists(scr_side_room_name_from_index)
-                        ? scr_side_room_name_from_index(_idx)
-                        : ("rm_side_" + string(_idx));
-                    draw_text(gx + 6, top_y + 8, "GOTO " + _dst);
                 }
                 else if (is_camera)
                 {
@@ -255,14 +246,6 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
                 if (variable_struct_exists(msel, "pan_x")) s += " pan_x=" + string(round(real(msel.pan_x)));
                 if (variable_struct_exists(msel, "pan_y")) s += " pan_y=" + string(round(real(msel.pan_y)));
                 if (variable_struct_exists(msel, "ease"))  s += " ease=" + string(msel.ease);
-            }
-            else if (mt2 == "room_goto")
-            {
-                var _sel_idx = variable_struct_exists(msel, "side_idx") ? floor(real(msel.side_idx)) : 0;
-                var _sel_dst = script_exists(scr_side_room_name_from_index)
-                    ? scr_side_room_name_from_index(_sel_idx)
-                    : ("rm_side_" + string(_sel_idx));
-                s += " side_idx=" + string(_sel_idx) + " dst=" + _sel_dst;
             }
             else
             {
@@ -575,7 +558,6 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
         draw_set_halign(fa_left);
         draw_set_valign(fa_top);
         draw_set_color(make_color_rgb(240, 120, 255));
-        draw_text(px + panel_pad, py + 6, "Master Hotkey DEBUG  (toggle: F3)");
 
         // Clip text using a surface so only the interior region scrolls.
         var clip_surf = surface_create(max(1, floor(view_w)), max(1, floor(view_h)));

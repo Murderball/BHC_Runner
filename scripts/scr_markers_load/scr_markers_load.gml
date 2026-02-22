@@ -17,6 +17,40 @@ function scr_markers_load()
         return undefined;
     }
 
+
+    function _is_supported_marker_kind(m)
+    {
+        if (!is_struct(m)) return false;
+
+        var _kind = "";
+        if (variable_struct_exists(m, "type")) _kind = string_lower(string(m.type));
+        else if (variable_struct_exists(m, "kind")) _kind = string_lower(string(m.kind));
+
+        return (_kind == "pause"
+            || _kind == "pickup"
+            || _kind == "spawn"
+            || _kind == "camera"
+            || _kind == "difficulty"
+            || _kind == "diff"
+            || _kind == "story");
+    }
+
+    function _sanitize_markers(markers_in)
+    {
+        var _out = [];
+        if (!is_array(markers_in)) return _out;
+
+        for (var i = 0; i < array_length(markers_in); i++)
+        {
+            var _m = markers_in[i];
+            if (_is_supported_marker_kind(_m)) {
+                array_push(_out, _m);
+            }
+        }
+
+        return _out;
+    }
+
     function _read_text_file(path)
     {
         if (!file_exists(path)) return "";
@@ -85,7 +119,7 @@ function scr_markers_load()
             var loaded_save = _markers_from_payload(data_save);
 
             if (is_array(loaded_save)) {
-                global.markers = loaded_save;
+                global.markers = _sanitize_markers(loaded_save);
                 show_debug_message("MARKERS LOAD <- SAVE " + save_name + " count=" + string(array_length(global.markers)));
                 return;
             }
@@ -118,7 +152,7 @@ function scr_markers_load()
             var loaded_def = _markers_from_payload(data_def);
 
             if (is_array(loaded_def)) {
-                global.markers = loaded_def;
+                global.markers = _sanitize_markers(loaded_def);
                 show_debug_message("MARKERS LOAD <- DEFAULT " + def_name + " count=" + string(array_length(global.markers)) + " ctx=" + lvl + "/" + d);
                 return;
             }

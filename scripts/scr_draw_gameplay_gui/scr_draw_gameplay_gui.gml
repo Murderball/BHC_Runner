@@ -18,7 +18,7 @@ function scr_draw_gameplay_gui()
     // --------------------------------------------------
     if (!variable_global_exists("PROGRESS_LINE_ENABLED") || global.PROGRESS_LINE_ENABLED)
     {
-        var progress_frac = scr_song_progress_frac();
+        var frac = script_exists(scr_song_progress_frac) ? scr_song_progress_frac() : 0.0;
 
         var bpm_prog = (variable_global_exists("chart_bpm") && is_real(global.chart_bpm) && global.chart_bpm > 0)
             ? global.chart_bpm
@@ -27,7 +27,9 @@ function scr_draw_gameplay_gui()
         var pulse_strength = (variable_global_exists("PROGRESS_PULSE_STRENGTH") && is_real(global.PROGRESS_PULSE_STRENGTH))
             ? global.PROGRESS_PULSE_STRENGTH : 0.45;
 
-        var alpha_prog = scr_beat_pulse_alpha(bpm_prog, now_time, pulse_strength);
+        var alpha_prog = script_exists(scr_beat_pulse_alpha)
+            ? scr_beat_pulse_alpha(bpm_prog, now_time, pulse_strength)
+            : 1.0;
 
         var margin = (variable_global_exists("PROGRESS_LINE_MARGIN") && is_real(global.PROGRESS_LINE_MARGIN))
             ? floor(global.PROGRESS_LINE_MARGIN) : 8;
@@ -37,7 +39,7 @@ function scr_draw_gameplay_gui()
         var x0 = margin;
         var x1 = gw - margin;
         var y  = margin;
-        var x  = lerp(x0, x1, progress_frac);
+        var x  = lerp(x0, x1, frac);
 
         draw_set_color(c_white);
 
@@ -112,12 +114,6 @@ function scr_draw_gameplay_gui()
     // --------------------------------------------------
     var hit_x = (variable_global_exists("HIT_X_GUI") ? global.HIT_X_GUI : 448);
 
-    // Lane lines (visual only)
-    for (var li = 0; li < 4; li++)
-    {
-        draw_set_color(make_color_rgb(60,60,60));
-        draw_line_width(0, global.LANE_Y[li], gw, global.LANE_Y[li], 1);
-    }
 
     // Beat-locked pulse (uses *hitline-time* so it stays phase-correct)
     var bpm = (variable_global_exists("BPM") && is_real(global.BPM) && global.BPM > 0) ? global.BPM : 140;
@@ -188,24 +184,10 @@ function scr_draw_gameplay_gui()
     draw_set_color(core_col);
     draw_rectangle(hit_x - core_w * 0.5, y0, hit_x + core_w * 0.5, y1, false);
 
-    // --------------------------------------------------
-    // Quick debug
-    // --------------------------------------------------
-    if (!variable_global_exists("chart") || is_undefined(global.chart)) {
-        draw_set_color(c_yellow);
-        draw_text(20, 60, "chart_len=<undefined>");
-        draw_set_color(c_black);
-        return;
-    }
+
+    if (!variable_global_exists("chart") || is_undefined(global.chart)) return;
 
     var chart_len = array_length(global.chart);
-    draw_set_color(c_yellow);
-    draw_text(20, 60, "chart_len=" + string(chart_len) + "  pps=" + string(round(scr_timeline_pps())));
-    draw_set_color(c_black);
-
-    draw_set_color(c_yellow);
-    draw_text(20, 140, "AUTO_HIT: " + string(variable_global_exists("AUTO_HIT") && global.AUTO_HIT));
-    draw_set_color(c_black);
 
     // Notes
     for (var i = 0; i < chart_len; i++)
@@ -238,50 +220,13 @@ function scr_draw_gameplay_gui()
         // Choose sprite per action (falls back to spr_note if missing)
         var note_act = string_lower(string(nref.act));
 
-        // Existing act dump (optional)
-        if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS)
-        {
-            if (string_pos("2", note_act) > 0) {
-                show_debug_message("[ACT_DUMP] raw=" + string(nref.act) + " norm=" + note_act);
-            }
-        }
 
         var spr = spr_note_attk1;
         if (script_exists(scr_note_sprite_index)) spr = scr_note_sprite_index(note_act);
 
-        // -------- NEW: DRAW-TIME DEBUG (truth overlay via console) --------
-        if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS)
-        {
-            if (note_act == "atk2" || note_act == "atk3")
-            {
-                var _spr_name = (spr != -1) ? sprite_get_name(spr) : "(none)";
-                show_debug_message("[DRAW] act=" + note_act
-                    + " spr_id=" + string(spr)
-                    + " spr_name=" + _spr_name
-                    + " draw_alpha=" + string(draw_get_alpha()));
-            }
-        }
-        // ----------------------------------------------------------------
-
-        // Robust ATK2 check (string-based; avoids comparing to numeric constants)
-        var is_atk2 = (note_act == "atk2" || note_act == "attk2" || note_act == "attack2");
-		if (note_act == "atk2") subimg_start = 0;
-        // Editor safety: keep ATK2 icon/preview bound to the canonical ATK2 sprite.
-        if (variable_global_exists("editor_on") && global.editor_on && is_atk2 && spr != spr_note_attk2)
-        {
-            if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS) {
-                show_debug_message("[EDITOR_ICONS] remap ATK2 sprite mismatch act=" + note_act
-                    + " resolved=" + string(spr) + " (" + sprite_get_name(spr) + ")"
-                    + " expected=" + string(spr_note_attk2) + " (" + sprite_get_name(spr_note_attk2) + ")");
-            }
-            spr = spr_note_attk2;
-        }
-
         var note_col = c_white;
         if (script_exists(scr_note_draw_color)) note_col = scr_note_draw_color(nref.act);
 
-        var debug_note_alpha = (variable_global_exists("DEBUG_NOTE_ALPHA") && global.DEBUG_NOTE_ALPHA);
-        var is_atk3 = (note_act == "atk3");
 
         // Animated subimages
         var subimg_start = 0;
@@ -310,40 +255,6 @@ function scr_draw_gameplay_gui()
             draw_set_alpha(note_alpha);
         }
 
-        if (debug_note_alpha && is_atk3)
-        {
-            var dbg_a_state = draw_get_alpha();
-            var dbg_col = draw_get_color();
-            var dbg_bm = gpu_get_blendmode();
-            show_debug_message("[ATK3_ALPHA] act=" + note_act
-                + " was_hit=" + string(was_hit)
-                + " note_a=" + string_format(note_alpha, 1, 3)
-                + " a_state=" + string_format(dbg_a_state, 1, 3)
-                + " color=" + string(dbg_col)
-                + " bm=" + string(dbg_bm)
-                + " shader=n/a"
-                + " a_arg=" + string_format(alpha_arg, 1, 3));
-
-            draw_set_alpha(1);
-            draw_set_color(c_yellow);
-            draw_text(start_gx + 24, start_gy - 34,
-                "ATK3 a_state=" + string_format(dbg_a_state, 1, 2)
-                + " a_arg=" + string_format(alpha_arg, 1, 2)
-                + " was_hit=" + string(was_hit)
-                + " note_a=" + string_format(note_alpha, 1, 2)
-                + " bm=" + string(dbg_bm));
-
-            // Raw compare draw to isolate sprite pixels vs draw-state influence.
-            gpu_set_blendmode(bm_normal);
-            draw_set_alpha(1);
-            draw_set_color(c_white);
-            if (spr == spr_note_attk3) draw_sprite(spr_note_attk3, 0, start_gx + 80, start_gy);
-
-            // Restore state for canonical draw path.
-            gpu_set_blendmode(bm_normal);
-            draw_set_alpha(1);
-            draw_set_color(note_col);
-        }
 
         // Start note marker
         if (spr != -1) draw_sprite_ext(spr, subimg_start, start_gx, start_gy, 1, 1, 0, note_col, alpha_arg);
@@ -353,21 +264,6 @@ function scr_draw_gameplay_gui()
             draw_set_color(c_black);
         }
 
-        // Optional on-screen label for ATK2 while debugging
-        if (variable_global_exists("editor_on") && global.editor_on
-            && variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS
-            && is_atk2)
-        {
-            var spr_name = (spr != -1) ? sprite_get_name(spr) : "(none)";
-            draw_set_alpha(1);
-            draw_set_color(c_yellow);
-            draw_text(start_gx + 28, start_gy - 14,
-                "ATK2 -> " + spr_name + " (" + string(spr) + ") a=" + string_format(note_alpha, 1, 2));
-
-            // Restore note draw state
-            draw_set_alpha(note_alpha);
-            draw_set_color(note_col);
-        }
     }
 
     draw_set_alpha(1);

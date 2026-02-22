@@ -10,7 +10,6 @@ scr_input_update();
 // STORY PAUSES (must run after input, before autoplay/gameplay)
 scr_story_pause_update();
 
-if (script_exists(scr_story_marker_update)) scr_story_marker_update();
 
 scr_difficulty_update();
 

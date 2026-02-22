@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_story_room_id",
+  "%Name":"scr_score_on_judge",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_story_room_id",
+  "name":"scr_score_on_judge",
   "parent":{
-    "name":"Scripts_Story",
-    "path":"folders/Scripts/Scripts_Story.yy",
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

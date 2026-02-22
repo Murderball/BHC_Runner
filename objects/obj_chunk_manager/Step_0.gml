@@ -1,14 +1,6 @@
 /// obj_chunk_manager : Step
 if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED) exit;
 
-if (keyboard_check_pressed(vk_f3)) {
-    if (!variable_global_exists("microprof") || !is_struct(global.microprof)) {
-        if (script_exists(scr_microprof_init)) scr_microprof_init();
-    }
-    if (variable_global_exists("microprof") && is_struct(global.microprof)) {
-        global.microprof.draw_enabled = !global.microprof.draw_enabled;
-    }
-}
 if (script_exists(scr_microprof_frame_begin)) scr_microprof_frame_begin();
 
 // --------------------------------------------------
@@ -118,12 +110,6 @@ if (!variable_global_exists("CHUNK_TIME_OFFSET_S")) global.CHUNK_TIME_OFFSET_S =
 
 var xoff      = global.CHUNK_X_OFFSET_PX;       // VISUAL ONLY
 var chunk_off = global.CHUNK_TIME_OFFSET_S;     // INDEXING / SECTION ALIGNMENT
-
-// Tune x offset live (visual nudge only)
-if (keyboard_check_pressed(ord("["))) global.CHUNK_X_OFFSET_PX -= 1;
-if (keyboard_check_pressed(ord("]"))) global.CHUNK_X_OFFSET_PX += 1;
-if (keyboard_check(vk_shift) && keyboard_check(ord("["))) global.CHUNK_X_OFFSET_PX -= 5;
-if (keyboard_check(vk_shift) && keyboard_check(ord("]"))) global.CHUNK_X_OFFSET_PX += 5;
 
 xoff = global.CHUNK_X_OFFSET_PX;
 

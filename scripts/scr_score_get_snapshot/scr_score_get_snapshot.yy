@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_seconds_per_beat",
+  "%Name":"scr_score_get_snapshot",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_seconds_per_beat",
+  "name":"scr_score_get_snapshot",
   "parent":{
-    "name":"Scripts_Story",
-    "path":"folders/Scripts/Scripts_Story.yy",
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

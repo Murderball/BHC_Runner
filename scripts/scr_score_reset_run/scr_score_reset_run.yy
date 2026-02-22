@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_story_gate_make",
+  "%Name":"scr_score_reset_run",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_story_gate_make",
+  "name":"scr_score_reset_run",
   "parent":{
-    "name":"Scripts_Story",
-    "path":"folders/Scripts/Scripts_Story.yy",
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
