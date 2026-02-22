@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_bam_current",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_bam_current",
+  "parent":{
+    "name":"Scripts_Story",
+    "path":"folders/Scripts/Scripts_Story.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

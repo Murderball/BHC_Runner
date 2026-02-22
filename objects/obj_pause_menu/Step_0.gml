@@ -78,6 +78,7 @@ if (back && move_cd <= 0 && !menu_game_open)
         }
 
         global.pause_song_time = 0.0;
+        if (script_exists(scr_countdown_begin)) scr_countdown_begin("unpause");
         move_cd = 8;
     }
 }
@@ -197,6 +198,7 @@ if (activate)
             }
 
             global.pause_song_time = 0.0;
+            if (script_exists(scr_countdown_begin)) scr_countdown_begin("unpause");
         break;
 
         case 1: // RESTART LEVEL
