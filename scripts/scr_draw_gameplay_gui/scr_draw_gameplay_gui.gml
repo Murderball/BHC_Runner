@@ -13,47 +13,75 @@ function scr_draw_gameplay_gui()
     var gw = display_get_gui_width();
     var gh = display_get_gui_height();
 
-    // --------------------------------------------------
-    // Song progress line (chart-time driven; syncs with editor/gameplay)
-    // --------------------------------------------------
-    if (!variable_global_exists("PROGRESS_LINE_ENABLED") || global.PROGRESS_LINE_ENABLED)
-    {
-        var progress_frac = script_exists(scr_song_progress_frac) ? scr_song_progress_frac() : 0.0;
+	// --------------------------------------------------
+	// Song timeline track (RED bar) + vertical playhead (WHITE, beat-pulsed)
+	// --------------------------------------------------
+	if (!variable_global_exists("PROGRESS_LINE_ENABLED")) global.PROGRESS_LINE_ENABLED = true;
 
-        var bpm_prog = (variable_global_exists("chart_bpm") && is_real(global.chart_bpm) && global.chart_bpm > 0)
-            ? global.chart_bpm
-            : ((variable_global_exists("BPM") && is_real(global.BPM) && global.BPM > 0) ? global.BPM : 140);
+	if (global.PROGRESS_LINE_ENABLED)
+	{
+	    // Progress fraction 0..1 (uses your existing scr_song_progress_frac)
+	    var progress_frac = scr_song_progress_frac();
 
-        var pulse_strength = (variable_global_exists("PROGRESS_PULSE_STRENGTH") && is_real(global.PROGRESS_PULSE_STRENGTH))
-            ? global.PROGRESS_PULSE_STRENGTH : 0.45;
+	    // BPM used for beat pulse
+	    var bpm_prog = (variable_global_exists("chart_bpm") && is_real(global.chart_bpm) && global.chart_bpm > 0)
+	        ? global.chart_bpm
+	        : ((variable_global_exists("BPM") && is_real(global.BPM) && global.BPM > 0) ? global.BPM : 140);
 
-        var alpha_prog = script_exists(scr_beat_pulse_alpha)
-            ? scr_beat_pulse_alpha(bpm_prog, now_time, pulse_strength)
-            : 1.0;
+	    // Knobs
+	    if (!variable_global_exists("PROGRESS_PULSE_STRENGTH")) global.PROGRESS_PULSE_STRENGTH = 0.45;
+	    if (!variable_global_exists("PROGRESS_LINE_MARGIN"))    global.PROGRESS_LINE_MARGIN = 8;
+	    if (!variable_global_exists("PROGRESS_LINE_THICKNESS")) global.PROGRESS_LINE_THICKNESS = 2;
 
-        var margin = (variable_global_exists("PROGRESS_LINE_MARGIN") && is_real(global.PROGRESS_LINE_MARGIN))
-            ? floor(global.PROGRESS_LINE_MARGIN) : 8;
-        var thick = (variable_global_exists("PROGRESS_LINE_THICKNESS") && is_real(global.PROGRESS_LINE_THICKNESS))
-            ? max(1, floor(global.PROGRESS_LINE_THICKNESS)) : 2;
+	    // NEW knobs for the red track
+	    if (!variable_global_exists("PROGRESS_TRACK_H"))        global.PROGRESS_TRACK_H = 10; // red bar height
+	    if (!variable_global_exists("PROGRESS_TRACK_ALPHA"))    global.PROGRESS_TRACK_ALPHA = 1.0;
 
-        var x_left  = margin;
-		var x_right = gw - margin;
-		var y_top   = margin;
-		var x_pos   = lerp(x_left, x_right, clamp(progress_frac, 0, 1));
+	    var pulse_strength = (is_real(global.PROGRESS_PULSE_STRENGTH)) ? global.PROGRESS_PULSE_STRENGTH : 0.45;
 
-        draw_set_color(c_white);
+	    // Pulse alpha (use helper if present; otherwise no pulse)
+	    var alpha_prog = 1.0;
+	    if (asset_get_index("scr_beat_pulse_alpha") != -1) {
+	        alpha_prog = scr_beat_pulse_alpha(bpm_prog, now_time, pulse_strength);
+	    }
 
-        // Baseline
-        draw_set_alpha(0.30);
-		draw_line_width(x_left, y_top, x_right, y_top, 1);
+	    // Layout
+	    var margin   = (is_real(global.PROGRESS_LINE_MARGIN)) ? floor(global.PROGRESS_LINE_MARGIN) : 8;
+	    var thick    = (is_real(global.PROGRESS_LINE_THICKNESS)) ? max(1, floor(global.PROGRESS_LINE_THICKNESS)) : 2;
 
-        // Progress segment + tick (pulse alpha)
-        draw_set_alpha(alpha_prog);
-		draw_line_width(x_left, y_top, x_pos, y_top, thick);
-		draw_line_width(x_pos, y_top - thick, x_pos, y_top + thick, thick);
+	    var track_h  = (is_real(global.PROGRESS_TRACK_H)) ? max(2, floor(global.PROGRESS_TRACK_H)) : 10;
+	    var track_a  = (is_real(global.PROGRESS_TRACK_ALPHA)) ? clamp(global.PROGRESS_TRACK_ALPHA, 0.0, 1.0) : 1.0;
 
-        draw_set_alpha(1);
-    }
+	    var x_left   = margin;
+	    var x_right  = gw - margin;
+
+	    // Position at very top; bar is centered on y_top
+	    var y_top    = margin;
+	    var y0       = y_top - track_h * 0.5;
+	    var y1       = y_top + track_h * 0.5;
+
+	    // Compute playhead x
+	    progress_frac = clamp(progress_frac, 0.0, 1.0);
+	    var x_head = lerp(x_left, x_right, progress_frac);
+
+	    // --- Draw RED track bar (full level play time) ---
+	    draw_set_alpha(track_a);
+	    draw_set_color(c_red);
+	    draw_rectangle(x_left, y0, x_right, y1, false);
+
+	    // Optional: crisp white top baseline edge
+	    draw_set_alpha(1);
+	    draw_set_color(c_white);
+	    draw_line_width(x_left, y_top, x_right, y_top, 1);
+
+	    // --- Draw WHITE playhead (vertical line) with beat pulse ---
+	    var head_h = track_h + 10; // slightly taller than track
+	    draw_set_alpha(alpha_prog);
+	    draw_set_color(c_white);
+	    draw_line_width(x_head, y_top - (head_h * 0.5), x_head, y_top + (head_h * 0.5), thick);
+
+	    draw_set_alpha(1);
+	}
 
     // --------------------------------------------------
     // Divisional lines (bar/beat): pause-only, independent of editor overlay
