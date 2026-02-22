@@ -3,6 +3,8 @@
 
 function scr_return_to_title()
 {
+    if (script_exists(scr_disarm_boss_goto_on_song_end)) scr_disarm_boss_goto_on_song_end();
+
     // Reset session globals (story/chunk/bg/chart flags)
     scr_reset_play_session();
 

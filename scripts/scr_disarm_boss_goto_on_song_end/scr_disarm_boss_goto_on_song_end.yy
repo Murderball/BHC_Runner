@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_disarm_boss_goto_on_song_end",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_disarm_boss_goto_on_song_end",
+  "parent":{
+    "name":"Scripts_Level",
+    "path":"folders/Scripts/Scripts_Level.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
