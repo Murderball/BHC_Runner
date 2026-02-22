@@ -10,7 +10,7 @@
   "compression":3,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":196.38857,
+  "duration":195.44817,
   "exportDir":"",
   "name":"snd_song_3_normal",
   "parent":{

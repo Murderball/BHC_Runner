@@ -10,7 +10,7 @@
   "compression":3,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":195.78775,
+  "duration":196.38857,
   "exportDir":"",
   "name":"snd_song_3_hard",
   "parent":{
