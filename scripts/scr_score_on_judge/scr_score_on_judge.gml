@@ -1,0 +1,144 @@
+/// scr_score_on_judge(judge_string, base_points, lane_or_kind_optional)
+/// Main entry point for note judgements.
+function scr_score_on_judge(_judge_string, _base_points, _meta)
+{
+    if (!variable_global_exists("score_state") || !is_struct(global.score_state)) {
+        scr_score_init();
+    }
+
+    var _st = global.score_state;
+    var _cfg = _st.config;
+
+    var _judge = string_lower(string(_judge_string));
+    if ((_judge != "perfect") && (_judge != "good") && (_judge != "bad") && (_judge != "miss")) {
+        _judge = "miss";
+    }
+
+    var _base = max(0, floor(_base_points));
+    var _now_ms = current_time;
+
+    // ---- judgement constants ----
+    var _roll_value = _cfg.roll_value_miss;
+    var _judge_weight = _cfg.judge_weight_miss;
+
+    switch (_judge)
+    {
+        case "perfect":
+            _roll_value = _cfg.roll_value_perfect;
+            _judge_weight = _cfg.judge_weight_perfect;
+            _st.count_perfect += 1;
+            _st.notes_hit += 1;
+            _st.combo += 1;
+        break;
+
+        case "good":
+            _roll_value = _cfg.roll_value_good;
+            _judge_weight = _cfg.judge_weight_good;
+            _st.count_good += 1;
+            _st.notes_hit += 1;
+            _st.combo += 1;
+        break;
+
+        case "bad":
+            _roll_value = _cfg.roll_value_bad;
+            _judge_weight = _cfg.judge_weight_bad;
+            _st.count_bad += 1;
+            _st.notes_hit += 1;
+            _st.combo = max(0, _st.combo - _cfg.bad_combo_penalty);
+            _st.multiplier = _st.multiplier / _cfg.bad_divider;
+        break;
+
+        case "miss":
+            _roll_value = _cfg.roll_value_miss;
+            _judge_weight = _cfg.judge_weight_miss;
+            _st.count_miss += 1;
+            if (_cfg.miss_breaks_combo) _st.combo = 0;
+            _st.multiplier = _st.multiplier / _cfg.miss_divider;
+            _st.multiplier_lock_until_ms = _now_ms + _cfg.mult_lock_ms_after_miss;
+        break;
+    }
+
+    _st.notes_total += 1;
+    _st.max_combo = max(_st.max_combo, _st.combo);
+
+    // ---- rolling accuracy ring buffer update ----
+    var _idx = _st.rolling_index;
+    var _was_count = _st.rolling_count;
+
+    if (_was_count < _cfg.rolling_window_size) {
+        _st.rolling_sum += _roll_value;
+        _st.rolling_count += 1;
+    } else {
+        _st.rolling_sum -= _st.rolling_window[_idx];
+        _st.rolling_sum += _roll_value;
+    }
+
+    _st.rolling_window[_idx] = _roll_value;
+    _st.rolling_index = (_idx + 1) mod _cfg.rolling_window_size;
+    _st.rolling_accuracy = (_st.rolling_count > 0) ? (_st.rolling_sum / _st.rolling_count) : 1.0;
+
+    // ---- overall (all notes) accuracy ----
+    var _acc_sum = (_st.count_perfect * _cfg.roll_value_perfect)
+                 + (_st.count_good    * _cfg.roll_value_good)
+                 + (_st.count_bad     * _cfg.roll_value_bad)
+                 + (_st.count_miss    * _cfg.roll_value_miss);
+
+    if (_st.notes_total > 0) {
+        _st.accuracy_percent = clamp((_acc_sum / _st.notes_total) * 100.0, 0.0, 100.0);
+    } else {
+        _st.accuracy_percent = 100.0;
+    }
+
+    // ---- accuracy tier from rolling window ----
+    var _acc_tier = _cfg.acc_tier_values[array_length(_cfg.acc_tier_values) - 1];
+    var _tier_len = min(array_length(_cfg.acc_tier_thresholds), array_length(_cfg.acc_tier_values));
+    for (var _i = 0; _i < _tier_len; _i++) {
+        if (_st.rolling_accuracy >= _cfg.acc_tier_thresholds[_i]) {
+            _acc_tier = _cfg.acc_tier_values[_i];
+            break;
+        }
+    }
+
+    // ---- smooth combo tier ----
+    var _combo_norm = min(_st.combo / _cfg.combo_tier_divisor, 1.0);
+    var _combo_tier = 1.0 + (_combo_norm * _cfg.combo_tier_max_boost);
+
+    _st.multiplier_target = _cfg.mult_base * _acc_tier * _combo_tier;
+    _st.multiplier_target = clamp(_st.multiplier_target, _cfg.mult_min, _cfg.mult_max);
+
+    // Multiplier rise lock: cannot increase while locked, but can still decrease.
+    var _can_rise = (_now_ms >= _st.multiplier_lock_until_ms);
+
+    if (_can_rise) {
+        _st.multiplier = lerp(_st.multiplier, _st.multiplier_target, _cfg.mult_rise_rate);
+    } else {
+        _st.multiplier = min(_st.multiplier, _st.multiplier_target);
+    }
+
+    _st.multiplier = clamp(_st.multiplier, _cfg.mult_min, _cfg.mult_max);
+
+    // ---- points ----
+    var _combo_bonus = min(_cfg.combo_bonus_cap, _st.combo * _cfg.combo_bonus_per_combo);
+    var _points_awarded = round((_base * _st.multiplier * _judge_weight) + _combo_bonus);
+
+    _st.score_total += _points_awarded;
+
+    // ---- breakdown/debug bookkeeping ----
+    switch (_judge)
+    {
+        case "perfect": _st.score_breakdown.points_perfect += _points_awarded; break;
+        case "good":    _st.score_breakdown.points_good += _points_awarded; break;
+        case "bad":     _st.score_breakdown.points_bad += _points_awarded; break;
+        case "miss":    _st.score_breakdown.points_miss += _points_awarded; break;
+    }
+
+    _st.score_breakdown.points_combo_bonus += _combo_bonus;
+    _st.score_breakdown.last_judge = _judge;
+    _st.score_breakdown.last_base_points = _base;
+    _st.score_breakdown.last_meta = _meta;
+    _st.score_breakdown.last_points_awarded = _points_awarded;
+    _st.score_breakdown.last_target_multiplier = _st.multiplier_target;
+    _st.score_breakdown.last_applied_multiplier = _st.multiplier;
+
+    return _points_awarded;
+}
