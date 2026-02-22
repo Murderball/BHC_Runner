@@ -558,7 +558,6 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
         draw_set_halign(fa_left);
         draw_set_valign(fa_top);
         draw_set_color(make_color_rgb(240, 120, 255));
-        draw_text(px + panel_pad, py + 6, "Master Hotkey DEBUG  (toggle: F3)");
 
         // Clip text using a surface so only the interior region scrolls.
         var clip_surf = surface_create(max(1, floor(view_w)), max(1, floor(view_h)));
