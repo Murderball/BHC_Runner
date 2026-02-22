@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_level_end_time_s",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_level_end_time_s",
+  "parent":{
+    "name":"Scripts_Room",
+    "path":"folders/Scripts/Scripts_Room.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
