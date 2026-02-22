@@ -64,6 +64,17 @@ menu_game_adjust = false;
 menu_game_step = 0.05;
 menu_game_slider_active = false;
 
+options_panel_pad = 18;
+options_panel_w = 380;
+options_panel_h = 160;
+options_slider_drag = false;
+options_slider_step = 0.05;
+options_panel_x = 0;
+options_panel_y = 0;
+options_slider_min_x = 0;
+options_slider_max_x = 0;
+options_slider_y = 0;
+
 // Arcade difficulty submenu open (LEFT page)
 arcade_diff_open = false;
 
