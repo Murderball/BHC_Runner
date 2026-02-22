@@ -47,14 +47,14 @@ function scr_phrases_draw_gui() {
                     act_norm = global.ACT_ATK2;
                 }
 
-				var spr = scr_note_sprite_index(act_norm);
-                if (variable_global_exists("ACT_ATK2") && act_norm == global.ACT_ATK2 && spr != spr_note_attk2) {
+				var spr = scr_note_sprite(act_norm);
+                if (variable_global_exists("ACT_ATK2") && act_norm == global.ACT_ATK2 && spr != scr_note_sprite("atk2")) {
                     if (variable_global_exists("DEBUG_EDITOR_ICONS") && global.DEBUG_EDITOR_ICONS) {
                         show_debug_message("[EDITOR_ICONS] Phrase ATK2 sprite mismatch act=" + string(act_norm)
                             + " resolved=" + string(spr)
-                            + " expected=" + string(spr_note_attk2));
+                            + " expected=" + string(scr_note_sprite("atk2")));
                     }
-                    spr = spr_note_attk2;
+                    spr = scr_note_sprite("atk2");
                 }
 
 				var subimg = scr_anim_subimg(spr, phr_i * 1000 + step_i);

@@ -334,7 +334,7 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
 
                 // End ghost sprite
                 draw_set_alpha(global.hold_end_alpha);
-                var spr = scr_note_sprite_index(note_ref.act);
+                var spr = scr_note_sprite(note_ref.act);
                 var subimg = scr_anim_subimg(spr, idx);
                 var alpha_arg = 1;
                 var note_act = string_lower(string(note_ref.act));
@@ -367,7 +367,7 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
                     gpu_set_blendmode(bm_normal);
                     draw_set_alpha(1);
                     draw_set_color(c_white);
-                    draw_sprite(spr_note_attk3, 0, end_gx + 80, end_gy);
+                    draw_sprite(scr_note_sprite("atk3"), 0, end_gx + 80, end_gy);
 
                     draw_set_alpha(global.hold_end_alpha);
                     draw_set_color(note_col);
