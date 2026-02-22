@@ -36,10 +36,10 @@ function scr_draw_gameplay_gui()
         var thick = (variable_global_exists("PROGRESS_LINE_THICKNESS") && is_real(global.PROGRESS_LINE_THICKNESS))
             ? max(1, floor(global.PROGRESS_LINE_THICKNESS)) : 2;
 
-        var x0 = margin;
-        var x1 = gw - margin;
-        var y  = margin;
-        var x  = lerp(x0, x1, progress_frac);
+        var x_left  = margin;
+		var x_right = gw - margin;
+		var y_top   = margin;
+		var x_pos   = lerp(x_left, x_right, progress_frac);
 
         draw_set_color(c_white);
 
