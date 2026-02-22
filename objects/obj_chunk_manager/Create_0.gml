@@ -3,6 +3,8 @@
 // 0) Init micro-profiler
 if (script_exists(scr_microprof_init)) scr_microprof_init();
 
+boss_transition_fired = false;
+
 // 1) Init chunk constants FIRST
 scr_chunk_system_init();
 
@@ -208,4 +210,3 @@ else
     // If prime fails (missing file etc.), we stay gated; player won't drop under floor anymore.
     global.level_stream_ready = false;
 }
-

@@ -4,6 +4,38 @@ if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED) exit;
 if (script_exists(scr_microprof_frame_begin)) scr_microprof_frame_begin();
 
 // --------------------------------------------------
+// Boss transition by per-level/per-difficulty end time
+// --------------------------------------------------
+if (room == rm_menu || (variable_global_exists("in_menu") && global.in_menu)) { /* skip */ }
+else if (room == rm_loading || (variable_global_exists("in_loading") && global.in_loading)) { /* skip */ }
+else
+{
+    // Pause detection (defensive)
+    var paused = false;
+    if (variable_global_exists("paused")) paused = global.paused;
+    else if (variable_global_exists("is_paused")) paused = global.is_paused;
+    else if (variable_global_exists("IN_PAUSE_MENU")) paused = global.IN_PAUSE_MENU;
+
+    if (!paused && !boss_transition_fired)
+    {
+        var end_s = scr_level_end_time_s(); // uses room_get_name(room) key
+        if (end_s > 0)
+        {
+            var now_s = scr_chart_time();
+            if (now_s >= end_s)
+            {
+                var boss_rm = scr_level_boss_room();
+                if (boss_rm != -1)
+                {
+                    boss_transition_fired = true;
+                    room_goto(boss_rm);
+                }
+            }
+        }
+    }
+}
+
+// --------------------------------------------------
 // TIME SOURCE (editor uses chart-time, gameplay uses song-time)
 // --------------------------------------------------
 var ed_on = (variable_global_exists("editor_on") && global.editor_on);
