@@ -1011,8 +1011,8 @@
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
-    {"roomId":{"name":"rm_menu","path":"rooms/rm_menu/rm_menu.yy",},},
     {"roomId":{"name":"rm_level01","path":"rooms/rm_level01/rm_level01.yy",},},
+    {"roomId":{"name":"rm_menu","path":"rooms/rm_menu/rm_menu.yy",},},
     {"roomId":{"name":"rm_batch_export","path":"rooms/rm_batch_export/rm_batch_export.yy",},},
     {"children":[
         {"children":[

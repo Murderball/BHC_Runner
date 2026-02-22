@@ -293,11 +293,15 @@ function scr_draw_gameplay_gui()
                 + " note_a=" + string_format(note_alpha, 1, 2)
                 + " bm=" + string(dbg_bm));
 
-
+            // Raw compare draw to isolate sprite pixels vs draw-state influence.
+            gpu_set_blendmode(bm_normal);
+            draw_set_alpha(1);
+            draw_set_color(c_white);
+            if (spr == spr_note_attk3) draw_sprite(spr_note_attk3, 0, start_gx + 80, start_gy);
 
             // Restore state for canonical draw path.
             gpu_set_blendmode(bm_normal);
-            draw_set_alpha(note_alpha);
+            draw_set_alpha(1);
             draw_set_color(note_col);
         }
 
