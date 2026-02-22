@@ -37,6 +37,17 @@ function scr_editor_update() {
 
 	if (!variable_global_exists("dbg_marker_txtL")) {
 	    global.dbg_marker_txtL =
+		 "MARKER TOOL (active):\n" +
+	        "  Ctrl+S         save markers\n" +
+	        "  Ctrl+L         load markers\n" +
+	        "  LMB            select / create marker\n" +
+	        "  LMB-drag       move selected marker time\n" +
+	        "  Shift+LMB      create SPAWN marker (enemy)\n" +
+			"  Shift+Alt+LMB  create PICKUP marker\n" +
+	        "  Alt+LMB        create CAMERA marker\n" +
+	        "  Delete/Backsp  delete selected marker\n" +
+	        "  RMB            delete marker under mouse\n" +
+	        "  Shift+D        Swap Visual/Audio Modes\n" +
 	        "Master Hotkey DEBUG  (toggle: F3)\n" +
 	        " F12    :       Toggle Play Window between screens\n" +
 	        " Tab    :       Play From Editor\n" +
@@ -60,17 +71,7 @@ function scr_editor_update() {
 	        "  U              Toggle Camera Marker\n" +
 	        "  Shift+7/8/9    Marker Difficulty Toggle\n" +
 
-	        "MARKER TOOL (active):\n" +
-	        "  Ctrl+S         save markers\n" +
-	        "  Ctrl+L         load markers\n" +
-	        "  LMB            select / create marker\n" +
-	        "  LMB-drag       move selected marker time\n" +
-	        "  Shift+LMB      create SPAWN marker (enemy)\n" +
-			"  Shift+Alt+LMB  create PICKUP marker\n" +
-	        "  Alt+LMB        create CAMERA marker\n" +
-	        "  Delete/Backsp  delete selected marker\n" +
-	        "  RMB            delete marker under mouse\n" +
-	        "  Shift+D        Swap Visual/Audio Modes\n" +
+	       
 
 	        "SPAWN MARKER (type=spawn):\n" +
 	        "  G              cycle enemy_kind\n" +
