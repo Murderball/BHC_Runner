@@ -7,7 +7,7 @@ function scr_level_end_time_s(_level_key)
     if (!is_struct(global.level_end_cfg)) return -1;
     if (!variable_struct_exists(global.level_end_cfg, key)) return -1;
 
-    var cfg = variable_struct_get(global.level_end_cfg, key);
+    var cfg = global.level_end_cfg[@ key];
     if (!is_struct(cfg)) return -1;
     if (!is_array(cfg.end_s)) return -1;
 
