@@ -15,12 +15,88 @@ function scr_editor_update() {
     }
 	// Toggle marker keybind debug panel (F3)
 	if (!variable_global_exists("dbg_marker_keys_on")) global.dbg_marker_keys_on = false;
+	if (!variable_global_exists("dbg_marker_scroll_y")) global.dbg_marker_scroll_y = 0;
+	if (!variable_global_exists("dbg_marker_dragging_thumb")) global.dbg_marker_dragging_thumb = false;
+	if (!variable_global_exists("dbg_marker_drag_offset")) global.dbg_marker_drag_offset = 0;
+	if (!variable_global_exists("dbg_marker_content_h")) global.dbg_marker_content_h = 0;
+	if (!variable_global_exists("dbg_marker_view_h")) global.dbg_marker_view_h = 0;
+	if (!variable_global_exists("dbg_marker_thumb_h")) global.dbg_marker_thumb_h = 0;
+	if (!variable_global_exists("dbg_marker_track_y")) global.dbg_marker_track_y = 0;
+	if (!variable_global_exists("dbg_marker_track_h")) global.dbg_marker_track_h = 0;
 
 	if (keyboard_check_pressed(vk_f3))
 	{
 	    global.dbg_marker_keys_on = !global.dbg_marker_keys_on;
+	    if (global.dbg_marker_keys_on) {
+	        global.dbg_marker_scroll_y = 0;
+	    } else {
+	        global.dbg_marker_dragging_thumb = false;
+	    }
 	    show_debug_message("[DBG] marker keys = " + string(global.dbg_marker_keys_on));
-}
+	}
+
+	if (!variable_global_exists("dbg_marker_txtL")) {
+	    global.dbg_marker_txtL =
+	        "Master Hotkey DEBUG  (toggle: F3)\n" +
+	        " F12    :       Toggle Play Window between screens\n" +
+	        " Tab    :       Play From Editor\n" +
+	        "Esc     :       Pause\n" +
+	        "[ or ]  :       Timeline Zoom\n" +
+	        "H       :       Tap/Hold Note Toggle\n" +
+	        "P       :       Phrase Tool\n" +
+	        " F8     :       Toggle Auto Hit\n" +
+	        " F11    :       Toggle Chunk Highlighting\n" +
+	        " E      :       Export Chunk\n";
+	}
+	if (!variable_global_exists("dbg_marker_txtR")) {
+	    global.dbg_marker_txtR =
+	        "GLOBAL / FILE:\n" +
+	        "  Ctrl+Shift+M   wipe marker file\n" +
+	        "  M              toggle Marker tool\n" +
+
+	        "DIFFICULTY:\n" +
+	        "  Ctrl+1/2/3/4   Chart Difficulty Toggle\n" +
+	        "  T              Toggle Difficulty Marker\n" +
+	        "  U              Toggle Camera Marker\n" +
+	        "  Shift+7/8/9    Marker Difficulty Toggle\n" +
+
+	        "MARKER TOOL (active):\n" +
+	        "  Ctrl+S         save markers\n" +
+	        "  Ctrl+L         load markers\n" +
+	        "  LMB            select / create marker\n" +
+	        "  LMB-drag       move selected marker time\n" +
+	        "  Shift+LMB      create SPAWN marker (enemy)\n" +
+			"  Shift+Alt+LMB  create PICKUP marker\n" +
+	        "  Alt+LMB        create CAMERA marker\n" +
+	        "  Delete/Backsp  delete selected marker\n" +
+	        "  RMB            delete marker under mouse\n" +
+	        "  Shift+D        Swap Visual/Audio Modes\n" +
+
+	        "SPAWN MARKER (type=spawn):\n" +
+	        "  G              cycle enemy_kind\n" +
+	        "  Up/Down        nudge y\n" +
+	        "  Shift+LMB hold  set y to mouse\n" +
+			"  \nPICKUP MARKER (type=pickup):\n" +
+			"  J              cycle pickup_kind\n" +
+			"  Up/Down        nudge y\n" +
+			"  Shift+LMB hold  set y to mouse\n" +
+
+	        "CAMERA MARKER (type=camera):\n" +
+	        "  Q / E          zoom -/+\n" +
+	        "  Arrows         pan x/y\n" +
+	        "  Shift+Arrows   fast pan x/y\n" +
+	        "  C / V          ease prev/next\n" +
+	        "  R              reset zoom/pan\n" +
+
+	        "STORY/PAUSE MARKER:\n" +
+	        "  N              toggle Yes/No choices\n" +
+	        "  R              toggle loop\n" +
+	        "  F              toggle wait_confirm\n" +
+	        "  C / V          caption preset prev/next\n" +
+	        "  O / P          fade out -/+ 50ms\n" +
+	        "  K / L          fade in  -/+ 50ms\n" +
+	        "  Q / E          sound prev/next\n";
+	}
 
 
     // Marker caption presets (editor helper list)
@@ -57,7 +133,92 @@ function scr_editor_update() {
 	{
 	    global.dbg_editor = !global.dbg_editor;
 	    show_debug_message("[EDITOR] dbg_editor = " + string(global.dbg_editor));
-}
+	}
+
+	// Master debug panel scrolling (F3 panel): wheel + thumb drag + PgUp/PgDn
+	if (global.dbg_marker_keys_on)
+	{
+	    var gw_dbg = display_get_gui_width();
+	    var gh_dbg = display_get_gui_height();
+	    var margin_dbg = 16;
+	    var px_dbg = margin_dbg;
+	    var pw_dbg = gw_dbg - margin_dbg * 2;
+	    var py_dbg = 200;
+	    var ph_dbg = min(700, gh_dbg - py_dbg - margin_dbg);
+
+	    var panel_pad_dbg = 10;
+	    var header_h_dbg = 28;
+	    var view_top_dbg = py_dbg + header_h_dbg;
+	    var view_h_dbg = max(1, ph_dbg - header_h_dbg - panel_pad_dbg);
+
+	    // Tweakables: line height, text paddings, scrollbar sizes, wheel speed.
+	    var line_h_dbg = 18;
+	    var text_top_pad_dbg = 6;
+	    var text_bottom_pad_dbg = 10;
+	    var scroll_speed_dbg = line_h_dbg * 3;
+	    var scrollbar_pad_dbg = 10;
+	    var scrollbar_w_dbg = 12;
+	    var min_thumb_dbg = 28;
+
+	    var left_lines_dbg = string_count("\n", global.dbg_marker_txtL) + 1;
+	    var right_lines_dbg = string_count("\n", global.dbg_marker_txtR) + 1;
+	    var line_count_dbg = max(left_lines_dbg, right_lines_dbg);
+	    var content_h_dbg = text_top_pad_dbg + (line_count_dbg * line_h_dbg) + text_bottom_pad_dbg;
+	    var max_scroll_dbg = max(0, content_h_dbg - view_h_dbg);
+
+	    var track_x_dbg = px_dbg + pw_dbg - scrollbar_pad_dbg - scrollbar_w_dbg;
+	    var track_y_dbg = view_top_dbg;
+	    var track_h_dbg = view_h_dbg;
+	    var thumb_h_dbg = max(min_thumb_dbg, track_h_dbg * (view_h_dbg / max(1, content_h_dbg)));
+	    thumb_h_dbg = min(track_h_dbg, thumb_h_dbg);
+	    var thumb_move_dbg = max(1, track_h_dbg - thumb_h_dbg);
+
+	    global.dbg_marker_content_h = content_h_dbg;
+	    global.dbg_marker_view_h = view_h_dbg;
+	    global.dbg_marker_track_y = track_y_dbg;
+	    global.dbg_marker_track_h = track_h_dbg;
+	    global.dbg_marker_thumb_h = thumb_h_dbg;
+
+	    var mx_dbg = device_mouse_x_to_gui(0);
+	    var my_dbg = device_mouse_y_to_gui(0);
+	    var panel_hover_dbg = (mx_dbg >= px_dbg && mx_dbg <= px_dbg + pw_dbg && my_dbg >= py_dbg && my_dbg <= py_dbg + ph_dbg);
+	    if (panel_hover_dbg || global.dbg_marker_keys_on)
+	    {
+	        if (mouse_wheel_up()) global.dbg_marker_scroll_y -= scroll_speed_dbg;
+	        if (mouse_wheel_down()) global.dbg_marker_scroll_y += scroll_speed_dbg;
+	    }
+
+	    if (keyboard_check_pressed(vk_pageup)) global.dbg_marker_scroll_y -= view_h_dbg * 0.9;
+	    if (keyboard_check_pressed(vk_pagedown)) global.dbg_marker_scroll_y += view_h_dbg * 0.9;
+
+	    var thumb_y_dbg = track_y_dbg;
+	    if (max_scroll_dbg > 0) {
+	        thumb_y_dbg = track_y_dbg + ((global.dbg_marker_scroll_y / max_scroll_dbg) * thumb_move_dbg);
+	    }
+
+	    var over_thumb_dbg = (mx_dbg >= track_x_dbg && mx_dbg <= track_x_dbg + scrollbar_w_dbg && my_dbg >= thumb_y_dbg && my_dbg <= thumb_y_dbg + thumb_h_dbg);
+	    if (mouse_check_button_pressed(mb_left) && over_thumb_dbg && max_scroll_dbg > 0)
+	    {
+	        global.dbg_marker_dragging_thumb = true;
+	        global.dbg_marker_drag_offset = my_dbg - thumb_y_dbg;
+	    }
+	    if (mouse_check_button_released(mb_left)) global.dbg_marker_dragging_thumb = false;
+
+	    if (global.dbg_marker_dragging_thumb)
+	    {
+	        var new_thumb_y_dbg = clamp(my_dbg - global.dbg_marker_drag_offset, track_y_dbg, track_y_dbg + track_h_dbg - thumb_h_dbg);
+	        var thumb_norm_dbg = (new_thumb_y_dbg - track_y_dbg) / thumb_move_dbg;
+	        global.dbg_marker_scroll_y = thumb_norm_dbg * max_scroll_dbg;
+	    }
+
+	    global.dbg_marker_scroll_y = clamp(global.dbg_marker_scroll_y, 0, max_scroll_dbg);
+	}
+	else
+	{
+	    global.dbg_marker_dragging_thumb = false;
+	    global.dbg_marker_scroll_y = 0;
+	}
+
     // Debug vars for marker preset cycling (so you can draw them in GUI later if you want)
     if (!variable_global_exists("dbg_marker_preset_i")) global.dbg_marker_preset_i = -1;
     if (!variable_global_exists("dbg_marker_preset"))   global.dbg_marker_preset   = "";

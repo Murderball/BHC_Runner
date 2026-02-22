@@ -505,91 +505,96 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
         var margin = 16;
         var px = margin;
         var pw = gw - margin * 2;
-
-        var ph = 700;
         var py = 200;
+        var ph = min(700, gh - py - margin);
 
-        // Background
+        // Tweak these to tune panel layout and scrolling feel.
+        var panel_pad = 10;
+        var header_h = 28;
+        var line_h = 18;
+        var text_top_pad = 6;
+        var text_bottom_pad = 10;
+        var col_gap = 8;
+        var scrollbar_pad = 10;
+        var scrollbar_w = 12;
+        var min_thumb = 28;
+
+        var txtL = variable_global_exists("dbg_marker_txtL") ? global.dbg_marker_txtL : "";
+        var txtR = variable_global_exists("dbg_marker_txtR") ? global.dbg_marker_txtR : "";
+
+        var left_lines = string_count("\n", txtL) + 1;
+        var right_lines = string_count("\n", txtR) + 1;
+        var line_count = max(left_lines, right_lines);
+        var content_h = text_top_pad + (line_count * line_h) + text_bottom_pad;
+
+        var view_x = px + panel_pad;
+        var view_y = py + header_h;
+        var view_w = pw - panel_pad * 2 - scrollbar_w - scrollbar_pad * 2;
+        var view_h = max(1, ph - header_h - panel_pad);
+
+        var max_scroll = max(0, content_h - view_h);
+        var scroll_y = variable_global_exists("dbg_marker_scroll_y") ? clamp(global.dbg_marker_scroll_y, 0, max_scroll) : 0;
+        global.dbg_marker_scroll_y = scroll_y;
+
+        var track_x = px + pw - scrollbar_pad - scrollbar_w;
+        var track_y = view_y;
+        var track_h = view_h;
+        var thumb_h = max(min_thumb, track_h * (view_h / max(1, content_h)));
+        thumb_h = min(track_h, thumb_h);
+        var thumb_move = max(1, track_h - thumb_h);
+        var thumb_y = track_y;
+        if (max_scroll > 0) {
+            thumb_y = track_y + ((scroll_y / max_scroll) * thumb_move);
+        }
+
+        // Panel frame + header are fixed; only text region scrolls.
         draw_set_alpha(1);
         draw_set_color(c_black);
         draw_rectangle(px, py, px + pw, py + ph, false);
 
-        // Text styling
-        draw_set_alpha(1);
-        draw_set_color(make_color_rgb(240, 120, 255));
-        draw_set_valign(fa_top);
+        draw_set_color(make_color_rgb(30, 30, 30));
+        draw_rectangle(px + 1, py + 1, px + pw - 1, py + header_h, false);
+
         draw_set_halign(fa_left);
+        draw_set_valign(fa_top);
+        draw_set_color(make_color_rgb(240, 120, 255));
+        draw_text(px + panel_pad, py + 6, "Master Hotkey DEBUG  (toggle: F3)");
 
-        var pad = 10;
-        var col_gap = 4;
-        var col_w = floor((pw - pad * 2 - col_gap) / 2);
+        // Clip text using a surface so only the interior region scrolls.
+        var clip_surf = surface_create(max(1, floor(view_w)), max(1, floor(view_h)));
+        if (surface_exists(clip_surf)) {
+            surface_set_target(clip_surf);
+            draw_clear_alpha(c_black, 0);
 
-        var x1 = px + pad;
-        var x2 = x1 + col_w + col_gap;
-        var ty = py + 6;
+            draw_set_halign(fa_left);
+            draw_set_valign(fa_top);
+            draw_set_color(make_color_rgb(240, 120, 255));
 
-        var txtL =
-            "Master Hotkey DEBUG  (toggle: F3)\n" +
-            " F12    :       Toggle Play Window between screens\n" +
-            " Tab    :       Play From Editor\n" +
-            "Esc     :       Pause\n" +
-            "[ or ]  :       Timeline Zoom\n" +
-            "H       :       Tap/Hold Note Toggle\n" +
-            "P       :       Phrase Tool\n" +
-            " F8     :       Toggle Auto Hit\n" +
-            " F11    :       Toggle Chunk Highlighting\n" +
-            " E      :       Export Chunk\n";
+            var col_w = floor((view_w - col_gap) / 2);
+            var draw_y = text_top_pad - scroll_y;
+            draw_text(0, draw_y, txtL);
+            draw_text(col_w + col_gap, draw_y, txtR);
 
-        var txtR =
-            "GLOBAL / FILE:\n" +
-            "  Ctrl+Shift+M   wipe marker file\n" +
-            "  M              toggle Marker tool\n" +
+            surface_reset_target();
+            draw_surface(clip_surf, view_x, view_y);
+            surface_free(clip_surf);
+        }
 
-            "DIFFICULTY:\n" +
-            "  Ctrl+1/2/3/4   Chart Difficulty Toggle\n" +
-            "  T              Toggle Difficulty Marker\n" +
-            "  U              Toggle Camera Marker\n" +
-            "  Shift+7/8/9    Marker Difficulty Toggle\n" +
+        // Scrollbar track + thumb.
+        draw_set_color(make_color_rgb(55, 55, 55));
+        draw_rectangle(track_x, track_y, track_x + scrollbar_w, track_y + track_h, false);
 
-            "MARKER TOOL (active):\n" +
-            "  Ctrl+S         save markers\n" +
-            "  Ctrl+L         load markers\n" +
-            "  LMB            select / create marker\n" +
-            "  LMB-drag       move selected marker time\n" +
-            "  Shift+LMB      create SPAWN marker (enemy)\n" +
-			"  Shift+Alt+LMB  create PICKUP marker\n" +
-            "  Alt+LMB        create CAMERA marker\n" +
-            "  Delete/Backsp  delete selected marker\n" +
-            "  RMB            delete marker under mouse\n" +
-            "  Shift+D        Swap Visual/Audio Modes\n" +
+        draw_set_color(make_color_rgb(210, 120, 245));
+        draw_rectangle(track_x, thumb_y, track_x + scrollbar_w, thumb_y + thumb_h, false);
 
-            "SPAWN MARKER (type=spawn):\n" +
-            "  G              cycle enemy_kind\n" +
-            "  Up/Down        nudge y\n" +
-            "  Shift+LMB hold  set y to mouse\n" +
-			"  \nPICKUP MARKER (type=pickup):\n" +
-			"  J              cycle pickup_kind\n" +
-			"  Up/Down        nudge y\n" +
-			"  Shift+LMB hold  set y to mouse\n" +
+        draw_set_color(c_white);
+        draw_rectangle(px, py, px + pw, py + ph, true);
 
-            "CAMERA MARKER (type=camera):\n" +
-            "  Q / E          zoom -/+\n" +
-            "  Arrows         pan x/y\n" +
-            "  Shift+Arrows   fast pan x/y\n" +
-            "  C / V          ease prev/next\n" +
-            "  R              reset zoom/pan\n" +
-
-            "STORY/PAUSE MARKER:\n" +
-            "  N              toggle Yes/No choices\n" +
-            "  R              toggle loop\n" +
-            "  F              toggle wait_confirm\n" +
-            "  C / V          caption preset prev/next\n" +
-            "  O / P          fade out -/+ 50ms\n" +
-            "  K / L          fade in  -/+ 50ms\n" +
-            "  Q / E          sound prev/next\n";
-
-        draw_text(x1, ty, txtL);
-        draw_text(x2, ty, txtR);
+        global.dbg_marker_content_h = content_h;
+        global.dbg_marker_view_h = view_h;
+        global.dbg_marker_track_y = track_y;
+        global.dbg_marker_track_h = track_h;
+        global.dbg_marker_thumb_h = thumb_h;
     }
 
 
