@@ -1,21 +1,24 @@
 /// scr_level_end_config_init()
 function scr_level_end_config_init()
 {
-    if (variable_global_exists("level_end_cfg_init") && global.level_end_cfg_init) return;
+    // Prevent re-initializing
+    if (variable_global_exists("level_end_cfg_init") && global.level_end_cfg_init)
+        return;
 
-    if (!variable_global_exists("level_end_cfg") || !is_struct(global.level_end_cfg)) {
-        global.level_end_cfg = {};
-    }
+    // Create registry map
+    global.level_end_cfg = ds_map_create();
 
+    // Internal registration helper
     function _reg(_level_room_name, _boss_room_name, _end_s, _warn_s, _fade_s)
     {
-        global.level_end_cfg?[_level_room_name] = {
-            boss_room: _boss_room_name,
-            end_s: _end_s,
-            warn_s: _warn_s,
-            fade_s: _fade_s
-        };
-    }
+        var entry = ds_map_create();
+        ds_map_add(entry, "boss_room", _boss_room_name);
+        ds_map_add(entry, "end_s", _end_s);
+        ds_map_add(entry, "warn_s", _warn_s);
+        ds_map_add(entry, "fade_s", _fade_s);
+
+        ds_map_add(global.level_end_cfg, _level_room_name, entry);
+    } 
 
     // ------------------------------------------------------------
     // EDIT THESE TIMES (seconds in chart time)
