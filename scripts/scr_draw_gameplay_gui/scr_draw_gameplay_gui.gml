@@ -39,18 +39,18 @@ function scr_draw_gameplay_gui()
         var x_left  = margin;
 		var x_right = gw - margin;
 		var y_top   = margin;
-		var x_pos   = lerp(x_left, x_right, progress_frac);
+		var x_pos   = lerp(x_left, x_right, clamp(progress_frac, 0, 1));
 
         draw_set_color(c_white);
 
         // Baseline
         draw_set_alpha(0.30);
-        draw_line_width(x0, y, x1, y, 1);
+		draw_line_width(x_left, y_top, x_right, y_top, 1);
 
         // Progress segment + tick (pulse alpha)
         draw_set_alpha(alpha_prog);
-        draw_line_width(x0, y, x, y, thick);
-        draw_line_width(x, y - thick, x, y + thick, thick);
+		draw_line_width(x_left, y_top, x_pos, y_top, thick);
+		draw_line_width(x_pos, y_top - thick, x_pos, y_top + thick, thick);
 
         draw_set_alpha(1);
     }
