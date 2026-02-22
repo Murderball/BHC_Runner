@@ -175,6 +175,23 @@ if (move_cd <= 0)
     }
 }
 
+var pause_options_active = (sel == 2) || (hover_i == 2) || options_slider_drag;
+if (array_length(btn) > 2)
+{
+    var _opr = btn[2];
+    ui_mouse_x = mx;
+    ui_mouse_y = my;
+    ui_input_left = left;
+    ui_input_right = right;
+    var _pause_panel = scr_ui_master_volume_panel_update(_opr.x1, _opr.y1, _opr.x2 - _opr.x1, _opr.y2 - _opr.y1, pause_options_active);
+
+    if (_pause_panel.hit_track || _pause_panel.hit_knob)
+    {
+        sel = 2;
+        if (mouse_check_button_pressed(mb_left)) menu_game_adjust = true;
+    }
+}
+
 // Activate selection (mouse click or keyboard confirm)
 var activate = ok || (click && hover_i == sel);
 

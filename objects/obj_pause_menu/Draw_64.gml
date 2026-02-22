@@ -124,14 +124,17 @@ for (var i = 0; i < array_length(items); i++)
 
         draw_sprite_ext(spr, 0, cx, cy, spr_scale, spr_scale, 0, c_white, 1);
 
-        if (i == 2)
-        {
-            draw_set_color(c_white);
-            draw_text(r.x2 + 20, cy - 8, string(floor(global.AUDIO_MASTER * 100)) + "%");
-        }
     }
 }
 
+
+
+var pause_options_draw_active = (!menu_game_open) && ((sel == 2) || (hover_i == 2) || options_slider_drag);
+if (pause_options_draw_active && array_length(btn) > 2)
+{
+    var _opr_draw = btn[2];
+    scr_ui_master_volume_panel_draw(_opr_draw.x1, _opr_draw.y1, _opr_draw.x2 - _opr_draw.x1, _opr_draw.y2 - _opr_draw.y1, true);
+}
 
 // ------------------------------------------------------
 // 4) Keyboard dashed selection outline

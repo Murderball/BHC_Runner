@@ -721,6 +721,8 @@
     {"id":{"name":"scr_timeline_pps","path":"scripts/scr_timeline_pps/scr_timeline_pps.yy",},},
     {"id":{"name":"scr_try_hit","path":"scripts/scr_try_hit/scr_try_hit.yy",},},
     {"id":{"name":"scr_try_trigger","path":"scripts/scr_try_trigger/scr_try_trigger.yy",},},
+    {"id":{"name":"scr_ui_master_volume_panel_draw","path":"scripts/scr_ui_master_volume_panel_draw/scr_ui_master_volume_panel_draw.yy",},},
+    {"id":{"name":"scr_ui_master_volume_panel_update","path":"scripts/scr_ui_master_volume_panel_update/scr_ui_master_volume_panel_update.yy",},},
     {"id":{"name":"shd_bpm_dual_pulse","path":"shaders/shd_bpm_dual_pulse/shd_bpm_dual_pulse.yy",},},
     {"id":{"name":"snd_boss_music_level1","path":"sounds/snd_boss_music_level1/snd_boss_music_level1.yy",},},
     {"id":{"name":"snd_boss_music_level3","path":"sounds/snd_boss_music_level3/snd_boss_music_level3.yy",},},
