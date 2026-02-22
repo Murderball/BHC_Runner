@@ -77,15 +77,15 @@ if (menu_state == 0)
 
         draw_set_alpha(0.28);
         draw_set_color(c_black);
-        draw_roundrect(px - cx + 8, py - cy + 8, px - cx + pw + 8, py - cy + ph + 8, 10, false);
+        draw_roundrect(px - cx + 8, py - cy + 8, px - cx + pw + 8, py - cy + ph + 8, 10);
 
         draw_set_alpha(0.85);
         draw_set_color(make_color_rgb(16, 16, 20));
-        draw_roundrect(px - cx, py - cy, px - cx + pw, py - cy + ph, 10, false);
+        draw_roundrect(px - cx, py - cy, px - cx + pw, py - cy + ph, 10);
 
         draw_set_alpha(1);
         draw_set_color(make_color_rgb(90, 90, 110));
-        draw_roundrect(px - cx, py - cy, px - cx + pw, py - cy + ph, 10, true);
+        draw_roundrect(px - cx, py - cy, px - cx + pw, py - cy + ph, 10);
 
         draw_set_color(c_white);
         draw_text(px - cx + options_panel_pad, py - cy + 16, "GAME");

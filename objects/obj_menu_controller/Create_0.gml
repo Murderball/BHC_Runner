@@ -100,9 +100,9 @@ btn_arcade  = { spr: menu_arcade,  x: left_x, y: y_arcade, w: BTN_W, h: BTN_H };
 btn_options = { spr: menu_options, x: left_x, y: y_opts,   w: BTN_W, h: BTN_H };
 
 var spr_menu_game = asset_get_index("menu_game");
-if (spr_menu_game < 0) spr_menu_game = menu_options;
+
 btn_game = { spr: spr_menu_game, x: left_x, y: y_opts + 100, w: BTN_W, h: BTN_H };
-btn_exit    = { spr: menu_exit,    x: left_x, y: y_exit + 100,   w: BTN_W, h: BTN_H };
+btn_exit    = { spr: menu_exit,    x: left_x, y: y_exit + 10,   w: BTN_W, h: BTN_H };
 
 // ----------------------------
 // ARCADE DIFFICULTY (LEFT PAGE — shows BEFORE pan)
