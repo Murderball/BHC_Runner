@@ -687,6 +687,7 @@
     {"id":{"name":"scr_recorder_save_chart","path":"scripts/scr_recorder_save_chart/scr_recorder_save_chart.yy",},},
     {"id":{"name":"scr_recorder_save_take","path":"scripts/scr_recorder_save_take/scr_recorder_save_take.yy",},},
     {"id":{"name":"scr_request_room_transition","path":"scripts/scr_request_room_transition/scr_request_room_transition.yy",},},
+    {"id":{"name":"scr_room_gate_make","path":"scripts/scr_room_gate_make/scr_room_gate_make.yy",},},
     {"id":{"name":"scr_reset_play_session","path":"scripts/scr_reset_play_session/scr_reset_play_session.yy",},},
     {"id":{"name":"scr_restart_level","path":"scripts/scr_restart_level/scr_restart_level.yy",},},
     {"id":{"name":"scr_return_from_side_room","path":"scripts/scr_return_from_side_room/scr_return_from_side_room.yy",},},
