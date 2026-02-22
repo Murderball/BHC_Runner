@@ -76,6 +76,15 @@ draw_set_color(c_black);
 draw_rectangle(0, 0, gw, gh, false);
 draw_set_alpha(1);
 
+if (menu_game_open)
+{
+    var panel_w2 = 640;
+    var panel_h2 = 360;
+    var panel_x2 = gw * 0.5 - panel_w2 * 0.5;
+    var panel_y2 = gh * 0.5 - panel_h2 * 0.5;
+    scr_menu_game_draw(id, panel_x2 + 60, panel_y2 + 120, panel_w2 - 120);
+    exit;
+}
 
 // ------------------------------------------------------
 // 3) Sprite buttons + hover glow
@@ -114,6 +123,12 @@ for (var i = 0; i < array_length(items); i++)
         }
 
         draw_sprite_ext(spr, 0, cx, cy, spr_scale, spr_scale, 0, c_white, 1);
+
+        if (i == 2)
+        {
+            draw_set_color(c_white);
+            draw_text(r.x2 + 20, cy - 8, string(floor(global.AUDIO_MASTER * 100)) + "%");
+        }
     }
 }
 

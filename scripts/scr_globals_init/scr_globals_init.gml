@@ -276,6 +276,8 @@ function scr_globals_init()
 // ====================================================
     // AUDIO / MUSIC  (FIXED: level-aware, no forced level03)
     // ====================================================
+    global.AUDIO_MASTER = 1.0;
+
     global.song_handle = -1;
     global.song_playing = false;
 

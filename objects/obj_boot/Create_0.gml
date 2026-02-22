@@ -20,6 +20,10 @@ if (!variable_global_exists("LEVEL_KEY") || !is_string(global.LEVEL_KEY) || glob
 // 1) Init globals (must define ALL globals read anywhere)
 scr_globals_init();
 
+// 1.5) Load persistent audio settings and apply to master output
+scr_audio_settings_load();
+scr_audio_settings_apply();
+
 // 2) Init subsystems in a known order
 scr_input_init();
 scr_chunk_system_init();
