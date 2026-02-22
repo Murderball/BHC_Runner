@@ -1,6 +1,6 @@
 [Gameplay (keyboard fallback)]
-Space        - Jump / confirm certain prompts (Gameplay)                     (scripts/scr_input_update.gml, scripts/scr_recorder_event_from_keypress.gml)
-1            - Attack 1 input                                                (scripts/scr_input_update.gml, scripts/scr_recorder_event_from_keypress.gml)
+Space        - Jump / confirm certain prompts (Gameplay)                     	(scripts/scr_input_update.gml, scripts/scr_recorder_event_from_keypress.gml)
+1            - Attack 1 input                                                		(scripts/scr_input_update.gml, scripts/scr_recorder_event_from_keypress.gml)
 2            - Attack 2 input                                                (scripts/scr_input_update.gml, scripts/scr_recorder_event_from_keypress.gml)
 3            - Attack 3 input                                                (scripts/scr_input_update.gml, scripts/scr_recorder_event_from_keypress.gml)
 4            - Ultimate/manual special input                                 (scripts/scr_input_update.gml, scripts/scr_recorder_event_from_keypress.gml)
@@ -60,8 +60,4 @@ Esc / Backspace - Back/cancel in menus                                        (o
 Arrow Keys or W/A/S/D - Navigate menu and pause selections                    (objects/obj_menu_controller/Step_0.gml, objects/obj_pause_menu/Step_0.gml)
 Arrow Left/Right or A/D - Adjust master volume slider                         (scripts/scr_ui_master_volume_panel_update.gml)
 
-[Development Utilities]
-(none retained)
 
-[Diagnostics]
-(none retained)
