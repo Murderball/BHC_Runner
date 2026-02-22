@@ -1,7 +1,5 @@
 function scr_start_boss_level()
 {
-    if (script_exists(scr_disarm_boss_goto_on_song_end)) scr_disarm_boss_goto_on_song_end();
-
     if (variable_global_exists("LEVEL_MODE") && global.LEVEL_MODE == "boss") return;
 
     // ====================================================

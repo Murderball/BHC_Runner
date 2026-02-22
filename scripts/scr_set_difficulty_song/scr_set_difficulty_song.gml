@@ -74,12 +74,6 @@ function scr_set_difficulty_song(_diff, _reason)
     var off = (variable_global_exists("OFFSET")) ? global.OFFSET : 0.0;
     audio_sound_set_track_position(global.song_handle, t_now + off);
 
-    // Song restarted -> restart end-of-song boss routing timer with new difficulty song.
-    if (script_exists(scr_arm_boss_goto_on_song_end) && script_exists(scr_boss_room_for_level)) {
-        var _boss_room = scr_boss_room_for_level(lk);
-        scr_arm_boss_goto_on_song_end(global.song_sound, _boss_room);
-    }
-
     // Preserve paused state
     if (was_paused) audio_pause_sound(global.song_handle);
 
