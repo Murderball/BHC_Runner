@@ -15,7 +15,7 @@ function scr_recorder_event_from_keypress(_t, _take_events)
             t: real(_t),
             kind: "jump",
             act: global.ACT_JUMP,
-            spr: spr_note_jump,
+            spr: scr_note_sprite("jump"),
             lane: 0,
             grid8: q.grid8,
             err: q.err,
@@ -32,7 +32,7 @@ function scr_recorder_event_from_keypress(_t, _take_events)
             t: real(_t),
             kind: "duck",
             act: global.ACT_DUCK,
-            spr: spr_note_duck,
+            spr: scr_note_sprite("duck"),
             lane: 0,
             grid8: q.grid8,
             err: q.err,
@@ -49,7 +49,7 @@ function scr_recorder_event_from_keypress(_t, _take_events)
             t: real(_t),
             kind: "atk1",
             act: global.ACT_ATK1,
-            spr: spr_note_attk1,
+            spr: scr_note_sprite("atk1"),
             lane: 0,
             grid8: q.grid8,
             err: q.err,
@@ -61,8 +61,7 @@ function scr_recorder_event_from_keypress(_t, _take_events)
 
     if (keyboard_check_pressed(ord("2")))
     {
-        var atk2_spr = spr_note_attk2;
-        if (script_exists(scr_note_sprite_index)) atk2_spr = scr_note_sprite_index(global.ACT_ATK2);
+        var atk2_spr = scr_note_sprite("atk2");
 
         q = scr_recorder_quantize_to_eighth(_t, bpm_now);
         ev = {
@@ -91,7 +90,7 @@ function scr_recorder_event_from_keypress(_t, _take_events)
             t: real(_t),
             kind: "atk3",
             act: global.ACT_ATK3,
-            spr: spr_note_attk3,
+            spr: scr_note_sprite("atk3"),
             lane: 2,
             grid8: q.grid8,
             err: q.err,
@@ -108,7 +107,7 @@ function scr_recorder_event_from_keypress(_t, _take_events)
             t: real(_t),
             kind: "ultimate",
             act: global.ACT_ULT,
-            spr: spr_note_ultimate,
+            spr: scr_note_sprite("ult"),
             lane: 3,
             grid8: q.grid8,
             err: q.err,

@@ -249,8 +249,7 @@ function scr_draw_gameplay_gui()
         var note_act = string_lower(string(nref.act));
 
 
-        var spr = spr_note_attk1;
-        if (script_exists(scr_note_sprite_index)) spr = scr_note_sprite_index(note_act);
+        var spr = scr_note_sprite(note_act);
 
         var note_col = c_white;
         if (script_exists(scr_note_draw_color)) note_col = scr_note_draw_color(nref.act);
