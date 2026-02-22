@@ -47,6 +47,17 @@ var hit_options = (mx >= btn_options.x && mx <= btn_options.x + btn_options.w &&
 var hit_game    = (mx >= btn_game.x    && mx <= btn_game.x    + btn_game.w    && my >= btn_game.y    && my <= btn_game.y    + btn_game.h);
 var hit_exit    = (mx >= btn_exit.x    && mx <= btn_exit.x    + btn_exit.w    && my >= btn_exit.y    && my <= btn_exit.y    + btn_exit.h);
 
+var options_is_active = options_open || ((menu_state == 0) && ((start_open && sel_main == 3) || (!start_open && sel_main == 1) || hit_options));
+options_panel_x = btn_options.x + btn_options.w + 20;
+options_panel_y = btn_options.y - 12;
+options_slider_min_x = options_panel_x + options_panel_pad;
+options_slider_max_x = options_panel_x + options_panel_w - options_panel_pad - 80;
+options_slider_y = options_panel_y + 102;
+
+var hit_options_slider_track = options_is_active && (mx >= options_slider_min_x - 8) && (mx <= options_slider_max_x + 8) && (my >= options_slider_y - 12) && (my <= options_slider_y + 12);
+var _knob_x_now = lerp(options_slider_min_x, options_slider_max_x, clamp(global.AUDIO_MASTER, 0, 1));
+var hit_options_slider_knob = options_is_active && point_distance(mx, my, _knob_x_now, options_slider_y) <= 16;
+
 // Left-page difficulty hits (BEFORE pan)
 var hit_easyL   = (mx >= btn_easyL.x   && mx <= btn_easyL.x   + btn_easyL.w   && my >= btn_easyL.y   && my <= btn_easyL.y   + btn_easyL.h);
 var hit_normalL = (mx >= btn_normalL.x && mx <= btn_normalL.x + btn_normalL.w && my >= btn_normalL.y && my <= btn_normalL.y + btn_normalL.h);
@@ -113,16 +124,6 @@ switch (menu_state)
         // -----------------------------
         if (options_open)
         {
-            if (menu_game_open)
-            {
-                scr_menu_game_update(id, ok, back, left, right, up, down);
-                if (!menu_game_open)
-                {
-                    sel_opt = 0;
-                }
-                break;
-            }
-
             if (used_kb && sel_opt < 0) sel_opt = 0;
 
             if (kb_nav_timer <= 0)
@@ -131,36 +132,93 @@ switch (menu_state)
                 else if (hit_exit) sel_opt = 1;
             }
 
-            if (up) sel_opt = (sel_opt - 1 + 2) mod 2;
-            if (down) sel_opt = (sel_opt + 1) mod 2;
+            if (!menu_game_adjust)
+            {
+                if (up) sel_opt = (sel_opt - 1 + 2) mod 2;
+                if (down) sel_opt = (sel_opt + 1) mod 2;
+            }
+
+            var _vol_changed = false;
+            var _dir = (right ? 1 : 0) - (left ? 1 : 0);
+
+            if (sel_opt == 0)
+            {
+                if (right && !menu_game_adjust) menu_game_adjust = true;
+
+                if (_dir != 0)
+                {
+                    global.AUDIO_MASTER = clamp(global.AUDIO_MASTER + (options_slider_step * _dir), 0.0, 1.0);
+                    _vol_changed = true;
+                }
+            }
+
+            if (mouse_check_button_pressed(mb_left) && (hit_options_slider_track || hit_options_slider_knob))
+            {
+                sel_opt = 0;
+                menu_game_adjust = true;
+                options_slider_drag = true;
+            }
+            if (!mouse_check_button(mb_left)) options_slider_drag = false;
+
+            if (options_slider_drag)
+            {
+                var _t = clamp((mx - options_slider_min_x) / max(1, options_slider_max_x - options_slider_min_x), 0, 1);
+                global.AUDIO_MASTER = _t;
+                _vol_changed = true;
+            }
+            else if (mouse_check_button_pressed(mb_left) && hit_options_slider_track)
+            {
+                var _tm = clamp((mx - options_slider_min_x) / max(1, options_slider_max_x - options_slider_min_x), 0, 1);
+                global.AUDIO_MASTER = _tm;
+                _vol_changed = true;
+            }
 
             if (click)
             {
-                if (hit_game)
-                {
-                    sel_opt = 0;
-                    scr_menu_game_open(id);
-                }
-                else if (hit_exit)
+                if (hit_exit)
                 {
                     sel_opt = 1;
                     game_end();
                 }
-                else { options_open = false; sel_opt = -1; }
+                else if (!hit_game && !hit_options_slider_track && !hit_options_slider_knob)
+                {
+                    options_open = false;
+                    menu_game_adjust = false;
+                    options_slider_drag = false;
+                    sel_opt = -1;
+                }
             }
 
             if (ok)
             {
                 if (sel_opt < 0) sel_opt = 0;
-                if (sel_opt == 0) scr_menu_game_open(id);
-                else game_end();
+
+                if (sel_opt == 0)
+                {
+                    menu_game_adjust = !menu_game_adjust;
+                }
+                else
+                {
+                    game_end();
+                }
             }
 
             if (back)
             {
-                options_open = false;
-                menu_game_open = false;
-                sel_opt = -1;
+                if (menu_game_adjust) menu_game_adjust = false;
+                else
+                {
+                    options_open = false;
+                    menu_game_open = false;
+                    options_slider_drag = false;
+                    sel_opt = -1;
+                }
+            }
+
+            if (_vol_changed)
+            {
+                scr_audio_settings_apply();
+                scr_audio_settings_save();
             }
 
             break;
