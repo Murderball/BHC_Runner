@@ -479,6 +479,7 @@ function scr_globals_init()
     if (script_exists(scr_bg_debug_reverse_init)) scr_bg_debug_reverse_init();
 
     if (script_exists(scr_markers_load)) scr_markers_load();
+    if (script_exists(scr_story_router_init)) scr_story_router_init();
     if (script_exists(scr_story_events_from_markers)) scr_story_events_from_markers();
     if (script_exists(scr_perf_init)) scr_perf_init();
 }

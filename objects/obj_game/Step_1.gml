@@ -10,6 +10,8 @@ scr_input_update();
 // STORY PAUSES (must run after input, before autoplay/gameplay)
 scr_story_pause_update();
 
+if (script_exists(scr_story_marker_update)) scr_story_marker_update();
+
 scr_difficulty_update();
 
 
@@ -20,12 +22,6 @@ if (script_exists(scr_note_trigger_inputs_update)) {
 
 
 scr_chart_hot_reload_step();
-
-// Toggle "notes trigger inputs" (debug)
-if (keyboard_check_pressed(vk_f8)) {
-    global.note_triggers_on = !global.note_triggers_on;
-    show_debug_message("note_triggers_on = " + string(global.note_triggers_on));
-}
 
 // ---------------- PERF SPIKE DETECTOR ----------------
 if (variable_global_exists("dbg_spike_on") && global.dbg_spike_on)

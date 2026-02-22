@@ -1,4 +1,5 @@
 /// obj_game : Step Event
+if (script_exists(scr_master_keybind_debug_update)) scr_master_keybind_debug_update();
 if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED) exit;
 if (!variable_instance_exists(id, "duck_timer")) duck_timer = 0;
 if (duck_timer > 0) duck_timer--;
@@ -45,12 +46,13 @@ if (variable_global_exists("STARTUP_LOADING") && global.STARTUP_LOADING)
     exit;
 }
 
+
+if (variable_global_exists("COUNTDOWN_ACTIVE") && global.COUNTDOWN_ACTIVE) exit;
+
 // Input recorder manager (authoritative recorder)
 if (!instance_exists(obj_input_recorder_machine)) {
     instance_create_layer(0, 0, "Instances", obj_input_recorder_machine);
 }
-
-if (keyboard_check_pressed(vk_f7)) global.DEBUG_CHUNK_BOXES = !global.DEBUG_CHUNK_BOXES;
 
 // --------------------------------------------------
 // F12: Toggle window between monitor 1 and monitor 2
