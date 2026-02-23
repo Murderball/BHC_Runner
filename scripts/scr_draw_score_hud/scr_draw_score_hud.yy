@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_draw_score_hud",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_draw_score_hud",
+  "parent":{
+    "name":"Scoring",
+    "path":"folders/Scripts/Scoring.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

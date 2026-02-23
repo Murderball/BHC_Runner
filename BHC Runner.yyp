@@ -700,6 +700,7 @@
     {"id":{"name":"scr_restart_level","path":"scripts/scr_restart_level/scr_restart_level.yy",},},
     {"id":{"name":"scr_return_to_title","path":"scripts/scr_return_to_title/scr_return_to_title.yy",},},
     {"id":{"name":"scr_score_get_snapshot","path":"scripts/scr_score_get_snapshot/scr_score_get_snapshot.yy",},},
+    {"id":{"name":"scr_draw_score_hud","path":"scripts/scr_draw_score_hud/scr_draw_score_hud.yy",},},
     {"id":{"name":"scr_score_init","path":"scripts/scr_score_init/scr_score_init.yy",},},
     {"id":{"name":"scr_score_on_judge","path":"scripts/scr_score_on_judge/scr_score_on_judge.yy",},},
     {"id":{"name":"scr_score_reset_run","path":"scripts/scr_score_reset_run/scr_score_reset_run.yy",},},
