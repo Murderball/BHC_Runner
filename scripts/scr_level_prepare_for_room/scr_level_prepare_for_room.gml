@@ -68,11 +68,19 @@ function scr_level_prepare_for_room(_room_id)
     // ====================================================
     // AUDIO / MUSIC (PER-LEVEL SONG MAP)
     // ====================================================
-    global.DIFF_SONG_SOUND = {
-        easy   : scr_level_song_sound(__level_idx, "easy"),
-        normal : scr_level_song_sound(__level_idx, "normal"),
-        hard   : scr_level_song_sound(__level_idx, "hard")
-    };
+    if (global.LEVEL_KEY == "level01") {
+        global.DIFF_SONG_SOUND = {
+            easy   : snd_song_1_easy,
+            normal : snd_song_1_normal,
+            hard   : snd_song_1_hard
+        };
+    } else {
+        global.DIFF_SONG_SOUND = {
+            easy   : snd_song_3_easy,
+            normal : snd_song_3_normal,
+            hard   : snd_song_3_hard
+        };
+    }
 
     // Ensure song_sound matches current difficulty selection (unless boss)
     if (!(variable_global_exists("LEVEL_MODE") && global.LEVEL_MODE == "boss"))
