@@ -4,13 +4,13 @@
 function scr_note_sprite(_action_key_or_id)
 {
     static note_map = {
-        jump:      { new_name: "spr_jump_note",     old_name: "spr_note_jump" },
-        duck:      { new_name: "spr_duck_note",     old_name: "spr_note_duck" },
-        atk1:      { new_name: "spr_attack_1_note", old_name: "spr_note_attk1" },
-        atk2:      { new_name: "spr_attack_2_note", old_name: "spr_note_attk2" },
-        atk3:      { new_name: "spr_attack_3_note", old_name: "spr_note_attk3" },
-        ult:       { new_name: "spr_ultimate_note", old_name: "spr_note_ultimate" },
-        ultimate:  { new_name: "spr_ultimate_note", old_name: "spr_note_ultimate" }
+        jump:      { new_name: "spr_jump_note" },
+        duck:      { new_name: "spr_duck_note"},
+        atk1:      { new_name: "spr_attack_1_note"},
+        atk2:      { new_name: "spr_attack_2_note"},
+        atk3:      { new_name: "spr_attack_3_note"},
+        ult:       { new_name: "spr_ultimate_note"},
+        ultimate:  { new_name: "spr_ultimate_note"}
     };
 
     if (!variable_global_exists("NOTE_SPR")) {
