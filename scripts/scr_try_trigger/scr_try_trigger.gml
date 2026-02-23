@@ -4,6 +4,8 @@
 
 function scr_try_trigger(act)
 {
+    if (!variable_global_exists("__dbg_note_hit_once")) global.__dbg_note_hit_once = false;
+
     // ----------------------------
     // TEST ROOM: always succeed
     // ----------------------------
@@ -66,6 +68,15 @@ function scr_try_trigger(act)
     if (!variable_struct_exists(nn, "hit_fx_pow")) nn.hit_fx_pow = 0;
     nn.hit_fx_t = nn.hit_fx_dur;
     nn.hit_fx_pow = 1;
+
+    if (!global.__dbg_note_hit_once)
+    {
+        global.__dbg_note_hit_once = true;
+        show_debug_message("[NOTE HIT PATH] scr_try_trigger called act=" + string(act)
+            + " judge=" + string(result)
+            + " hit_fx_t=" + string(nn.hit_fx_t)
+            + " hit_fx_dur=" + string(nn.hit_fx_dur));
+    }
 
     if (variable_global_exists("dbg_song_overlay_on") && global.dbg_song_overlay_on) {
         show_debug_message("[NOTE HIT FX] id=" + string(best_i) + " fx_dur=" + string(nn.hit_fx_dur));
