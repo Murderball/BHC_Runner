@@ -68,7 +68,13 @@ if (back && move_cd <= 0 && !menu_game_open)
 
         if (!(variable_global_exists("editor_on") && global.editor_on) &&
             variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
-            if (variable_global_exists("song_handle") && global.song_handle >= 0) {
+            if (variable_global_exists("pending_song_start") && global.pending_song_start
+                && script_exists(scr_song_play_from)
+                && variable_global_exists("song_sound") && audio_exists(global.song_sound)) {
+                var resume_t = (variable_global_exists("pause_song_time") && is_real(global.pause_song_time)) ? max(0.0, global.pause_song_time) : 0.0;
+                scr_song_play_from(global.song_sound, resume_t);
+                global.pending_song_start = false;
+            } else if (variable_global_exists("song_handle") && global.song_handle >= 0) {
                 audio_resume_sound(global.song_handle);
             }
         }
@@ -204,7 +210,13 @@ if (activate)
 
             if (!(variable_global_exists("editor_on") && global.editor_on) &&
                 variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
-                if (variable_global_exists("song_handle") && global.song_handle >= 0) {
+                if (variable_global_exists("pending_song_start") && global.pending_song_start
+                    && script_exists(scr_song_play_from)
+                    && variable_global_exists("song_sound") && audio_exists(global.song_sound)) {
+                    var resume_t2 = (variable_global_exists("pause_song_time") && is_real(global.pause_song_time)) ? max(0.0, global.pause_song_time) : 0.0;
+                    scr_song_play_from(global.song_sound, resume_t2);
+                    global.pending_song_start = false;
+                } else if (variable_global_exists("song_handle") && global.song_handle >= 0) {
                     audio_resume_sound(global.song_handle);
                 }
             }

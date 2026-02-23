@@ -98,6 +98,14 @@ function scr_set_difficulty_song(_diff, _reason)
     var was_playing = scr_song_is_valid_inst(global.song_state.inst)
         && (audio_is_playing(global.song_state.inst) || global.song_playing);
 
+    var in_editor = variable_global_exists("editor_on") && global.editor_on;
+    var in_menu = variable_global_exists("in_menu") && global.in_menu;
+    var in_loading = variable_global_exists("in_loading") && global.in_loading;
+    var game_paused = (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED)
+        || (variable_global_exists("STORY_PAUSED") && global.STORY_PAUSED)
+        || (variable_global_exists("transport_paused") && global.transport_paused);
+    var audio_start_allowed = !in_editor && !in_menu && !in_loading && !game_paused;
+
     var t_now = 0.0;
     if (script_exists(scr_song_get_pos_s)) t_now = scr_song_get_pos_s();
 
@@ -110,6 +118,19 @@ function scr_set_difficulty_song(_diff, _reason)
         }
         return;
     }
+
+    if (!audio_start_allowed) {
+        global.song_state.sound_asset = new_snd;
+        global.pending_song_start = true;
+        if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+            show_debug_message("[AUDIO] diff switch deferred (not running) diff=" + d
+                + " reason=" + string(_reason)
+                + " snd=" + scr_song_asset_label(new_snd));
+        }
+        return;
+    }
+
+    global.pending_song_start = false;
 
     scr_song_play_from(new_snd, t_now);
 
