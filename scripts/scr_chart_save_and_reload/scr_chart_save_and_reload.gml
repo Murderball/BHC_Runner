@@ -65,6 +65,19 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
     var diff = string_lower(string(_diff));
     if (diff != "easy" && diff != "normal" && diff != "hard") diff = "normal";
 
+    global.editor_chart_level_index = level_index;
+    global.editor_chart_diff = diff;
+    global.editor_chart_is_boss = _is_boss;
+    global.editor_chart_filename = scr_chart_filename(level_index, diff, _is_boss);
+    global.editor_chart_fullpath = path;
+    global.editor_chart_path = path;
+    global.editor_level_index = level_index;
+
+    var level_key = "level";
+    if (level_index < 10) level_key += "0";
+    level_key += string(level_index);
+    global.LEVEL_KEY = level_key;
+
     global.chart_file = path;
 
     if (script_exists(scr_chart_load)) scr_chart_load();
@@ -76,13 +89,6 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
     if (variable_global_exists("editor_time") && variable_global_exists("CHART_LEN_S") && is_real(global.CHART_LEN_S)) {
         global.editor_time = clamp(global.editor_time, 0, max(0, global.CHART_LEN_S));
     }
-
-    global.editor_chart_level_index = level_index;
-    global.editor_chart_diff = diff;
-    global.editor_chart_is_boss = _is_boss;
-    global.editor_chart_filename = scr_chart_filename(level_index, diff, _is_boss);
-    global.editor_chart_fullpath = path;
-    global.editor_chart_path = path;
 
     global.editor_active_chart_label = global.editor_chart_filename;
 
@@ -98,11 +104,6 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
 
         show_debug_message("[EDITOR AUDIO] chart switch level=level" + (string(level_index < 10 ? "0" + string(level_index) : string(level_index)))
             + " diff=" + diff + " path=" + path);
-    }
-
-    global.editor_level_index = level_index;
-    if (variable_global_exists("LEVEL_KEY")) {
-        global.LEVEL_KEY = "level0" + string(level_index);
     }
 
     show_debug_message("[editor chart switch] " + path);

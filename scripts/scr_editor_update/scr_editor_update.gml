@@ -301,8 +301,25 @@ function scr_editor_update() {
 
     if (sh && !typing_text)
     {
-        if (!variable_global_exists("editor_level_index")) global.editor_level_index = 1;
-        global.editor_level_index = clamp(global.editor_level_index, 1, 6);
+        var _sh_room_name = string_lower(room_get_name(room));
+        var _sh_room_level_idx = -1;
+        if (string_pos("rm_level", _sh_room_name) == 1) {
+            var _sh_num = string_copy(_sh_room_name, string_length("rm_level") + 1, 2);
+            if (string_length(_sh_num) == 2) {
+                var _sh_d1 = string_char_at(_sh_num, 1);
+                var _sh_d2 = string_char_at(_sh_num, 2);
+                if (_sh_d1 >= "0" && _sh_d1 <= "9" && _sh_d2 >= "0" && _sh_d2 <= "9") {
+                    _sh_room_level_idx = real(_sh_num);
+                }
+            }
+        }
+
+        if (_sh_room_level_idx >= 1) {
+            global.editor_level_index = clamp(_sh_room_level_idx, 1, 6);
+        } else {
+            if (!variable_global_exists("editor_level_index")) global.editor_level_index = 1;
+            global.editor_level_index = clamp(global.editor_level_index, 1, 6);
+        }
 
         if (keyboard_check_pressed(ord("1"))) {
             scr_editor_chart_switch(
@@ -953,8 +970,54 @@ if (mm_type == "difficulty" || mm_type == "diff")
 
 		if (ctrl && !typing_text)
 		{
-		    if (!variable_global_exists("editor_level_index")) global.editor_level_index = 1;
-		    global.editor_level_index = clamp(global.editor_level_index, 1, 6);
+		    var _ctrl_room_name = string_lower(room_get_name(room));
+		    var _ctrl_level_key = "";
+		    var _ctrl_level_idx = -1;
+
+		    if (string_pos("rm_level", _ctrl_room_name) == 1) {
+		        var _ctrl_num = string_copy(_ctrl_room_name, string_length("rm_level") + 1, 2);
+		        if (string_length(_ctrl_num) == 2) {
+		            var _ctrl_d1 = string_char_at(_ctrl_num, 1);
+		            var _ctrl_d2 = string_char_at(_ctrl_num, 2);
+		            if (_ctrl_d1 >= "0" && _ctrl_d1 <= "9" && _ctrl_d2 >= "0" && _ctrl_d2 <= "9") {
+		                _ctrl_level_idx = real(_ctrl_num);
+		            }
+		        }
+		    }
+
+		    if (_ctrl_level_idx >= 1 && _ctrl_level_idx <= 99) {
+		        var _ctrl_ns = string(_ctrl_level_idx);
+		        if (string_length(_ctrl_ns) < 2) _ctrl_ns = "0" + _ctrl_ns;
+		        _ctrl_level_key = "level" + _ctrl_ns;
+		        global.editor_level_index = clamp(_ctrl_level_idx, 1, 6);
+		    } else {
+		        var _ctrl_path = "";
+		        if (variable_global_exists("editor_chart_path")) _ctrl_path = string_lower(string(global.editor_chart_path));
+		        if (_ctrl_path == "" && variable_global_exists("editor_chart_fullpath")) _ctrl_path = string_lower(string(global.editor_chart_fullpath));
+		        if (_ctrl_path == "" && variable_global_exists("chart_file")) _ctrl_path = string_lower(string(global.chart_file));
+
+		        var _ctrl_tag = "charts/level";
+		        var _ctrl_pos = string_pos(_ctrl_tag, _ctrl_path);
+		        if (_ctrl_pos > 0) {
+		            var _ctrl_num_pos = _ctrl_pos + string_length(_ctrl_tag);
+		            if (_ctrl_num_pos + 1 <= string_length(_ctrl_path)) {
+		                var _ctrl_p1 = string_char_at(_ctrl_path, _ctrl_num_pos);
+		                var _ctrl_p2 = string_char_at(_ctrl_path, _ctrl_num_pos + 1);
+		                if (_ctrl_p1 >= "0" && _ctrl_p1 <= "9" && _ctrl_p2 >= "0" && _ctrl_p2 <= "9") {
+		                    var _ctrl_ns2 = _ctrl_p1 + _ctrl_p2;
+		                    _ctrl_level_idx = real(_ctrl_ns2);
+		                    _ctrl_level_key = "level" + _ctrl_ns2;
+		                }
+		            }
+		        }
+
+		        if (_ctrl_level_key == "") {
+		            _ctrl_level_key = "level01";
+		            _ctrl_level_idx = 1;
+		        }
+
+		        global.editor_level_index = clamp(_ctrl_level_idx, 1, 6);
+		    }
 
 		    if (keyboard_check_pressed(ord("7"))) global.editor_level_index = max(1, global.editor_level_index - 1);
 		    if (keyboard_check_pressed(ord("8"))) global.editor_level_index = min(6, global.editor_level_index + 1);
