@@ -225,3 +225,37 @@ ts_level3_master
 - Quarantined total directories: 131.
 - Category counts: scripts=45, rooms=4, sprites=58, sounds=16, shaders=1, tilesets=7.
 - Top-level folders touched: `_legacy/`, `scripts/`, `rooms/`, `sprites/`, `sounds/`, `shaders/`, `tilesets/`, `docs/`.
+
+## Hard Delete Results
+
+### Method and Gate Evidence
+- Iterated each quarantined item under `/_legacy` and ran exact-name repository searches excluding `/_legacy` (`rg -n -F "<asset_name>" --glob '!_legacy/**'`).
+- For each `.yy` inside candidate folders, extracted UUID-like IDs and searched them globally (same exclusion) to catch non-name references.
+- Applied dynamic/string safety by treating any out-of-legacy name hit as **UNCERTAIN** (kept), including script names appearing in comments/resource-order metadata and UUID hits.
+- Room/object reachability: no `_legacy` room/object names were referenced by active routing or creation paths outside docs.
+
+### Deleted (proven unused)
+- **Scripts deleted (38):**
+  `scr_attack_perform`, `scr_bg_sprite_for_ci`, `scr_chart_now_time`, `scr_chunk_cache_preload_step`, `scr_chunk_clear_ci`, `scr_chunk_clear_room`, `scr_chunk_stamp_ci`, `scr_chunk_stamp_room`, `scr_chunk_stamp_step`, `scr_chunk_stamp_to_maps_step`, `scr_datafile_read_all_text`, `scr_editor_delete_enemy_at_cursor`, `scr_editor_place_enemy`, `scr_enemy_budget_init`, `scr_enemy_damage_active`, `scr_enemy_window_times`, `scr_find_hittable_note_in_lane`, `scr_fmod_event_play`, `scr_fmod_event_stop`, `scr_get_level_start_time`, `scr_lane_pressed`, `scr_layer_first_sprite_name`, `scr_music_bar_math`, `scr_music_pause_start`, `scr_music_pause_stop`, `scr_player_jump`, `scr_player_lane_from_y`, `scr_restamp_visuals_for_loaded_slots`, `scr_room_flow_init`, `scr_section_index_from_ci`, `scr_set_difficulty_band`, `scr_story_events_refresh`, `scr_tiledata_shift_index`, `scr_time_camera_left`, `scr_time_hitline`, `scr_time_to_beat`, `scr_try_hit_jump_note`, `scr_visual_bands_init`.
+- **Objects deleted:** none (no quarantined legacy objects present).
+- **Rooms deleted (4):** `rm_chunk_break_1_00`, `rm_level02`, `rm_level04`, `rm_level06`.
+- **Assets deleted (80):**
+  - Sprites deleted (56): all quarantined sprites except `spr_ts_boss3` and `spr_ts_hard1`.
+  - Sounds deleted (16): all quarantined sounds.
+  - Shaders deleted (1): `shd_saturation`.
+  - Tilesets deleted (7): all quarantined tilesets.
+
+### Kept (UNCERTAIN) and reasons
+- **Scripts kept (7):**
+  - `scr_bg_set_by_difficulty`, `scr_bg_sprite_for_slot_diff`, `scr_bg_warmup`, `scr_bg_warmup_fast`, `scr_enemy_damage_lane`: name hits found in active script trees (`scripts/scr_attack_notes_in_window/...`).
+  - `scr_chunk_files_init`: name appears in active code comments as dependency context.
+  - `scr_room_fps`: appears in active `scripts/BHC Runner.resource_order` metadata.
+- **Sprites kept (2):**
+  - `spr_ts_boss3`, `spr_ts_hard1`: UUID hits found outside `_legacy`; retained to avoid unsafe deletion.
+
+### Batch Execution + Build/Compile Checks
+- Batch 1 (scripts): deleted proven-unused script folders, then verified no active-manifest references for sampled deleted scripts.
+- Batch 2 (objects): no-op (no legacy objects existed).
+- Batch 3 (rooms): deleted all proven-unused legacy rooms; only docs references remain outside `_legacy`.
+- Batch 4 (remaining assets): deleted proven-unused sprites/sounds/shaders/tilesets; only docs references remain outside `_legacy` for sampled names.
+- **Compile gate note:** this environment has no GameMaker build CLI (`Igor`/`gmassetcompiler`) installed, so full compile execution is not available here. Static reference gates were applied conservatively; uncertain items were retained.
