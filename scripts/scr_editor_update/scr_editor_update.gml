@@ -58,6 +58,7 @@ function scr_editor_update() {
 	        "DIFFICULTY:\n" +
 	        "  Ctrl+1..6      Quick Switch Chart (normal+boss)\n" +
 	        "  Ctrl+7/8       Prev/Next Level Index\n" +
+	        "  Shift+1..6     Note kind (Atk1/Atk2/Atk3/Ult/Jump/Duck)\n" +
 	        "  T              Toggle Difficulty Marker\n" +
 	        "  U              Toggle Camera Marker\n" +
 	        "  Shift+7/8/9    Marker Difficulty Toggle\n" +
@@ -293,53 +294,40 @@ function scr_editor_update() {
 
 
     // ----------------------------
-    // DIFFICULTY HOTKEYS (SHIFT + 1/2/3)
+    // Shift+1..6 note kind select (editor)
     // ----------------------------
-    var sh = keyboard_check(vk_shift) || keyboard_check(vk_lshift) || keyboard_check(vk_rshift);
+    var sh = keyboard_check(vk_shift);
+    var ctrl = keyboard_check(vk_control)
+            || keyboard_check(vk_lcontrol)
+            || keyboard_check(vk_rcontrol);
     var typing_text = (variable_global_exists("editor_typing") && global.editor_typing)
         || (variable_global_exists("ui_text_input") && global.ui_text_input);
 
-    if (sh && !typing_text)
+    if (sh && !ctrl && !typing_text && global.editor_tool != "marker" && global.editor_tool != "phrase")
     {
-        var _sh_room_name = string_lower(room_get_name(room));
-        var _sh_room_level_idx = -1;
-        if (string_pos("rm_level", _sh_room_name) == 1) {
-            var _sh_num = string_copy(_sh_room_name, string_length("rm_level") + 1, 2);
-            if (string_length(_sh_num) == 2) {
-                var _sh_d1 = string_char_at(_sh_num, 1);
-                var _sh_d2 = string_char_at(_sh_num, 2);
-                if (_sh_d1 >= "0" && _sh_d1 <= "9" && _sh_d2 >= "0" && _sh_d2 <= "9") {
-                    _sh_room_level_idx = real(_sh_num);
-                }
+        if (keyboard_check_pressed(ord("1"))) { global.editor_act = global.ACT_ATK1; global.editor_act_i = 2; }
+        if (keyboard_check_pressed(ord("2"))) { global.editor_act = global.ACT_ATK2; global.editor_act_i = 3; }
+        if (keyboard_check_pressed(ord("3"))) { global.editor_act = global.ACT_ATK3; global.editor_act_i = 4; }
+        if (keyboard_check_pressed(ord("4"))) { global.editor_act = global.ACT_ULT;  global.editor_act_i = 5; }
+
+        if (keyboard_check_pressed(ord("5"))) {
+            var spr_jump_note_idx = asset_get_index("spr_jump_note");
+            if (spr_jump_note_idx != -1 && asset_get_type(spr_jump_note_idx) == asset_sprite) {
+                global.editor_act = global.ACT_JUMP;
+                global.editor_act_i = 0;
+            } else {
+                show_debug_message("[EDITOR] Missing sprite spr_jump_note");
             }
         }
 
-        if (_sh_room_level_idx >= 1) {
-            global.editor_level_index = clamp(_sh_room_level_idx, 1, 6);
-        } else {
-            if (!variable_global_exists("editor_level_index")) global.editor_level_index = 1;
-            global.editor_level_index = clamp(global.editor_level_index, 1, 6);
-        }
-
-        if (keyboard_check_pressed(ord("1"))) {
-            scr_editor_chart_switch(
-                scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "easy", false)),
-                global.editor_level_index, "easy", false
-            );
-        }
-
-        if (keyboard_check_pressed(ord("2"))) {
-            scr_editor_chart_switch(
-                scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "normal", false)),
-                global.editor_level_index, "normal", false
-            );
-        }
-
-        if (keyboard_check_pressed(ord("3"))) {
-            scr_editor_chart_switch(
-                scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "hard", false)),
-                global.editor_level_index, "hard", false
-            );
+        if (keyboard_check_pressed(ord("6"))) {
+            var spr_duck_note_idx = asset_get_index("spr_duck_note");
+            if (spr_duck_note_idx != -1 && asset_get_type(spr_duck_note_idx) == asset_sprite) {
+                global.editor_act = global.ACT_DUCK;
+                global.editor_act_i = 1;
+            } else {
+                show_debug_message("[EDITOR] Missing sprite spr_duck_note");
+            }
         }
     }
 
@@ -962,9 +950,9 @@ if (mm_type == "difficulty" || mm_type == "diff")
 		    }
 		}
 
-		var ctrl = keyboard_check(vk_control)
-		        || keyboard_check(vk_lcontrol)
-		        || keyboard_check(vk_rcontrol);
+		ctrl = keyboard_check(vk_control)
+		    || keyboard_check(vk_lcontrol)
+		    || keyboard_check(vk_rcontrol);
 		typing_text = (variable_global_exists("editor_typing") && global.editor_typing)
 		    || (variable_global_exists("ui_text_input") && global.ui_text_input);
 

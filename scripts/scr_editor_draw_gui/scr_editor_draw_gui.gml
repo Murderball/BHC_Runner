@@ -51,7 +51,7 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
 
     draw_text(20, gui_h - 140,
         "MODE: " + string(global.editor_act) +
-        "   (1=Jump 2=Duck 3=Atk1 4=Atk2 5=Atk3)"
+        "   (Shift+1=Atk1 Shift+2=Atk2 Shift+3=Atk3 Shift+4=Ult Shift+5=Jump Shift+6=Duck)"
     );
 
     draw_text(10, 160,
