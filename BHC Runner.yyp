@@ -227,11 +227,6 @@
   ],
   "ForcedPrefabProjectReferences":[],
   "IncludedFiles":[
-    {"$GMIncludedFile":"","%Name":"Level_1.bank","CopyToMask":-1,"filePath":"audio/fmod/Desktop","name":"Level_1.bank","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
-    {"$GMIncludedFile":"","%Name":"Level_3.bank","CopyToMask":-1,"filePath":"audio/fmod/Desktop","name":"Level_3.bank","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
-    {"$GMIncludedFile":"","%Name":"Master.bank","CopyToMask":-1,"filePath":"audio/fmod/Desktop","name":"Master.bank","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
-    {"$GMIncludedFile":"","%Name":"Master.strings.bank","CopyToMask":-1,"filePath":"audio/fmod/Desktop","name":"Master.strings.bank","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
-    {"$GMIncludedFile":"","%Name":"Menu_Sounds.bank","CopyToMask":-1,"filePath":"audio/fmod/Desktop","name":"Menu_Sounds.bank","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"boss_level1_easy.json","CopyToMask":-1,"filePath":"datafiles/charts/level01","name":"boss_level1_easy.json","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"boss_level1_hard.json","CopyToMask":-1,"filePath":"datafiles/charts/level01","name":"boss_level1_hard.json","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"boss_level1_normal.json","CopyToMask":-1,"filePath":"datafiles/charts/level01","name":"boss_level1_normal.json","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
