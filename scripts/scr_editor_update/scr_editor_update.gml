@@ -111,7 +111,7 @@ function scr_editor_update() {
     {
         global.marker_default = {
             type: "pause",
-            snd_name: "snd_pause",
+            snd_name: "Pause_Loop",
             fade_out_ms: 150,
             fade_in_ms: 150,
             wait_confirm: true,

@@ -352,7 +352,7 @@ function scr_globals_init()
         global.song_sound = real(global.DIFF_SONG_SOUND[$ __song_diff]);
     }
 
-    global.METRONOME_SOUND = snd_metronome;
+    global.METRONOME_SOUND = -1;
     global.METRONOME_VOL = 5.0;
     global.metro_last_beat = -1000000000;
     global.metro_next_t = 0.0;
@@ -401,7 +401,7 @@ function scr_globals_init()
     {
         global.marker_default = {
             type         : "pause",
-            snd_name      : "snd_pause", // string name
+            snd_name      : "Pause_Loop", // string name
             fade_out_ms   : 150,
             fade_in_ms    : 150,
             wait_confirm  : true,
@@ -414,7 +414,7 @@ function scr_globals_init()
     // Marker editor sound dropdown list (string asset names)
     if (!variable_global_exists("marker_sound_list") || is_undefined(global.marker_sound_list))
     {
-        global.marker_sound_list = ["snd_pause"];
+        global.marker_sound_list = ["Pause_Loop"];
     }
 
     // ====================================================
@@ -436,7 +436,7 @@ function scr_globals_init()
             charts: { easy: scr_chart_fullpath(scr_chart_filename(1, "easy", true)),
                      normal: scr_chart_fullpath(scr_chart_filename(1, "normal", true)),
                      hard: scr_chart_fullpath(scr_chart_filename(1, "hard", true)) },
-            song  : snd_boss_music_level1,
+            song  : "Level 1.4 -Hunger (BOSS)",
             offset: 0.0,
             bpm   : 180
         },
@@ -448,7 +448,7 @@ function scr_globals_init()
             charts: { easy: scr_chart_fullpath(scr_chart_filename(3, "easy", true)),
                      normal: scr_chart_fullpath(scr_chart_filename(3, "normal", true)),
                      hard: scr_chart_fullpath(scr_chart_filename(3, "hard", true)) },
-            song  : snd_boss_music_level3,
+            song  : "Level 3.4 - Faceless(BOSS)",
             offset: 0.0,
             bpm   : 180
         }
@@ -459,7 +459,7 @@ function scr_globals_init()
     global.BOSS_ROOM = rm_boss_3;
     global.BOSS_BOSSES = [ obj_boss_punky_level3 ];
     global.BOSS_CHART_FILE = "";
-    global.BOSS_SONG_SOUND = snd_boss_music_level3;
+    global.BOSS_SONG_SOUND = "Level 3.4 - Faceless(BOSS)";
     global.BOSS_OFFSET = 0.0;
     global.BOSS_BPM = 180;
 

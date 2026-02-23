@@ -123,6 +123,8 @@ function scr_apply_difficulty(_diff, _reason, _swap_visual, _swap_audio)
         }
     }
 
+    if (script_exists(scr_audio_route_apply)) scr_audio_route_apply();
+
     show_debug_message("[DIFF] apply -> " + d + " (" + string(_reason) + ")"
         + " same=" + string(same) + " V=" + string(_swap_visual) + " A=" + string(_swap_audio));
 }

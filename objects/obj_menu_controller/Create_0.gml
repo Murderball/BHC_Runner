@@ -10,7 +10,8 @@ cam = view_camera[0];
 // Menu music handle
 if (!variable_global_exists("menu_music_handle")) global.menu_music_handle = -1;
 if (global.menu_music_handle < 0) {
-    global.menu_music_handle = audio_play_sound(snd_title_track, 1, true);
+    scr_audio_route_apply();
+    global.menu_music_handle = -1;
 }
 
 // ----------------------------------

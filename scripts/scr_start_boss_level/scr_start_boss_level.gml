@@ -33,7 +33,7 @@ function scr_start_boss_level()
     global.ROOM_FLOW_ENABLED = false;
 
     // 2) stop current song
-    if (global.song_handle >= 0) audio_stop_sound(global.song_handle);
+    scr_fmod_music_stop();
     global.song_handle = -1;
     global.song_playing = false;
 
@@ -93,9 +93,9 @@ function scr_start_boss_level()
     }
 
     // 5) start boss music at 0
-    global.song_handle = audio_play_sound(global.song_sound, 1, false);
+    global.song_handle = -1;
     global.song_playing = true;
-    audio_sound_set_track_position(global.song_handle, 0 + global.OFFSET);
+    scr_audio_route_apply();
 
     // Boss timeline reset (used if audio timing is briefly unavailable)
     global.BOSS_TIMELINE_S = 0.0;
