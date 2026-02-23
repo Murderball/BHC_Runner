@@ -45,7 +45,6 @@ function scr_globals_init()
 
     // Input/keybind debug gate
     if (!variable_global_exists("DEBUG_INPUT")) global.DEBUG_INPUT = false;
-    if (!variable_global_exists("DEBUG_MEDIA_TRACE")) global.DEBUG_MEDIA_TRACE = false;
 
     // ====================================================
     // RUN SESSION IDS

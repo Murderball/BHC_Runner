@@ -1,17 +1,8 @@
-/// scr_apply_difficulty_change(new_diff, optional_level_key)
-function scr_apply_difficulty_change(new_diff, optional_level_key)
+/// scr_apply_difficulty_change(new_diff)
+function scr_apply_difficulty_change(new_diff)
 {
     var d = string_lower(string(new_diff));
     if (d != "easy" && d != "normal" && d != "hard") d = "normal";
-
-    var explicit_key = "";
-    if (!is_undefined(optional_level_key)) explicit_key = string_lower(string(optional_level_key));
-
-    var lk = explicit_key;
-    if (lk == "" && script_exists(scr_active_level_key)) lk = scr_active_level_key();
-    if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) lk = string_lower(global.LEVEL_KEY);
-
-    scr_media_trace("scr_apply_difficulty_change", lk, d, -1);
 
     // If nothing changes, bail
     if (variable_global_exists("difficulty") && string_lower(string(global.difficulty)) == d) return;
@@ -20,15 +11,20 @@ function scr_apply_difficulty_change(new_diff, optional_level_key)
     global.difficulty = d;
     global.DIFFICULTY = d;
 
+    // -------------------------------------------------
     // Ensure we have a valid level key (used for charts)
+    // -------------------------------------------------
+    var lk = "";
+    if (script_exists(scr_active_level_key)) lk = scr_active_level_key();
+    if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) lk = string_lower(global.LEVEL_KEY);
     if (lk == "") return;
     global.LEVEL_KEY = lk;
 
-    var __level_idx = real(string_copy(lk, 6, string_length(lk) - 5));
-    if (__level_idx < 1) return;
-
-    __level_idx = clamp(__level_idx, 1, 99);
-
+    // -------------------------------------------------
+    // Rebuild DIFF_CHART per level so chart swaps
+    // don't accidentally keep Level 3 paths on Level 1.
+    // -------------------------------------------------
+    var __level_idx = clamp(real(string_copy(lk, 6, string_length(lk) - 5)), 1, 99);
     global.DIFF_CHART = {
         easy   : scr_chart_fullpath(scr_chart_filename(__level_idx, "easy", false)),
         normal : scr_chart_fullpath(scr_chart_filename(__level_idx, "normal", false)),
@@ -44,9 +40,14 @@ function scr_apply_difficulty_change(new_diff, optional_level_key)
     // --- VISUAL / TILEMAP SWITCH ---
     if (variable_global_exists("diff_swap_visual") && global.diff_swap_visual)
     {
-        if (script_exists(scr_chunk_refresh_visual_for_difficulty)) {
+        // Prefer your existing system if present
+        if (script_exists(scr_chunk_refresh_visual_for_difficulty))
+        {
             scr_chunk_refresh_visual_for_difficulty(d);
-        } else {
+        }
+        else
+        {
+            // Soft fallback: request refresh flags if your renderer watches them
             if (variable_global_exists("DIFF_REFRESH_NEEDS_RESTAMP") && global.DIFF_REFRESH_NEEDS_RESTAMP)
                 global.force_chunk_refresh = true;
 
@@ -58,7 +59,7 @@ function scr_apply_difficulty_change(new_diff, optional_level_key)
     if (variable_global_exists("diff_swap_audio") && global.diff_swap_audio)
     {
         if (script_exists(scr_set_difficulty_song))
-            scr_set_difficulty_song(d, "diff_change", lk);
+            scr_set_difficulty_song(d, "diff_change");
     }
 
     show_debug_message("[DIFF] change -> " + d + " level=" + string(lk));

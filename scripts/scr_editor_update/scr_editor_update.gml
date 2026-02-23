@@ -62,7 +62,7 @@ function scr_editor_update() {
 	        "  U              Toggle Camera Marker\n" +
 	        "  Shift+7/8/9    Marker Difficulty Toggle\n" +
 
-
+	       
 
 	        "SPAWN MARKER (type=spawn):\n" +
 	        "  G              cycle enemy_kind\n" +
@@ -738,7 +738,7 @@ if (mm_type == "difficulty" || mm_type == "diff")
 			    mm.wait_confirm = false;
 			    mm.loop = false;
 			    mm.choices = [];
-
+				
 
 			    global.markers[global.editor_marker_sel] = mm;
 			    scr_story_events_from_markers();
@@ -840,7 +840,7 @@ if (mm_type == "difficulty" || mm_type == "diff")
         // Marker tool should not run note placement/dragging below
         return;
     }
-
+	
     // ----------------------------
     // Timeline Zoom Controls
     // ----------------------------
@@ -956,48 +956,38 @@ if (mm_type == "difficulty" || mm_type == "diff")
 		    if (!variable_global_exists("editor_level_index")) global.editor_level_index = 1;
 		    global.editor_level_index = clamp(global.editor_level_index, 1, 6);
 
-		    // Resolve current editor level from the active chart path first (authoritative for CTRL+1/2/3).
-		    var hotkey_chart_path = "";
-		    if (variable_global_exists("editor_chart_path")) hotkey_chart_path = string(global.editor_chart_path);
-		    if (hotkey_chart_path == "" && variable_global_exists("chart_file")) hotkey_chart_path = string(global.chart_file);
-
-		    var hotkey_level_key = "";
-		    if (script_exists(scr_editor_level_key_from_path)) hotkey_level_key = scr_editor_level_key_from_path(hotkey_chart_path);
-
-		    var hotkey_level_index = global.editor_level_index;
-		    if (hotkey_level_key != "") {
-		        hotkey_level_index = clamp(real(string_copy(hotkey_level_key, 6, string_length(hotkey_level_key) - 5)), 1, 6);
-		        global.editor_level_index = hotkey_level_index;
-		    }
-
 		    if (keyboard_check_pressed(ord("7"))) global.editor_level_index = max(1, global.editor_level_index - 1);
 		    if (keyboard_check_pressed(ord("8"))) global.editor_level_index = min(6, global.editor_level_index + 1);
-		    hotkey_level_index = global.editor_level_index;
 
-		    // Update editor chart context before applying difficulty switch.
-		    function _editor_hotkey_switch(_diff, _is_boss) {
-		        var next_path = scr_chart_fullpath(scr_chart_filename(hotkey_level_index, _diff, _is_boss));
-		        global.editor_chart_path = next_path;
-		        global.editor_chart_fullpath = next_path;
-		        var next_level_key = "level" + ((hotkey_level_index < 10) ? ("0" + string(hotkey_level_index)) : string(hotkey_level_index));
-		        global.LEVEL_KEY = next_level_key;
+		    if (keyboard_check_pressed(ord("1")))
+		        scr_editor_chart_switch(
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "easy", false)),
+		            global.editor_level_index, "easy", false);
 
-		        if (!_is_boss) {
-		            global.DIFFICULTY = _diff;
-		            global.difficulty = _diff;
-		            if (script_exists(scr_set_difficulty_song)) scr_set_difficulty_song(_diff, "editor_ctrl_hotkey", next_level_key);
-		        }
+		    if (keyboard_check_pressed(ord("2")))
+		        scr_editor_chart_switch(
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "normal", false)),
+		            global.editor_level_index, "normal", false);
 
-		        scr_editor_chart_switch(next_path, hotkey_level_index, _diff, _is_boss);
-		    }
+		    if (keyboard_check_pressed(ord("3")))
+		        scr_editor_chart_switch(
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "hard", false)),
+		            global.editor_level_index, "hard", false);
 
-		    if (keyboard_check_pressed(ord("1"))) _editor_hotkey_switch("easy", false);
-		    if (keyboard_check_pressed(ord("2"))) _editor_hotkey_switch("normal", false);
-		    if (keyboard_check_pressed(ord("3"))) _editor_hotkey_switch("hard", false);
+		    if (keyboard_check_pressed(ord("4")))
+		        scr_editor_chart_switch(
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "easy", true)),
+		            global.editor_level_index, "easy", true);
 
-		    if (keyboard_check_pressed(ord("4"))) _editor_hotkey_switch("easy", true);
-		    if (keyboard_check_pressed(ord("5"))) _editor_hotkey_switch("normal", true);
-		    if (keyboard_check_pressed(ord("6"))) _editor_hotkey_switch("hard", true);
+		    if (keyboard_check_pressed(ord("5")))
+		        scr_editor_chart_switch(
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "normal", true)),
+		            global.editor_level_index, "normal", true);
+
+		    if (keyboard_check_pressed(ord("6")))
+		        scr_editor_chart_switch(
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "hard", true)),
+		            global.editor_level_index, "hard", true);
 		}
 
 
