@@ -65,9 +65,15 @@ function scr_level_song_sound(_level_index, _diff)
         }
         return -1;
     }
+show_debug_message("[AUDIO] resolve song DEBUG level=" + string(level_key) + " diff=" + string(diff));
+show_debug_message("[AUDIO] song_map is_struct=" + string(is_struct(global.song_map)));
 
-    global.song_no_music_level = false;
-
+if (is_struct(global.song_map)) {
+    show_debug_message("[AUDIO] song_map keys? (try level03/level3/3): "
+        + string(variable_struct_exists(global.song_map, "level03")) + ", "
+        + string(variable_struct_exists(global.song_map, "level3")) + ", "
+        + string(variable_struct_exists(global.song_map, "3")));
+}
     if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
         show_debug_message("[AUDIO] resolve song level=" + level_key + " diff=" + diff
             + " -> " + asset_get_name(snd_asset) + " [" + string(snd_asset) + "]");
