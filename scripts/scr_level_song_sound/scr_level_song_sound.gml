@@ -76,7 +76,7 @@ if (is_struct(global.song_map)) {
 }
     if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
         show_debug_message("[AUDIO] resolve song level=" + level_key + " diff=" + diff
-            + " -> " + asset_get_name(snd_asset) + " [" + string(snd_asset) + "]");
+            + " -> " + scr_song_asset_label(snd_asset) + " [" + string(snd_asset) + "]");
     }
 
     return snd_asset;

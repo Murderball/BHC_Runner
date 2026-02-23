@@ -87,7 +87,7 @@ function scr_set_difficulty_song(_diff, _reason)
     if (!was_playing) {
         global.song_state.sound_asset = new_snd;
         if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
-            show_debug_message("[AUDIO] selected idle diff=" + d + " snd=" + asset_get_name(new_snd));
+            show_debug_message("[AUDIO] selected idle diff=" + d + " snd=" + scr_song_asset_label(new_snd));
         }
         return;
     }
@@ -97,7 +97,7 @@ function scr_set_difficulty_song(_diff, _reason)
     if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
         show_debug_message("[AUDIO] diff switch -> " + d
             + " reason=" + string(_reason)
-            + " snd=" + asset_get_name(new_snd)
+            + " snd=" + scr_song_asset_label(new_snd)
             + " t=" + string_format(t_now, 1, 3));
     }
 }
