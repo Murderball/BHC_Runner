@@ -237,7 +237,8 @@ function scr_editor_update() {
             scr_story_events_from_markers();
 			if (script_exists(scr_difficulty_events_from_markers)) scr_difficulty_events_from_markers();
             if (global.song_handle >= 0) audio_stop_sound(global.song_handle);
-            scr_song_play_from(global.editor_time);
+            var snd_on_exit = (variable_global_exists("song_sound")) ? global.song_sound : -1;
+            scr_song_play_from(snd_on_exit, global.editor_time);
 			return;
         }
     }
