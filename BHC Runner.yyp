@@ -1025,8 +1025,9 @@
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
-    {"roomId":{"name":"rm_menu","path":"rooms/rm_menu/rm_menu.yy",},},
     {"roomId":{"name":"rm_level01","path":"rooms/rm_level01/rm_level01.yy",},},
+    {"roomId":{"name":"rm_menu","path":"rooms/rm_menu/rm_menu.yy",},},
+    {"roomId":{"name":"rm_level03","path":"rooms/rm_level03/rm_level03.yy",},},
     {"roomId":{"name":"rm_batch_export","path":"rooms/rm_batch_export/rm_batch_export.yy",},},
     {"children":[
         {"children":[
@@ -1346,7 +1347,6 @@
             {"roomId":{"name":"rm_chunk_outro_07","path":"rooms/rm_chunk_outro_07/rm_chunk_outro_07.yy",},},
           ],"groupName":"outro",},
         {"roomId":{"name":"rm_boss_3","path":"rooms/rm_boss_3/rm_boss_3.yy",},},
-        {"roomId":{"name":"rm_level03","path":"rooms/rm_level03/rm_level03.yy",},},
       ],"groupName":"Level_3_Master",},
     {"children":[
         {"children":[
