@@ -95,6 +95,10 @@ function scr_song_debug_draw(_x, _y)
     draw_text(px, py + 64, "audio_pos: " + string_format(audio_pos, 1, 3));
     draw_text(px, py + 80, "chart_time: " + string_format(chart_pos, 1, 3));
     draw_text(px, py + 96, "drift: " + string_format(drift, 1, 3));
+
+    if (variable_global_exists("song_no_music_level") && global.song_no_music_level) {
+        draw_text(px, py + 112, "No music for this level");
+    }
 }
 
 /// scr_song_play_from(time_sec)

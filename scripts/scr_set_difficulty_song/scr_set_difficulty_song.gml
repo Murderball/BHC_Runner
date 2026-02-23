@@ -31,6 +31,14 @@ function scr_set_difficulty_song(_diff, _reason)
         hard   : scr_level_song_sound(level_idx, "hard")
     };
 
+    if (variable_global_exists("song_no_music_level") && global.song_no_music_level) {
+        if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+            show_debug_message("[AUDIO] diff song switch skipped (no music for level=" + string(level_idx)
+                + ") reason=" + string(_reason));
+        }
+        return;
+    }
+
     var new_snd = real(global.DIFF_SONG_SOUND[$ d]);
     if (!audio_exists(new_snd)) {
         new_snd = real(global.DIFF_SONG_SOUND.normal);
@@ -45,7 +53,9 @@ function scr_set_difficulty_song(_diff, _reason)
     }
 
     if (!audio_exists(new_snd)) {
-        show_debug_message("[AUDIO] difficulty song switch failed: no valid asset for level=" + string(lk) + " diff=" + d);
+        if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+            show_debug_message("[AUDIO] difficulty song switch failed: no valid asset for level=" + string(lk) + " diff=" + d);
+        }
         return;
     }
 
