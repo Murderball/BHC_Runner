@@ -54,7 +54,8 @@ function scr_globals_init()
 
 	// Current level key (used by level-aware systems)
 	if (!variable_global_exists("LEVEL_KEY") || !is_string(global.LEVEL_KEY) || global.LEVEL_KEY == "")
-    global.LEVEL_KEY = "level03";
+    global.LEVEL_KEY = "level01";
+    global.level_key = global.LEVEL_KEY;
 
 
     // ====================================================
@@ -266,6 +267,7 @@ function scr_globals_init()
     __editor_level_idx = clamp(__editor_level_idx, 1, 6);
 
     global.editor_level_index = __editor_level_idx;
+    global.editor_level_key = "level0" + string(__editor_level_idx);
     global.editor_chart_level_index = __editor_level_idx;
     global.editor_chart_diff = global.DIFFICULTY;
     global.editor_chart_is_boss = (variable_global_exists("LEVEL_MODE") && global.LEVEL_MODE == "boss");
