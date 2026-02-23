@@ -41,7 +41,6 @@
     {"name":"Scripts_Story","order":17,"path":"folders/Scripts/Scripts_Story.yy",},
     {"name":"Warmup","order":18,"path":"folders/Scripts/Warmup.yy",},
     {"name":"Shaders","order":9,"path":"folders/Shaders.yy",},
-    {"name":"Sounds","order":10,"path":"folders/Sounds.yy",},
   ],
   "ResourceOrderSettings":[
     {"name":"FMOD","order":1,"path":"extensions/FMOD/FMOD.yy",},
