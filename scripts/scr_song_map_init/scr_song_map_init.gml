@@ -2,7 +2,7 @@
 /// Builds one-time level/difficulty -> song sound mapping using direct asset constants.
 function scr_song_map_init()
 {
-    if (variable_global_exists("SONG_SND_READY") && global.SONG_SND_READY
+    if (variable_global_exists("__song_map_inited") && global.__song_map_inited
         && variable_global_exists("SONG_SND") && is_struct(global.SONG_SND)) {
         return;
     }
@@ -17,4 +17,5 @@ function scr_song_map_init()
     };
 
     global.SONG_SND_READY = true;
+    global.__song_map_inited = true;
 }
