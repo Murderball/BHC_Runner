@@ -81,9 +81,7 @@ if (!_isBossRoom)
 {
     // If we entered a new gameplay room and something is still playing, stop it.
     // (Prevents carrying boss music into a main level room.)
-    if (global.song_handle >= 0 && audio_is_playing(global.song_handle)) {
-        audio_stop_sound(global.song_handle);
-    }
+    scr_fmod_music_stop();
     global.song_handle = -1;
     global.song_playing = false;
 }
@@ -97,7 +95,7 @@ else
 
         if (!global.song_playing) _needRestart = true;
         if (global.song_handle < 0) _needRestart = true;
-        if (global.song_handle >= 0 && !audio_is_playing(global.song_handle)) _needRestart = true;
+        if (false) _needRestart = true;
 
         // If a song is playing but it's not the boss song, restart.
         if (!_needRestart) {
@@ -110,7 +108,7 @@ else
 
         if (_needRestart)
         {
-            if (global.song_handle >= 0) audio_stop_sound(global.song_handle);
+            scr_fmod_music_stop();
             global.song_handle = -1;
             global.song_playing = false;
 
@@ -196,3 +194,5 @@ if (!global.song_playing && global.song_handle < 0)
     // Now start the song ONCE (using global.song_sound via scr_begin_level_play)
     scr_begin_level_play(0.0);
 }
+
+if (script_exists(scr_audio_route_apply)) scr_audio_route_apply();

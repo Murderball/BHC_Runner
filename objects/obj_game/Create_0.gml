@@ -110,3 +110,7 @@ bg_near.parallax     = 0.85;
 bg_near.fade_s       = 0.15;
 bg_near.target_depth = 11000;
 scr_bg_manager_apply_profile(bg_near);
+
+if (script_exists(scr_fmod_init)) scr_fmod_init();
+if (script_exists(scr_audio_route_apply)) scr_audio_route_apply();
+global.audio_last_room = room;

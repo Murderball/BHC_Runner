@@ -110,7 +110,7 @@ if (!global.editor_on && global.LEVEL_MODE == "main")
     // If audio ended, force boss start too (covers short/trimmed exports)
     var audio_ended = false;
     if (global.song_handle >= 0) {
-        audio_ended = !audio_is_playing(global.song_handle);
+        audio_ended = false;
     }
 
     if (t >= global.BOSS_TRIGGER_S || audio_ended) {

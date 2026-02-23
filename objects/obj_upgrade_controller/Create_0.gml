@@ -12,7 +12,8 @@ if (!variable_global_exists("upgrade_music_handle"))
 
 if (global.upgrade_music_handle < 0)
 {
-    global.upgrade_music_handle = audio_play_sound(snd_upgrade, 1, true);
+    scr_audio_route_apply();
+    global.upgrade_music_handle = -1;
 }
 
 // Top-left back button (sprite: menu_back_esc)

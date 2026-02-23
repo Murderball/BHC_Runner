@@ -15,7 +15,7 @@ function scr_begin_level_play(_start_t)
 
     // If menu music was playing, stop it
     if (variable_global_exists("menu_music_handle") && global.menu_music_handle >= 0) {
-        audio_stop_sound(global.menu_music_handle);
+        scr_fmod_music_stop();
         global.menu_music_handle = -1;
     }
 
