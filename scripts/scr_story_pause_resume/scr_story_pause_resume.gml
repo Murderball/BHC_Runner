@@ -11,7 +11,15 @@ function scr_story_pause_resume(ev)
 
     // Resume + fade in the main song
     if (global.story_song_was_playing && global.song_handle >= 0) {
-        audio_resume_sound(global.song_handle);
+        if (variable_global_exists("pending_song_start") && global.pending_song_start
+            && script_exists(scr_song_play_from)
+            && variable_global_exists("song_sound") && audio_exists(global.song_sound)) {
+            var resume_t = (variable_global_exists("story_pause_song_t") && is_real(global.story_pause_song_t)) ? max(0.0, global.story_pause_song_t) : 0.0;
+            scr_song_play_from(global.song_sound, resume_t);
+            global.pending_song_start = false;
+        } else {
+            audio_resume_sound(global.song_handle);
+        }
 
         var ms = max(0, ev.fade_in_ms);
         audio_sound_gain(global.song_handle, 1.0, ms);
