@@ -59,7 +59,7 @@ if (menu_state == 0)
         }
     }
 
-    draw_btn_glow(btn_options.spr, btn_options.x - cx, btn_options.y - cy, glow_options, g_a, g_off);
+    draw_btn_glow(btn_options.spr, btn_options.x + 120, btn_options.y + 50, glow_options, g_a, g_off);
 
     var options_panel_visible = options_open || (start_open ? (sel_main == 3) : (sel_main == 1));
     if (options_panel_visible)
