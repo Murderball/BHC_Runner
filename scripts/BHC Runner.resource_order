@@ -217,6 +217,7 @@
     {"name":"scr_editor_selection_clear","order":9,"path":"scripts/scr_editor_selection_clear/scr_editor_selection_clear.yy",},
     {"name":"scr_editor_selection_has","order":10,"path":"scripts/scr_editor_selection_has/scr_editor_selection_has.yy",},
     {"name":"scr_editor_selection_remove","order":11,"path":"scripts/scr_editor_selection_remove/scr_editor_selection_remove.yy",},
+    {"name":"scr_editor_preview_music_set","order":12,"path":"scripts/scr_editor_preview_music_set/scr_editor_preview_music_set.yy",},
     {"name":"scr_editor_snap_time","order":12,"path":"scripts/scr_editor_snap_time/scr_editor_snap_time.yy",},
     {"name":"scr_editor_update","order":13,"path":"scripts/scr_editor_update/scr_editor_update.yy",},
     {"name":"scr_enemy_pick_sprite","order":1,"path":"scripts/scr_enemy_pick_sprite/scr_enemy_pick_sprite.yy",},

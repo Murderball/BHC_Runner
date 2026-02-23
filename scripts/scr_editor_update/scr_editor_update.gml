@@ -250,6 +250,8 @@ function scr_editor_update() {
 	// ----------------------------
 	if (!variable_global_exists("editor_act"))   global.editor_act = global.ACT_ATK1;
 	if (!variable_global_exists("editor_act_i")) global.editor_act_i = 0;
+	if (!variable_global_exists("editor_level_index")) global.editor_level_index = 1;
+	global.editor_level_index = clamp(global.editor_level_index, 1, 6);
 
 	// ----------------------------
 	// Ensure drag/marquee globals exist (prevents "not set before reading")
@@ -277,16 +279,30 @@ function scr_editor_update() {
 
 
     // ----------------------------
-    // ACTION MODE HOTKEYS (SHIFT + 1–5)
+    // EDITOR DIFFICULTY HOTKEYS (SHIFT + 1/2/3)
     // ----------------------------
-    var sh = keyboard_check(vk_shift);
+    var sh = keyboard_check(vk_shift) || keyboard_check(vk_lshift) || keyboard_check(vk_rshift);
+    var typing_locked = (variable_global_exists("editor_typing") && global.editor_typing)
+                     || (variable_global_exists("ui_text_input") && global.ui_text_input);
 
-	// Notes no longer support JUMP/DUCK actions.
-	// SHIFT+1..4 selects which NOTE action you place.
-	if (sh && keyboard_check_pressed(ord("1"))) { global.editor_act = global.ACT_ATK1; global.editor_act_i = 0; }
-	if (sh && keyboard_check_pressed(ord("2"))) { global.editor_act = global.ACT_ATK2; global.editor_act_i = 1; }
-	if (sh && keyboard_check_pressed(ord("3"))) { global.editor_act = global.ACT_ATK3; global.editor_act_i = 2; }
-	if (sh && keyboard_check_pressed(ord("4"))) { global.editor_act = global.ACT_ULT;  global.editor_act_i = 3; }
+	if (sh && !typing_locked && keyboard_check_pressed(ord("1"))) {
+		scr_editor_chart_switch(
+			scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "easy", false)),
+			global.editor_level_index, "easy", false
+		);
+	}
+	if (sh && !typing_locked && keyboard_check_pressed(ord("2"))) {
+		scr_editor_chart_switch(
+			scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "normal", false)),
+			global.editor_level_index, "normal", false
+		);
+	}
+	if (sh && !typing_locked && keyboard_check_pressed(ord("3"))) {
+		scr_editor_chart_switch(
+			scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "hard", false)),
+			global.editor_level_index, "hard", false
+		);
+	}
 
     // ----------------------------
     // Tool toggles
