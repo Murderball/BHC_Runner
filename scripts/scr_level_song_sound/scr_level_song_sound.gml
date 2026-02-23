@@ -28,14 +28,15 @@ function scr_level_song_sound(_level_index, _diff)
             }
         }
 
-        var miss_level_key = "level" + ((level_index < 10) ? ("0" + string(level_index)) : string(level_index));
-        scr_media_trace("scr_level_song_sound", miss_level_key, diff, -1);
         return -1;
     }
 
     var level_key = string(level_index);
-    var level_alias = (level_index == 1) ? "level01" : "level03";
     var snd_asset = -1;
+
+    var level_alias = level_key;
+    if (level_index == 1) level_alias = "level01";
+    if (level_index == 3) level_alias = "level03";
 
     if (variable_global_exists("SONG_SND") && ds_exists(global.SONG_SND, ds_type_map)
         && ds_map_exists(global.SONG_SND, level_alias)) {
@@ -50,19 +51,29 @@ function scr_level_song_sound(_level_index, _diff)
     }
 
     if (!is_real(snd_asset) || snd_asset == -1) {
+        if (variable_global_exists("song_sound") && is_real(global.song_sound) && global.song_sound != -1) {
+            snd_asset = global.song_sound;
+        }
+    }
+
+    if (!is_real(snd_asset) || snd_asset == -1) {
         global.song_no_music_level = false;
         var warn_key = "scr_level_song_sound_missing_" + level_key + "_" + diff;
         if (!variable_struct_exists(global.__audio_warned, warn_key)) {
             global.__audio_warned[$ warn_key] = true;
             show_debug_message("[AUDIO] resolve song FAILED: level=" + level_key + " diff=" + diff);
         }
-        scr_media_trace("scr_level_song_sound", level_alias, diff, -1);
         return -1;
     }
+show_debug_message("[AUDIO] resolve song DEBUG level=" + string(level_key) + " diff=" + string(diff));
+show_debug_message("[AUDIO] song_map is_struct=" + string(is_struct(global.song_map)));
 
-    global.song_no_music_level = false;
-    scr_media_trace("scr_level_song_sound", level_alias, diff, snd_asset);
-
+if (is_struct(global.song_map)) {
+    show_debug_message("[AUDIO] song_map keys? (try level03/level3/3): "
+        + string(variable_struct_exists(global.song_map, "level03")) + ", "
+        + string(variable_struct_exists(global.song_map, "level3")) + ", "
+        + string(variable_struct_exists(global.song_map, "3")));
+}
     if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
         show_debug_message("[AUDIO] resolve song level=" + level_key + " diff=" + diff
             + " -> " + scr_song_asset_label(snd_asset) + " [" + string(snd_asset) + "]");

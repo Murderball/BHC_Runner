@@ -1,5 +1,5 @@
-/// scr_apply_difficulty(diff, reason, swap_visual, swap_audio, optional_level_key)
-function scr_apply_difficulty(_diff, _reason, _swap_visual, _swap_audio, _optional_level_key)
+/// scr_apply_difficulty(diff, reason, swap_visual, swap_audio)
+function scr_apply_difficulty(_diff, _reason, _swap_visual, _swap_audio)
 {
     // Defaults so old callers don't break
     if (is_undefined(_swap_visual)) _swap_visual = true;
@@ -10,15 +10,6 @@ function scr_apply_difficulty(_diff, _reason, _swap_visual, _swap_audio, _option
     if (d != "easy" && d != "normal" && d != "hard") d = "normal";
 
     var same = (variable_global_exists("DIFFICULTY") && string_lower(string(global.DIFFICULTY)) == d);
-
-    var explicit_key = "";
-    if (!is_undefined(_optional_level_key)) explicit_key = string_lower(string(_optional_level_key));
-
-    var resolved_level_key = explicit_key;
-    if (resolved_level_key == "" && script_exists(scr_active_level_key)) resolved_level_key = scr_active_level_key();
-    if (resolved_level_key == "" && variable_global_exists("LEVEL_KEY")) resolved_level_key = string_lower(string(global.LEVEL_KEY));
-
-    scr_media_trace("scr_apply_difficulty", resolved_level_key, d, -1);
 
     // Always keep both globals synced
     global.DIFFICULTY = d;
@@ -50,9 +41,7 @@ function scr_apply_difficulty(_diff, _reason, _swap_visual, _swap_audio, _option
 
     // Story markers are level+difficulty scoped; refresh when context changes.
     var lvl = "global";
-    if (resolved_level_key != "") {
-        lvl = resolved_level_key;
-    } else if (variable_global_exists("LEVEL_KEY")) {
+    if (variable_global_exists("LEVEL_KEY")) {
         lvl = string_lower(string(global.LEVEL_KEY));
         if (lvl == "") lvl = "global";
     }
@@ -130,7 +119,7 @@ function scr_apply_difficulty(_diff, _reason, _swap_visual, _swap_audio, _option
     {
         if (script_exists(scr_set_difficulty_song))
         {
-            scr_set_difficulty_song(d, _reason, resolved_level_key);
+            scr_set_difficulty_song(d, _reason);
         }
     }
 

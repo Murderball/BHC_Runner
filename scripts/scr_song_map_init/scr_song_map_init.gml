@@ -6,7 +6,6 @@ function scr_song_map_init()
         && variable_global_exists("SONG_SND") && ds_exists(global.SONG_SND, ds_type_map))
     {
         global.song_map = global.SONG_SND;
-        scr_media_trace("scr_song_map_init", "<na>", "<na>", -1);
         return;
     }
 
@@ -49,8 +48,6 @@ function scr_song_map_init()
 
     global.SONG_SND_READY = true;
     global.__song_map_inited = true;
-
-    scr_media_trace("scr_song_map_init", "<na>", "<na>", -1);
 
     if (global.AUDIO_DEBUG_LOG)
     {

@@ -237,10 +237,6 @@ function scr_song_play_from(time_sec)
             + " arg0_is_asset=" + string(arg0_is_audio_asset));
     }
 
-    var _trace_lk = "";
-    if (script_exists(scr_active_level_key)) _trace_lk = scr_active_level_key();
-    scr_media_trace("scr_song_play_from", _trace_lk, "<na>", snd_asset);
-
     // If request is invalid, KEEP current playback state
     if (!audio_exists(snd_asset)) {
         _audio_warn_once("scr_song_play_from_invalid_" + string(snd_asset),
