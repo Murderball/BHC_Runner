@@ -1,4 +1,4 @@
-/// scr_level_key_from_room([room_id]) -> "levelNN" or "" if unmapped.
+/// scr_level_key_from_room([room_id]) -> "level01", "level03", etc.
 function scr_level_key_from_room(_room_id)
 {
     var rid = (argument_count >= 1) ? _room_id : room;

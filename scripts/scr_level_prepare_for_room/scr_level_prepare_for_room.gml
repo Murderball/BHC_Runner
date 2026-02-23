@@ -10,17 +10,13 @@ function scr_level_prepare_for_room(_room_id)
         scr_globals_init();
     }
 
-    // Determine which level this room belongs to.
-    // Never overwrite a valid LEVEL_KEY with "".
+    // Determine which level this room belongs to
     var key = scr_level_key_from_room(rid);
-    if (!is_string(key) || key == "") {
-        if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY) && global.LEVEL_KEY != "") {
-            key = string_lower(global.LEVEL_KEY);
-        } else {
-            key = "level01";
-        }
+
+    // If LEVEL_KEY differs, update it
+    if (!variable_global_exists("LEVEL_KEY") || !is_string(global.LEVEL_KEY) || global.LEVEL_KEY != key) {
+        global.LEVEL_KEY = key;
     }
-    global.LEVEL_KEY = key;
 	// --------------------------------------------------
 	// Keep boss settings synced with LEVEL_KEY
 	// --------------------------------------------------

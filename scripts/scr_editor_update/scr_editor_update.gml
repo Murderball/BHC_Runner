@@ -956,17 +956,8 @@ if (mm_type == "difficulty" || mm_type == "diff")
 		    if (!variable_global_exists("editor_level_index")) global.editor_level_index = 1;
 		    global.editor_level_index = clamp(global.editor_level_index, 1, 6);
 
-		    var room_level_key = scr_level_key_from_room(room);
-		    if (room_level_key != "") {
-		        var room_level_index = clamp(real(string_copy(room_level_key, 6, string_length(room_level_key) - 5)), 1, 6);
-		        global.editor_level_index = room_level_index;
-		        global.LEVEL_KEY = room_level_key;
-		    }
-
-		    if (room_level_key == "") {
-		        if (keyboard_check_pressed(ord("7"))) global.editor_level_index = max(1, global.editor_level_index - 1);
-		        if (keyboard_check_pressed(ord("8"))) global.editor_level_index = min(6, global.editor_level_index + 1);
-		    }
+		    if (keyboard_check_pressed(ord("7"))) global.editor_level_index = max(1, global.editor_level_index - 1);
+		    if (keyboard_check_pressed(ord("8"))) global.editor_level_index = min(6, global.editor_level_index + 1);
 
 		    if (keyboard_check_pressed(ord("1")))
 		        scr_editor_chart_switch(
