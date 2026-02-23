@@ -205,9 +205,9 @@
     {"$GMFolder":"","%Name":"Upgrade Room","folderPath":"folders/Rooms/GameWide/Upgrade Room.yy","name":"Upgrade Room","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Utility","folderPath":"folders/Rooms/Utility.yy","name":"Utility","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Scripts","folderPath":"folders/Scripts.yy","name":"Scripts","resourceType":"GMFolder","resourceVersion":"2.0",},
-    {"$GMFolder":"","%Name":"Scoring","folderPath":"folders/Scripts/Scoring.yy","name":"Scoring","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Other","folderPath":"folders/Scripts/Other.yy","name":"Other","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Recorder","folderPath":"folders/Scripts/Recorder.yy","name":"Recorder","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"Scoring","folderPath":"folders/Scripts/Scoring.yy","name":"Scoring","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Scripts_Audio","folderPath":"folders/Scripts/Scripts_Audio.yy","name":"Scripts_Audio","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Scripts_Backgrounds","folderPath":"folders/Scripts/Scripts_Backgrounds.yy","name":"Scripts_Backgrounds","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Scripts_Batch_Export","folderPath":"folders/Scripts/Scripts_Batch_Export.yy","name":"Scripts_Batch_Export","resourceType":"GMFolder","resourceVersion":"2.0",},
@@ -1025,8 +1025,8 @@
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
-    {"roomId":{"name":"rm_level01","path":"rooms/rm_level01/rm_level01.yy",},},
     {"roomId":{"name":"rm_menu","path":"rooms/rm_menu/rm_menu.yy",},},
+    {"roomId":{"name":"rm_level01","path":"rooms/rm_level01/rm_level01.yy",},},
     {"roomId":{"name":"rm_batch_export","path":"rooms/rm_batch_export/rm_batch_export.yy",},},
     {"children":[
         {"children":[
