@@ -5,7 +5,10 @@ function scr_editor_preview_music_set(_level_index, _diff)
     if (!variable_global_exists("editor_on") || !global.editor_on) return;
 
     var level_index = clamp(floor(real(_level_index)), 1, 6);
-    if (script_exists(scr_song_map_init)) scr_song_map_init();
+    if (!variable_global_exists("__song_map_inited") || !global.__song_map_inited) {
+        scr_song_map_init();
+        global.__song_map_inited = true;
+    }
     var diff = string_lower(string(_diff));
     if (diff != "easy" && diff != "normal" && diff != "hard") diff = "normal";
 

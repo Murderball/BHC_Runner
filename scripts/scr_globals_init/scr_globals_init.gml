@@ -313,7 +313,11 @@ function scr_globals_init()
     global.music_name = ""; // keep as string
     global.music_fade_ms = 350;
 
-    if (script_exists(scr_song_map_init)) scr_song_map_init();
+    if (!variable_global_exists("__song_map_inited") || !global.__song_map_inited)
+    {
+        scr_song_map_init();
+        global.__song_map_inited = true;
+    }
 
     var __song_level_idx = 1;
     if (is_string(global.LEVEL_KEY) && string_length(global.LEVEL_KEY) >= 6) {
