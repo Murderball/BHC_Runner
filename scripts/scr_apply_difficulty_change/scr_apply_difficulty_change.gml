@@ -14,15 +14,17 @@ function scr_apply_difficulty_change(new_diff)
     // -------------------------------------------------
     // Ensure we have a valid level key (used for charts)
     // -------------------------------------------------
-    var lk = "level03";
-    if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) lk = global.LEVEL_KEY;
-    else global.LEVEL_KEY = lk;
+    var lk = "";
+    if (script_exists(scr_active_level_key)) lk = scr_active_level_key();
+    if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) lk = string_lower(global.LEVEL_KEY);
+    if (lk == "") return;
+    global.LEVEL_KEY = lk;
 
     // -------------------------------------------------
     // Rebuild DIFF_CHART per level so chart swaps
     // don't accidentally keep Level 3 paths on Level 1.
     // -------------------------------------------------
-    var __level_idx = clamp(real(string_copy(lk, 6, string_length(lk) - 5)), 1, 6);
+    var __level_idx = clamp(real(string_copy(lk, 6, string_length(lk) - 5)), 1, 99);
     global.DIFF_CHART = {
         easy   : scr_chart_fullpath(scr_chart_filename(__level_idx, "easy", false)),
         normal : scr_chart_fullpath(scr_chart_filename(__level_idx, "normal", false)),
