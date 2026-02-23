@@ -13,6 +13,10 @@ function scr_draw_gameplay_gui()
     var gw = display_get_gui_width();
     var gh = display_get_gui_height();
 
+    if (!variable_global_exists("dbg_song_overlay_on")) global.dbg_song_overlay_on = false;
+    if (keyboard_check_pressed(vk_f10)) global.dbg_song_overlay_on = !global.dbg_song_overlay_on;
+
+
 	// --------------------------------------------------
 	// Song timeline track (RED bar) + vertical playhead (WHITE, beat-pulsed)
 	// --------------------------------------------------
@@ -212,6 +216,10 @@ function scr_draw_gameplay_gui()
     draw_set_color(core_col);
     draw_rectangle(hit_x - core_w * 0.5, y0, hit_x + core_w * 0.5, y1, false);
 
+
+    if (global.dbg_song_overlay_on && script_exists(scr_song_debug_draw)) {
+        scr_song_debug_draw(20, 80);
+    }
 
     if (!variable_global_exists("chart") || is_undefined(global.chart)) return;
 

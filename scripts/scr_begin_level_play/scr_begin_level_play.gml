@@ -25,6 +25,11 @@ function scr_begin_level_play(_start_t)
         global.song_handle = -1;
     }
 
+    if (script_exists(scr_song_state_ensure)) {
+        scr_song_state_ensure();
+        global.song_state.inst = -1;
+    }
+
     global.song_playing = false;
 
     // ----------------------------------------------------
@@ -54,22 +59,8 @@ function scr_begin_level_play(_start_t)
         if (variable_global_exists("BOSS_SONG_SOUND")) global.song_sound = global.BOSS_SONG_SOUND;
         if (variable_global_exists("BOSS_OFFSET"))     global.OFFSET     = global.BOSS_OFFSET;
 
-        // Start boss music
-        global.song_handle = audio_play_sound(global.song_sound, 1, false);
-
-        // If playback failed, bail safely
-        if (is_undefined(global.song_handle) || global.song_handle < 0) {
-            global.song_handle = -1;
-            global.song_playing = false;
-            return;
-        }
-
-        global.song_playing = true;
-
-        // Seek
         if (_start_t < 0) _start_t = 0;
-        var offb = (variable_global_exists("OFFSET")) ? global.OFFSET : 0.0;
-        audio_sound_set_track_position(global.song_handle, _start_t + offb);
+        scr_song_play_from(global.song_sound, _start_t);
         return;
     }
 
@@ -109,20 +100,6 @@ function scr_begin_level_play(_start_t)
         }
     }
 
-    global.song_handle = audio_play_sound(global.song_sound, 1, false);
-
-    // If playback failed, bail safely
-    if (is_undefined(global.song_handle) || global.song_handle < 0) {
-        global.song_handle = -1;
-        global.song_playing = false;
-        return;
-    }
-
-    global.song_playing = true;
-
-    // Seek
     if (_start_t < 0) _start_t = 0;
-
-    var off = (variable_global_exists("OFFSET")) ? global.OFFSET : 0.0;
-    audio_sound_set_track_position(global.song_handle, _start_t + off);
+    scr_song_play_from(global.song_sound, _start_t);
 }

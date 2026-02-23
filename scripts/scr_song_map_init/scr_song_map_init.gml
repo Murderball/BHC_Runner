@@ -18,4 +18,9 @@ function scr_song_map_init()
 
     global.SONG_SND_READY = true;
     global.__song_map_inited = true;
+
+    if (!variable_global_exists("AUDIO_DEBUG_LOG")) global.AUDIO_DEBUG_LOG = false;
+    if (global.AUDIO_DEBUG_LOG) {
+        show_debug_message("[AUDIO] song map init complete");
+    }
 }

@@ -1,10 +1,11 @@
 /// scr_set_difficulty_song(diff, reason)
-/// Swaps the currently selected main song based on difficulty.
-/// If song is playing, restarts new song at the same time (keeps pause state too).
+/// Swaps currently selected song based on difficulty with one controlled restart.
 function scr_set_difficulty_song(_diff, _reason)
 {
-    // Never override boss music
     if (variable_global_exists("LEVEL_MODE") && global.LEVEL_MODE == "boss") return;
+
+    if (!script_exists(scr_song_state_ensure)) return;
+    scr_song_state_ensure();
 
     var d = string_lower(string(_diff));
     if (d != "easy" && d != "normal" && d != "hard") d = "normal";
@@ -24,40 +25,58 @@ function scr_set_difficulty_song(_diff, _reason)
     };
 
     var new_snd = real(global.DIFF_SONG_SOUND[$ d]);
-
-    if (!is_real(new_snd) || new_snd == -1)
-    {
-        new_snd = scr_level_song_sound(level_idx, "normal");
+    if (!scr_song_is_valid_asset(new_snd)) {
+        new_snd = real(global.DIFF_SONG_SOUND.normal);
     }
 
-    if (variable_global_exists("song_sound") && global.song_sound == new_snd) return;
-
-    var had_handle = (variable_global_exists("song_handle") && global.song_handle >= 0);
-    var was_playing_flag = (variable_global_exists("song_playing") && global.song_playing);
-    var was_paused = (had_handle && was_playing_flag && !audio_is_playing(global.song_handle));
-
-    var t_now = 0.0;
-    if (script_exists(scr_song_time)) {
-        t_now = scr_song_time();
-    } else if (variable_global_exists("editor_time")) {
-        t_now = global.editor_time;
+    if (!scr_song_is_valid_asset(new_snd) && scr_song_is_valid_asset(global.song_state.sound_asset)) {
+        new_snd = global.song_state.sound_asset;
     }
 
-    global.song_sound = new_snd;
-
-    if (!had_handle || !was_playing_flag) {
-        show_debug_message("[SONG] selected " + d + " (idle) (" + string(_reason) + ") level=" + string(lk)
-            + " snd_asset=" + string(new_snd));
+    if (!scr_song_is_valid_asset(new_snd)) {
+        show_debug_message("[AUDIO] difficulty song switch failed: no valid asset for level=" + string(lk) + " diff=" + d);
         return;
     }
 
-    audio_stop_sound(global.song_handle);
-    global.song_handle = -1;
+    // Debounce repeated calls in same frame/reason.
+    if (!variable_global_exists("_last_diff_song_switch_ms")) global._last_diff_song_switch_ms = -1000000;
+    if (!variable_global_exists("_last_diff_song_switch_key")) global._last_diff_song_switch_key = "";
+
+    var switch_key = d + "|" + string(_reason) + "|" + string(new_snd);
+    if ((current_time - global._last_diff_song_switch_ms) < 100 && global._last_diff_song_switch_key == switch_key) {
+        return;
+    }
+
+    global._last_diff_song_switch_ms = current_time;
+    global._last_diff_song_switch_key = switch_key;
+
+    if (global.song_state.sound_asset == new_snd && scr_song_is_valid_inst(global.song_state.inst)) {
+        global.song_sound = new_snd;
+        return;
+    }
+
+    var was_playing = scr_song_is_valid_inst(global.song_state.inst)
+        && (audio_is_playing(global.song_state.inst) || global.song_playing);
+
+    var t_now = 0.0;
+    if (script_exists(scr_song_get_pos_s)) t_now = scr_song_get_pos_s();
+
+    global.song_sound = new_snd;
+
+    if (!was_playing) {
+        global.song_state.sound_asset = new_snd;
+        if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+            show_debug_message("[AUDIO] selected idle diff=" + d + " snd=" + asset_get_name(new_snd));
+        }
+        return;
+    }
 
     scr_song_play_from(new_snd, t_now);
 
-    if (was_paused && global.song_handle >= 0) audio_pause_sound(global.song_handle);
-
-    show_debug_message("[SONG] -> " + d + " @t=" + string(t_now) + " (" + string(_reason) + ") level=" + string(lk)
-        + " snd_asset=" + string(new_snd));
+    if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+        show_debug_message("[AUDIO] diff switch -> " + d
+            + " reason=" + string(_reason)
+            + " snd=" + asset_get_name(new_snd)
+            + " t=" + string_format(t_now, 1, 3));
+    }
 }
