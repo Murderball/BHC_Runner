@@ -14,7 +14,13 @@ function scr_song_state_ensure()
             last_log_ms      : -1000000
         };
     }
-
+if (global.AUDIO_DEBUG_LOG) {
+    var a0 = (argument_count >= 1) ? argument[0] : -999;
+    var a1 = (argument_count >= 2) ? argument[1] : -999;
+    show_debug_message("[AUDIO] play_from argc=" + string(argument_count)
+        + " a0=" + string(a0) + " exists(a0)=" + string(audio_exists(a0))
+        + " a1=" + string(a1));
+}
     if (!variable_global_exists("song_handle"))  global.song_handle = -1;
     if (!variable_global_exists("song_sound"))   global.song_sound = -1;
     if (!variable_global_exists("song_playing")) global.song_playing = false;

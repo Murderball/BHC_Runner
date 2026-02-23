@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"scr_score_get_snapshot",
   "parent":{
-    "name":"Scripts",
-    "path":"folders/Scripts.yy",
+    "name":"Scoring",
+    "path":"folders/Scripts/Scoring.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

@@ -313,7 +313,8 @@ function scr_globals_init()
     global.music_name = ""; // keep as string
     global.music_fade_ms = 350;
 
-    if (!variable_global_exists("AUDIO_DEBUG_LOG")) global.AUDIO_DEBUG_LOG = false;
+    if (!variable_global_exists("AUDIO_DEBUG_LOG")) global.AUDIO_DEBUG_LOG = true
+	;
 
     if (!variable_global_exists("__song_map_inited") || !global.__song_map_inited)
     {
