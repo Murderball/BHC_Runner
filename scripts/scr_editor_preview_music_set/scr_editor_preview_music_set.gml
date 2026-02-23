@@ -5,11 +5,18 @@ function scr_editor_preview_music_set(_level_index, _diff)
     if (!variable_global_exists("editor_on") || !global.editor_on) return;
 
     var level_index = clamp(floor(real(_level_index)), 1, 6);
+    if (script_exists(scr_song_map_init)) scr_song_map_init();
     var diff = string_lower(string(_diff));
     if (diff != "easy" && diff != "normal" && diff != "hard") diff = "normal";
 
     var snd_asset = scr_level_song_sound(level_index, diff);
-    if (!is_real(snd_asset) || snd_asset == -1) return;
+    if (!is_real(snd_asset) || snd_asset == -1) {
+        show_debug_message("[AUDIO] editor preview music skipped invalid resolve: level=" + string(level_index)
+            + " diff=" + diff + " snd_asset=" + string(snd_asset));
+        return;
+    }
+
+    snd_asset = real(snd_asset);
 
     if (!variable_global_exists("editor_preview_sound_asset")) global.editor_preview_sound_asset = -1;
     if (!variable_global_exists("editor_preview_sound_instance")) global.editor_preview_sound_instance = -1;
