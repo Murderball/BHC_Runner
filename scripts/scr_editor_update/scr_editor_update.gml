@@ -23,7 +23,6 @@ function scr_editor_update() {
 	if (!variable_global_exists("dbg_marker_thumb_h")) global.dbg_marker_thumb_h = 0;
 	if (!variable_global_exists("dbg_marker_track_y")) global.dbg_marker_track_y = 0;
 	if (!variable_global_exists("dbg_marker_track_h")) global.dbg_marker_track_h = 0;
-	if (!variable_global_exists("editor_text_input_active")) global.editor_text_input_active = false;
 
 
 	if (!variable_global_exists("dbg_marker_txtL")) {
@@ -279,14 +278,14 @@ function scr_editor_update() {
     // ----------------------------
     // ACTION MODE HOTKEYS (SHIFT + 1–5)
     // ----------------------------
+    var sh = keyboard_check(vk_shift);
+
 	// Notes no longer support JUMP/DUCK actions.
 	// SHIFT+1..4 selects which NOTE action you place.
-	if (!global.editor_text_input_active) {
-		if (scr_hotkey_shift_num(1)) { global.editor_act = global.ACT_ATK1; global.editor_act_i = 0; }
-		if (scr_hotkey_shift_num(2)) { global.editor_act = global.ACT_ATK2; global.editor_act_i = 1; }
-		if (scr_hotkey_shift_num(3)) { global.editor_act = global.ACT_ATK3; global.editor_act_i = 2; }
-		if (scr_hotkey_shift_num(4)) { global.editor_act = global.ACT_ULT;  global.editor_act_i = 3; }
-	}
+	if (sh && keyboard_check_pressed(ord("1"))) { global.editor_act = global.ACT_ATK1; global.editor_act_i = 0; }
+	if (sh && keyboard_check_pressed(ord("2"))) { global.editor_act = global.ACT_ATK2; global.editor_act_i = 1; }
+	if (sh && keyboard_check_pressed(ord("3"))) { global.editor_act = global.ACT_ATK3; global.editor_act_i = 2; }
+	if (sh && keyboard_check_pressed(ord("4"))) { global.editor_act = global.ACT_ULT;  global.editor_act_i = 3; }
 
     // ----------------------------
     // Tool toggles
@@ -628,9 +627,9 @@ if (mm_type == "difficulty" || mm_type == "diff")
     var changed = false;
 
     // SHIFT + 7/8/9 OR NUMPAD 7/8/9 sets difficulty
-    var k_easy   = (!global.editor_text_input_active && scr_hotkey_shift_num(7)) || keyboard_check_pressed(vk_numpad7);
-    var k_normal = (!global.editor_text_input_active && scr_hotkey_shift_num(8)) || keyboard_check_pressed(vk_numpad8);
-    var k_hard   = (!global.editor_text_input_active && scr_hotkey_shift_num(9)) || keyboard_check_pressed(vk_numpad9);
+    var k_easy   = (keyboard_check(vk_shift) && keyboard_check_pressed(ord("7"))) || keyboard_check_pressed(vk_numpad7);
+    var k_normal = (keyboard_check(vk_shift) && keyboard_check_pressed(ord("8"))) || keyboard_check_pressed(vk_numpad8);
+    var k_hard   = (keyboard_check(vk_shift) && keyboard_check_pressed(ord("9"))) || keyboard_check_pressed(vk_numpad9);
 
     if (k_easy)   { mm.diff = "easy";   mm.caption = "DIFFICULTY: easy";   show_debug_message("[DIFF MARKER] -> easy");   changed = true; }
     if (k_normal) { mm.diff = "normal"; mm.caption = "DIFFICULTY: normal"; show_debug_message("[DIFF MARKER] -> normal"); changed = true; }
