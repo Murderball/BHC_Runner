@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"scr_recorder_quantize_to_eighth",
   "parent":{
-    "name":"Scripts",
-    "path":"folders/Scripts.yy",
+    "name":"Recorder",
+    "path":"folders/Scripts/Recorder.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

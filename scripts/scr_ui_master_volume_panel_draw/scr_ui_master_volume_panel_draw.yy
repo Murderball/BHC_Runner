@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"scr_ui_master_volume_panel_draw",
   "parent":{
-    "name":"Scripts",
-    "path":"folders/Scripts.yy",
+    "name":"Scripts_Audio",
+    "path":"folders/Scripts/Scripts_Audio.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
