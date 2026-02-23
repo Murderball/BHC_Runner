@@ -1,6 +1,10 @@
 /// obj_game : Create
 
+// Always run globals init first (idempotent).
+scr_globals_init();
+
 // Only initialize once (obj_boot already does this)
+
 if (!variable_global_exists("BOOT_DONE") || !global.BOOT_DONE)
 {
     scr_globals_init();

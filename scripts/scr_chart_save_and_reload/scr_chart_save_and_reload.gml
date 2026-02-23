@@ -35,8 +35,39 @@ function scr_chart_fullpath(_filename)
         if (num_txt != "") lvl = clamp(real(num_txt), 1, 6);
     }
 
-    var level_key = "level0" + string(lvl);
+    var level_key = "level" + string_format(lvl, 2, 0);
     return "charts/" + level_key + "/" + filename;
+}
+
+function scr_chart_resolve_for_level(_level_index, _diff, _is_boss)
+{
+    var level_index = clamp(floor(real(_level_index)), 1, 6);
+    var diff = string_lower(string(_diff));
+    if (diff != "easy" && diff != "normal" && diff != "hard") diff = "normal";
+
+    var lvl_short = "level" + string(level_index);
+    var lvl_pad = "level" + string_format(level_index, 2, 0);
+    var prefix = _is_boss ? "boss_" : "";
+
+    var diff_variant = diff;
+    if (diff == "normal") diff_variant = "normal_v2";
+    if (diff == "hard") diff_variant = "hard_v2";
+
+    var candidates = [
+        prefix + lvl_short + "_" + diff + ".json",
+        prefix + lvl_pad + "_" + diff + ".json",
+        prefix + lvl_short + "_" + diff_variant + ".json",
+        prefix + lvl_pad + "_" + diff_variant + ".json",
+        diff + ".json",
+        diff_variant + ".json"
+    ];
+
+    for (var i = 0; i < array_length(candidates); i++) {
+        var rel = "charts/" + lvl_pad + "/" + candidates[i];
+        if (file_exists(rel) || file_exists("datafiles/" + rel)) return rel;
+    }
+
+    return "charts/" + lvl_pad + "/" + candidates[0];
 }
 
 function scr_editor_chart_autosave()
@@ -60,10 +91,12 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
 {
     scr_editor_chart_autosave();
 
-    var path = string(_fullpath);
     var level_index = clamp(floor(real(_level_index)), 1, 6);
     var diff = string_lower(string(_diff));
     if (diff != "easy" && diff != "normal" && diff != "hard") diff = "normal";
+
+    var path = string(_fullpath);
+    if (path == "") path = scr_chart_resolve_for_level(level_index, diff, _is_boss);
 
     global.chart_file = path;
 
@@ -89,7 +122,6 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
     {
         global.DIFFICULTY = diff;
         global.difficulty = diff;
-        global.editor_chart_diff = diff;
 
         if (script_exists(scr_editor_preview_music_set)) {
             scr_editor_preview_music_set(level_index, diff);
@@ -97,15 +129,12 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
     }
 
     global.editor_level_index = level_index;
-    if (variable_global_exists("LEVEL_KEY")) {
-        global.LEVEL_KEY = "level0" + string(level_index);
-    }
+    global.LEVEL_KEY = "level" + string_format(level_index, 2, 0);
 
     show_debug_message("[editor chart switch] " + path);
     return true;
 }
 
-/// scr_chart_save_and_reload(path_or_filename)
 function scr_chart_save_and_reload(fname)
 {
     if (is_undefined(fname) || string(fname) == "") return;
@@ -125,7 +154,6 @@ function scr_chart_save_and_reload(fname)
     if (script_exists(scr_chart_load)) scr_chart_load();
 }
 
-/// Back-compat: 1..6 => normal/boss quick-switch slots
 function scr_editor_switch_chart_variant(_variant_index)
 {
     var idx = floor(_variant_index);
@@ -143,8 +171,6 @@ function scr_editor_switch_chart_variant(_variant_index)
     if (idx == 5) { diff = "normal"; is_boss = true; }
     if (idx == 6) { diff = "hard";   is_boss = true; }
 
-    var filename = scr_chart_filename(global.editor_level_index, diff, is_boss);
-    var fullpath = scr_chart_fullpath(filename);
-
+    var fullpath = scr_chart_resolve_for_level(global.editor_level_index, diff, is_boss);
     return scr_editor_chart_switch(fullpath, global.editor_level_index, diff, is_boss);
 }
