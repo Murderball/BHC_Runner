@@ -15,8 +15,12 @@ function scr_editor_preview_music_set(_level_index, _diff)
     if (!script_exists(scr_song_is_valid_asset)) return;
 
     if (!scr_song_is_valid_asset(snd_asset)) {
-        show_debug_message("[AUDIO] editor preview music skipped invalid resolve: level=" + string(level_index)
-            + " diff=" + diff + " snd_asset=" + string(snd_asset));
+        if (!(variable_global_exists("song_no_music_level") && global.song_no_music_level)) {
+            show_debug_message("[AUDIO] editor preview music skipped invalid resolve: level=" + string(level_index)
+                + " diff=" + diff + " snd_asset=" + string(snd_asset));
+        } else if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+            show_debug_message("[AUDIO] editor preview music: no music for level=" + string(level_index));
+        }
         return;
     }
 

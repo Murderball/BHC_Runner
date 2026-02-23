@@ -19,19 +19,6 @@ function scr_begin_level_play(_start_t)
         global.menu_music_handle = -1;
     }
 
-    // Stop any previous song instance
-    if (variable_global_exists("song_handle") && global.song_handle >= 0) {
-        audio_stop_sound(global.song_handle);
-        global.song_handle = -1;
-    }
-
-    if (script_exists(scr_song_state_ensure)) {
-        scr_song_state_ensure();
-        global.song_state.inst = -1;
-    }
-
-    global.song_playing = false;
-
     // ----------------------------------------------------
     // BOSS-AWARE START (ROOM-BASED ONLY)
     // Prevents boss mode leaking into main rooms (Level 1 Hard etc.)
@@ -46,6 +33,28 @@ function scr_begin_level_play(_start_t)
     // Hard safety for your known boss rooms (covers direct room_goto)
     if (!_isBoss) {
         if (room == rm_boss_1 || room == rm_boss_3) _isBoss = true;
+    }
+
+    var _target_level_idx = 1;
+    if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY) && string_length(global.LEVEL_KEY) >= 6) {
+        _target_level_idx = real(string_copy(global.LEVEL_KEY, 6, string_length(global.LEVEL_KEY) - 5));
+    }
+    _target_level_idx = clamp(_target_level_idx, 1, 6);
+    var _level_has_music = (_target_level_idx == 1 || _target_level_idx == 3);
+
+    if (_isBoss || _level_has_music) {
+        // Stop any previous song instance
+        if (variable_global_exists("song_handle") && global.song_handle >= 0) {
+            audio_stop_sound(global.song_handle);
+            global.song_handle = -1;
+        }
+
+        if (script_exists(scr_song_state_ensure)) {
+            scr_song_state_ensure();
+            global.song_state.inst = -1;
+        }
+
+        global.song_playing = false;
     }
 
     if (_isBoss)
@@ -72,11 +81,7 @@ function scr_begin_level_play(_start_t)
     // MAIN LEVEL START (difficulty music)
     // ----------------------------------------------------
     if (!variable_global_exists("DIFF_SONG_SOUND") || !is_struct(global.DIFF_SONG_SOUND)) {
-        var _level_idx = 1;
-        if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY) && string_length(global.LEVEL_KEY) >= 6) {
-            _level_idx = real(string_copy(global.LEVEL_KEY, 6, string_length(global.LEVEL_KEY) - 5));
-        }
-        _level_idx = clamp(_level_idx, 1, 6);
+        var _level_idx = _target_level_idx;
 
         global.DIFF_SONG_SOUND = {
             easy   : scr_level_song_sound(_level_idx, "easy"),
@@ -95,17 +100,20 @@ function scr_begin_level_play(_start_t)
         global.song_sound = global.DIFF_SONG_SOUND[$ d];
 
         if (is_undefined(global.song_sound) || global.song_sound == -1) {
-            var _fallback_level = 1;
-            if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY) && string_length(global.LEVEL_KEY) >= 6) {
-                _fallback_level = real(string_copy(global.LEVEL_KEY, 6, string_length(global.LEVEL_KEY) - 5));
-            }
-            _fallback_level = clamp(_fallback_level, 1, 6);
+            var _fallback_level = _target_level_idx;
             global.song_sound = scr_level_song_sound(_fallback_level, "normal");
         }
     }
 
     if (!audio_exists(global.song_sound))
     {
+        if (variable_global_exists("song_no_music_level") && global.song_no_music_level) {
+            if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+                show_debug_message("[AUDIO] begin_level_play: no music for level=" + string(_target_level_idx) + ", skipping start");
+            }
+            return;
+        }
+
         if (variable_global_exists("song_state") && is_struct(global.song_state) && audio_exists(global.song_state.sound_asset)) {
             global.song_sound = global.song_state.sound_asset;
         } else if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
