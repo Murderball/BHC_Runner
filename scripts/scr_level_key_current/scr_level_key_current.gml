@@ -53,12 +53,76 @@ function scr_editor_level_key_from_path(_path)
     return "";
 }
 
+function scr_media_trace_enabled()
+{
+    return variable_global_exists("DEBUG_MEDIA_TRACE") && global.DEBUG_MEDIA_TRACE;
+}
+
+function scr_media_trace_sound_name(_snd)
+{
+    if (!is_real(_snd) || !audio_exists(_snd)) return "<none>";
+    return asset_get_name(_snd);
+}
+
+function scr_media_trace_idx_dump()
+{
+    var out = "";
+
+    if (variable_global_exists("song_level_idx")) out += " song_level_idx=" + string(global.song_level_idx);
+    if (variable_global_exists("current_level")) out += " current_level=" + string(global.current_level);
+    if (variable_global_exists("level_idx")) out += " level_idx=" + string(global.level_idx);
+    if (variable_global_exists("editor_level_index")) out += " editor_level_index=" + string(global.editor_level_index);
+    if (variable_global_exists("editor_chart_level_index")) out += " editor_chart_level_index=" + string(global.editor_chart_level_index);
+
+    return out;
+}
+
+function scr_media_trace_assert_editor_level_key(_resolved_level_key)
+{
+    if (!scr_media_trace_enabled()) return;
+    if (!(variable_global_exists("editor_on") && global.editor_on)) return;
+    if (!variable_global_exists("editor_chart_path")) return;
+
+    var p = string_lower(string(global.editor_chart_path));
+    if (string_pos("charts/level01/", p) != 1) return;
+
+    if (string_lower(string(_resolved_level_key)) != "level01") {
+        show_debug_message("[MEDIA TRACE][ASSERT] MISMATCH expected=level01 got=" + string(_resolved_level_key)
+            + " path=" + string(global.editor_chart_path));
+    }
+}
+
+function scr_media_trace(_fn, _resolved_level_key, _diff, _resolved_sound)
+{
+    if (!scr_media_trace_enabled()) return;
+
+    var is_editor = (variable_global_exists("editor_on") && global.editor_on) ? 1 : 0;
+    var room_name = room_get_name(room);
+    var editor_path = "<none>";
+    if (variable_global_exists("editor_chart_path") && string(global.editor_chart_path) != "") {
+        editor_path = string(global.editor_chart_path);
+    }
+
+    show_debug_message("[MEDIA TRACE] fn=" + string(_fn)
+        + " room=" + room_name
+        + " editor=" + string(is_editor)
+        + " editor_chart_path=" + editor_path
+        + " resolved_level_key=" + string(_resolved_level_key)
+        + " diff=" + string(_diff)
+        + " resolved_sound=" + string(_resolved_sound)
+        + " resolved_sound_name=" + scr_media_trace_sound_name(_resolved_sound)
+        + scr_media_trace_idx_dump());
+
+    scr_media_trace_assert_editor_level_key(_resolved_level_key);
+}
+
 /// scr_active_level_key() -> string like "level01"
 /// Editor: derive from loaded editor chart path first, then room name mapping.
 /// Runtime: preserve LEVEL_KEY behavior, with room mapping fallback.
 function scr_active_level_key()
 {
     var is_editor = variable_global_exists("editor_on") && global.editor_on;
+    var resolved = "";
 
     if (is_editor) {
         var editor_path = "";
@@ -67,19 +131,22 @@ function scr_active_level_key()
         if (editor_path == "" && variable_global_exists("chart_file")) editor_path = string(global.chart_file);
 
         var editor_key = scr_editor_level_key_from_path(editor_path);
-        if (editor_key != "") return editor_key;
+        if (editor_key != "") resolved = editor_key;
 
-        var room_key = scr_level_key_from_room(room);
-        if (room_key != "") return room_key;
-
-        return "";
+        if (resolved == "") {
+            var room_key = scr_level_key_from_room(room);
+            if (room_key != "") resolved = room_key;
+        }
     }
 
-    if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY) && global.LEVEL_KEY != "") {
-        return string_lower(global.LEVEL_KEY);
+    if (resolved == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY) && global.LEVEL_KEY != "") {
+        resolved = string_lower(global.LEVEL_KEY);
     }
 
-    return scr_level_key_from_room(room);
+    if (resolved == "") resolved = scr_level_key_from_room(room);
+
+    scr_media_trace("scr_active_level_key", resolved, "<na>", -1);
+    return resolved;
 }
 
 /// scr_level_key_current() -> string
