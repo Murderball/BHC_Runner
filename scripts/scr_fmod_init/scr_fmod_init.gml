@@ -26,7 +26,7 @@ function scr_fmod_init()
 
     if (init_ok)
     {
-        var base = "audio/fmod/Desktop/";
+        var base = "/fmod/Desktop/";
         var banks = ["Master.bank", "Master.strings.bank", "Level_1.bank", "Level_3.bank", "Menu_Sounds.bank"];
 
         for (var i = 0; i < array_length(banks); i++)
