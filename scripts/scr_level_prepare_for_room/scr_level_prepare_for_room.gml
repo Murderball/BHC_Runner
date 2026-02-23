@@ -57,11 +57,15 @@ function scr_level_prepare_for_room(_room_id)
         global.CHUNK_FILE_PREFIX = "chunk_rm1_chunk_";
     }
 
-    // Rebuild per-level chart paths EVERY time
+    // Rebuild per-level chart paths EVERY time (standardized level{N}_{difficulty}.json)
+    var lvl_num = 3;
+    if (string_length(global.LEVEL_KEY) >= 6) lvl_num = max(1, real(string_copy(global.LEVEL_KEY, 6, string_length(global.LEVEL_KEY) - 5)));
+    var lvl_num_str = string(floor(lvl_num));
+
     global.DIFF_CHART = {
-        easy   : "charts/" + global.LEVEL_KEY + "/easy.json",
-        normal : "charts/" + global.LEVEL_KEY + "/normal_v2.json",
-        hard   : "charts/" + global.LEVEL_KEY + "/hard_v2.json"
+        easy   : "charts/" + global.LEVEL_KEY + "/level" + lvl_num_str + "_easy.json",
+        normal : "charts/" + global.LEVEL_KEY + "/level" + lvl_num_str + "_normal.json",
+        hard   : "charts/" + global.LEVEL_KEY + "/level" + lvl_num_str + "_hard.json"
     };
 
     // ====================================================

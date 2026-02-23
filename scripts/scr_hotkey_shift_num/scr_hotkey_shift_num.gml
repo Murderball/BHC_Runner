@@ -17,3 +17,20 @@ function scr_hotkey_shift_num(_n)
     var key_code = ord(string(key_num));
     return keyboard_check_pressed(key_code);
 }
+
+/// @function scr_hotkey_ctrl_shift_num(_n)
+/// @description Returns true when CTRL+SHIFT is held and number-row key (_n 1..9) is pressed this step.
+function scr_hotkey_ctrl_shift_num(_n)
+{
+    if (!is_real(_n)) return false;
+
+    var key_num = floor(_n);
+    if (key_num < 1 || key_num > 9) return false;
+
+    var ctrl_down = keyboard_check(vk_control)
+        || keyboard_check(vk_lcontrol)
+        || keyboard_check(vk_rcontrol);
+
+    if (!ctrl_down) return false;
+    return scr_hotkey_shift_num(key_num);
+}

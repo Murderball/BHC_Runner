@@ -136,10 +136,13 @@ function scr_globals_init()
     global.difficulty = _d0;
 
    // IMPORTANT: These must be REAL paths/strings
+	var _lvl_num = 3;
+	if (string_length(global.LEVEL_KEY) >= 6) _lvl_num = max(1, real(string_copy(global.LEVEL_KEY, 6, string_length(global.LEVEL_KEY) - 5)));
+	var _lvl_num_str = string(floor(_lvl_num));
 	global.DIFF_CHART = {
-	    easy   : "charts/" + global.LEVEL_KEY + "/easy.json",
-	    normal : "charts/" + global.LEVEL_KEY + "/normal_v2.json",
-	    hard   : "charts/" + global.LEVEL_KEY + "/hard_v2.json"
+	    easy   : "charts/" + global.LEVEL_KEY + "/level" + _lvl_num_str + "_easy.json",
+	    normal : "charts/" + global.LEVEL_KEY + "/level" + _lvl_num_str + "_normal.json",
+	    hard   : "charts/" + global.LEVEL_KEY + "/level" + _lvl_num_str + "_hard.json"
 	};
 
 
@@ -381,6 +384,35 @@ function scr_globals_init()
         global.marker_sound_list = ["snd_pause"];
     }
 
+    // Editor quick-load config (chart filename/pattern hotkeys)
+    global.editor_chart_quickload = {
+        boss_active_level   : 1,
+        normal_active_level : 1,
+        base_path           : "charts/",
+        boss_pattern        : "boss_level{L}_{D}.json",
+        normal_pattern      : "level{L}_{D}.json",
+        // SHIFT+1..4 already select editor action modes in this project.
+        // To avoid breaking that behavior, boss-level set selection uses ALT+SHIFT+1..5.
+        use_alt_shift_boss_level_select : true,
+        normal_load_requires_ctrl        : true
+    };
+
+    // One-time compatibility fallback map (new -> legacy names discovered in project)
+    global.editor_chart_legacy_fallback = {
+        "level1_easy.json"      : ["charts/level01/easy.json"],
+        "level1_normal.json"    : ["charts/level01/normal_v2.json"],
+        "level1_hard.json"      : ["charts/level01/hard_v2.json"],
+        "level3_easy.json"      : ["charts/level03/easy.json", "level03_easy.json"],
+        "level3_normal.json"    : ["charts/level03/normal_v2.json", "level03_normal_v2.json"],
+        "level3_hard.json"      : ["charts/level03/hard_v2.json", "level03_hard_v2.json"],
+        "boss_level1_easy.json" : ["charts/level01/boss_ukes_easy.json"],
+        "boss_level1_normal.json": ["charts/level01/boss_ukes_normal.json"],
+        "boss_level1_hard.json" : ["charts/level01/boss_ukes_hard.json"],
+        "boss_level3_easy.json" : ["charts/level03/boss_punky_easy.json"],
+        "boss_level3_normal.json": ["charts/level03/boss_punky_normal.json"],
+        "boss_level3_hard.json" : ["charts/level03/boss_punky_hard.json"]
+    };
+
     // ====================================================
     // BOSS SYSTEM (LEVEL-AWARE + PER-DIFFICULTY CHARTS + BOSS OBJECTS)
     // (FIXED: no hard-coded level03 runtime defaults)
@@ -397,9 +429,9 @@ function scr_globals_init()
             room  : rm_boss_1,
             // Two bosses for level 1
             bosses: [ obj_boss_uke1_level1, obj_boss_uke2_level1 ],
-            charts: { easy: "charts/level01/boss_ukes_easy.json",
-                     normal: "charts/level01/boss_ukes_normal.json",
-                     hard: "charts/level01/boss_ukes_hard.json" },
+            charts: { easy: "charts/level01/boss_level1_easy.json",
+                     normal: "charts/level01/boss_level1_normal.json",
+                     hard: "charts/level01/boss_level1_hard.json" },
             song  : snd_boss_music_level1,
             offset: 0.0,
             bpm   : 180
@@ -409,9 +441,9 @@ function scr_globals_init()
             room  : rm_boss_3,
             // One boss for level 3
             bosses: [ obj_boss_punky_level3 ],
-            charts: { easy: "charts/level03/boss_punky_easy.json",
-                     normal: "charts/level03/boss_punky_normal.json",
-                     hard: "charts/level03/boss_punky_hard.json" },
+            charts: { easy: "charts/level03/boss_level3_easy.json",
+                     normal: "charts/level03/boss_level3_normal.json",
+                     hard: "charts/level03/boss_level3_hard.json" },
             song  : snd_boss_music_level3,
             offset: 0.0,
             bpm   : 180
