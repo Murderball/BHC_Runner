@@ -136,10 +136,11 @@ function scr_globals_init()
     global.difficulty = _d0;
 
    // IMPORTANT: These must be REAL paths/strings
+	var __level_idx_init = clamp(real(string_copy(global.LEVEL_KEY, 6, string_length(global.LEVEL_KEY) - 5)), 1, 6);
 	global.DIFF_CHART = {
-	    easy   : "charts/" + global.LEVEL_KEY + "/easy.json",
-	    normal : "charts/" + global.LEVEL_KEY + "/normal_v2.json",
-	    hard   : "charts/" + global.LEVEL_KEY + "/hard_v2.json"
+	    easy   : scr_chart_fullpath(scr_chart_filename(__level_idx_init, "easy", false)),
+	    normal : scr_chart_fullpath(scr_chart_filename(__level_idx_init, "normal", false)),
+	    hard   : scr_chart_fullpath(scr_chart_filename(__level_idx_init, "hard", false))
 	};
 
 
@@ -257,6 +258,20 @@ function scr_globals_init()
     // ====================================================
     global.editor_on = true;
     if (!variable_global_exists("editor_time")) global.editor_time = 0.0;
+
+    var __editor_level_idx = 1;
+    if (is_string(global.LEVEL_KEY) && string_length(global.LEVEL_KEY) >= 6) {
+        __editor_level_idx = real(string_copy(global.LEVEL_KEY, 6, string_length(global.LEVEL_KEY) - 5));
+    }
+    __editor_level_idx = clamp(__editor_level_idx, 1, 6);
+
+    global.editor_level_index = __editor_level_idx;
+    global.editor_chart_level_index = __editor_level_idx;
+    global.editor_chart_diff = global.DIFFICULTY;
+    global.editor_chart_is_boss = (variable_global_exists("LEVEL_MODE") && global.LEVEL_MODE == "boss");
+    global.editor_chart_filename = scr_chart_filename(__editor_level_idx, global.editor_chart_diff, global.editor_chart_is_boss);
+    global.editor_chart_fullpath = scr_chart_fullpath(global.editor_chart_filename);
+    global.editor_active_chart_label = global.editor_chart_filename;
 
     global.editor_toggle_key    = vk_tab;
     global.editor_playpause_key = vk_space;
@@ -397,9 +412,9 @@ function scr_globals_init()
             room  : rm_boss_1,
             // Two bosses for level 1
             bosses: [ obj_boss_uke1_level1, obj_boss_uke2_level1 ],
-            charts: { easy: "charts/level01/boss_ukes_easy.json",
-                     normal: "charts/level01/boss_ukes_normal.json",
-                     hard: "charts/level01/boss_ukes_hard.json" },
+            charts: { easy: scr_chart_fullpath(scr_chart_filename(1, "easy", true)),
+                     normal: scr_chart_fullpath(scr_chart_filename(1, "normal", true)),
+                     hard: scr_chart_fullpath(scr_chart_filename(1, "hard", true)) },
             song  : snd_boss_music_level1,
             offset: 0.0,
             bpm   : 180
@@ -409,9 +424,9 @@ function scr_globals_init()
             room  : rm_boss_3,
             // One boss for level 3
             bosses: [ obj_boss_punky_level3 ],
-            charts: { easy: "charts/level03/boss_punky_easy.json",
-                     normal: "charts/level03/boss_punky_normal.json",
-                     hard: "charts/level03/boss_punky_hard.json" },
+            charts: { easy: scr_chart_fullpath(scr_chart_filename(3, "easy", true)),
+                     normal: scr_chart_fullpath(scr_chart_filename(3, "normal", true)),
+                     hard: scr_chart_fullpath(scr_chart_filename(3, "hard", true)) },
             song  : snd_boss_music_level3,
             offset: 0.0,
             bpm   : 180

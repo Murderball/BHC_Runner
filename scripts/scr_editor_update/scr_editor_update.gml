@@ -56,7 +56,8 @@ function scr_editor_update() {
 	        "  M              toggle Marker tool\n" +
 
 	        "DIFFICULTY:\n" +
-	        "  Ctrl+1/2/3/4   Chart Difficulty Toggle\n" +
+	        "  Ctrl+1..6      Quick Switch Chart (normal+boss)\n" +
+	        "  Ctrl+7/8       Prev/Next Level Index\n" +
 	        "  T              Toggle Difficulty Marker\n" +
 	        "  U              Toggle Camera Marker\n" +
 	        "  Shift+7/8/9    Marker Difficulty Toggle\n" +
@@ -906,32 +907,49 @@ if (mm_type == "difficulty" || mm_type == "diff")
 		    }
 		}
 
-		// CTRL + 1/2/3/4 = switch chart variant and force reload from disk
-		if (!variable_global_exists("_editor_ctrl_switch_prev")) global._editor_ctrl_switch_prev = [false, false, false, false];
+		var ctrl = keyboard_check(vk_control)
+		        || keyboard_check(vk_lcontrol)
+		        || keyboard_check(vk_rcontrol);
+		var typing_text = (variable_global_exists("editor_typing") && global.editor_typing);
 
-		var ctrl_down = keyboard_check(vk_control);
-		var hk1_now = ctrl_down && keyboard_check_direct(ord("1"));
-		var hk2_now = ctrl_down && keyboard_check_direct(ord("2"));
-		var hk3_now = ctrl_down && keyboard_check_direct(ord("3"));
-		var hk4_now = ctrl_down && keyboard_check_direct(ord("4"));
+		if (ctrl && !typing_text)
+		{
+		    if (!variable_global_exists("editor_level_index")) global.editor_level_index = 1;
+		    global.editor_level_index = clamp(global.editor_level_index, 1, 6);
 
-		if (hk1_now && !global._editor_ctrl_switch_prev[0]) {
-		    if (script_exists(scr_editor_switch_chart_variant)) scr_editor_switch_chart_variant(1);
-		}
-		if (hk2_now && !global._editor_ctrl_switch_prev[1]) {
-		    if (script_exists(scr_editor_switch_chart_variant)) scr_editor_switch_chart_variant(2);
-		}
-		if (hk3_now && !global._editor_ctrl_switch_prev[2]) {
-		    if (script_exists(scr_editor_switch_chart_variant)) scr_editor_switch_chart_variant(3);
-		}
-		if (hk4_now && !global._editor_ctrl_switch_prev[3]) {
-		    if (script_exists(scr_editor_switch_chart_variant)) scr_editor_switch_chart_variant(4);
-		}
+		    if (keyboard_check_pressed(ord("7"))) global.editor_level_index = max(1, global.editor_level_index - 1);
+		    if (keyboard_check_pressed(ord("8"))) global.editor_level_index = min(6, global.editor_level_index + 1);
 
-		global._editor_ctrl_switch_prev[0] = hk1_now;
-		global._editor_ctrl_switch_prev[1] = hk2_now;
-		global._editor_ctrl_switch_prev[2] = hk3_now;
-		global._editor_ctrl_switch_prev[3] = hk4_now;
+		    if (keyboard_check_pressed(ord("1")))
+		        scr_editor_chart_switch(
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "easy", false)),
+		            global.editor_level_index, "easy", false);
+
+		    if (keyboard_check_pressed(ord("2")))
+		        scr_editor_chart_switch(
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "normal", false)),
+		            global.editor_level_index, "normal", false);
+
+		    if (keyboard_check_pressed(ord("3")))
+		        scr_editor_chart_switch(
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "hard", false)),
+		            global.editor_level_index, "hard", false);
+
+		    if (keyboard_check_pressed(ord("4")))
+		        scr_editor_chart_switch(
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "easy", true)),
+		            global.editor_level_index, "easy", true);
+
+		    if (keyboard_check_pressed(ord("5")))
+		        scr_editor_chart_switch(
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "normal", true)),
+		            global.editor_level_index, "normal", true);
+
+		    if (keyboard_check_pressed(ord("6")))
+		        scr_editor_chart_switch(
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "hard", true)),
+		            global.editor_level_index, "hard", true);
+		}
 
 
 

@@ -22,10 +22,11 @@ function scr_apply_difficulty_change(new_diff)
     // Rebuild DIFF_CHART per level so chart swaps
     // don't accidentally keep Level 3 paths on Level 1.
     // -------------------------------------------------
+    var __level_idx = clamp(real(string_copy(lk, 6, string_length(lk) - 5)), 1, 6);
     global.DIFF_CHART = {
-        easy   : "charts/" + lk + "/easy.json",
-        normal : "charts/" + lk + "/normal_v2.json",
-        hard   : "charts/" + lk + "/hard_v2.json"
+        easy   : scr_chart_fullpath(scr_chart_filename(__level_idx, "easy", false)),
+        normal : scr_chart_fullpath(scr_chart_filename(__level_idx, "normal", false)),
+        hard   : scr_chart_fullpath(scr_chart_filename(__level_idx, "hard", false))
     };
 
     // Apply chart_file for this diff

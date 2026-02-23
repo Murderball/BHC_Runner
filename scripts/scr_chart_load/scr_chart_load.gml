@@ -16,25 +16,23 @@ function scr_chart_load()
     // ------------------------------------------------------------
     // Resolve path robustly:
     // 1) sandbox path as-given
-    // 2) included fallback: datafiles/ + chart_file
-    // 3) legacy fallback: charts/level03_hard.json style names
+    // 2) if only filename is provided, map via scr_chart_fullpath()
+    // 3) included fallback: datafiles/ + chart_file
     // ------------------------------------------------------------
     var want = string(global.chart_file);
 
     var path = want;
 
-    // Legacy: if someone passed "charts/level03_hard.json" convert to "charts/level03/hard.json"
-    // or if someone passed "level03_hard.json" convert accordingly.
+    if (string_pos("/", path) == 0 && string_pos("\\", path) == 0)
+    {
+        path = scr_chart_fullpath(path);
+    }
+
     if (!file_exists(path))
     {
-        // Handle common legacy patterns explicitly
-        if (want == "charts/level03_hard_v2.json") path = "charts/level03/hard_v2.json";
-        else if (want == "charts/level03_normal_v2.json") path = "charts/level03/normal_v2.json";
-        else if (want == "charts/level03_easy.json") path = "charts/level03/easy.json";
-        else if (want == "level03_hard_v2.json") path = "charts/level03/hard_v2.json";
-        else if (want == "level03_normal_v2.json") path = "charts/level03/normal_v2.json";
-        else if (want == "level03_easy.json") path = "charts/level03/easy.json";
-        else path = want;
+        // Legacy fallbacks -> new authoritative naming
+        if (want == "level03_normal_v2.json") path = scr_chart_fullpath(scr_chart_filename(3, "normal", false));
+        else if (want == "level03_hard_v2.json") path = scr_chart_fullpath(scr_chart_filename(3, "hard", false));
     }
 
     // sandbox check

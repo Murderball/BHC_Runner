@@ -58,10 +58,11 @@ function scr_level_prepare_for_room(_room_id)
     }
 
     // Rebuild per-level chart paths EVERY time
+    var __level_idx = clamp(real(string_copy(global.LEVEL_KEY, 6, string_length(global.LEVEL_KEY) - 5)), 1, 6);
     global.DIFF_CHART = {
-        easy   : "charts/" + global.LEVEL_KEY + "/easy.json",
-        normal : "charts/" + global.LEVEL_KEY + "/normal_v2.json",
-        hard   : "charts/" + global.LEVEL_KEY + "/hard_v2.json"
+        easy   : scr_chart_fullpath(scr_chart_filename(__level_idx, "easy", false)),
+        normal : scr_chart_fullpath(scr_chart_filename(__level_idx, "normal", false)),
+        hard   : scr_chart_fullpath(scr_chart_filename(__level_idx, "hard", false))
     };
 
     // ====================================================
