@@ -5,30 +5,11 @@ function scr_draw_gameplay_gui()
     var __gui_prev_color = draw_get_color();
     var __gui_prev_blend = gpu_get_blendmode();
 
-    if (!variable_global_exists("__dbg_note_draw_once")) global.__dbg_note_draw_once = false;
-    if (!variable_global_exists("__dbg_note_draw_alpha_leak_once")) global.__dbg_note_draw_alpha_leak_once = false;
-
-    if (__gui_prev_alpha != 1 && !global.__dbg_note_draw_alpha_leak_once)
-    {
-        global.__dbg_note_draw_alpha_leak_once = true;
-        show_debug_message("[NOTE DRAW PATH] alpha leak detected at entry: scr_draw_gameplay_gui alpha=" + string(__gui_prev_alpha));
-    }
-
     // --------------------------------------------------
     // MENU GUARD: do not draw gameplay UI in menu/loading
     // --------------------------------------------------
-    if (room == rm_menu || (variable_global_exists("in_menu") && global.in_menu)) {
-        draw_set_alpha(__gui_prev_alpha);
-        draw_set_color(__gui_prev_color);
-        gpu_set_blendmode(__gui_prev_blend);
-        return;
-    }
-    if (room == rm_loading || (variable_global_exists("in_loading") && global.in_loading)) {
-        draw_set_alpha(__gui_prev_alpha);
-        draw_set_color(__gui_prev_color);
-        gpu_set_blendmode(__gui_prev_blend);
-        return;
-    }
+    if (room == rm_menu || (variable_global_exists("in_menu") && global.in_menu)) exit;
+    if (room == rm_loading || (variable_global_exists("in_loading") && global.in_loading)) exit;
 
     // Safety: if chart isn't ready, still draw UI and exit cleanly
     var now_time = scr_chart_time();
@@ -255,7 +236,6 @@ function scr_draw_gameplay_gui()
     var chart_len = array_length(global.chart);
 
     // Notes
-    var __draw_note_alpha_entry = draw_get_alpha();
     for (var i = 0; i < chart_len; i++)
     {
         var nref = global.chart[i];
@@ -281,6 +261,11 @@ function scr_draw_gameplay_gui()
         if (!variable_struct_exists(nref, "hit_fx_t")) nref.hit_fx_t = 0;
         if (!variable_struct_exists(nref, "hit_fx_dur")) nref.hit_fx_dur = 0.10;
         if (!variable_struct_exists(nref, "hit_fx_pow")) nref.hit_fx_pow = 0;
+
+        if (nref.hit_fx_t > 0) {
+            nref.hit_fx_t = max(0, nref.hit_fx_t - (delta_time / 1000000.0));
+            if (nref.hit_fx_t <= 0) nref.hit_fx_pow = 0;
+        }
 
         var hf = 0;
         if (nref.hit_fx_dur > 0) hf = clamp(nref.hit_fx_t / nref.hit_fx_dur, 0, 1);
@@ -356,14 +341,6 @@ function scr_draw_gameplay_gui()
         draw_set_alpha(__note_prev_alpha);
         draw_set_color(__note_prev_color);
         gpu_set_blendmode(__note_prev_blend);
-    }
-
-    if (!global.__dbg_note_draw_once)
-    {
-        global.__dbg_note_draw_once = true;
-        show_debug_message("[NOTE DRAW PATH] scr_draw_gameplay_gui notes loop active entry_alpha="
-            + string(__draw_note_alpha_entry)
-            + " exit_alpha=" + string(draw_get_alpha()));
     }
 
     draw_set_alpha(__gui_prev_alpha);
