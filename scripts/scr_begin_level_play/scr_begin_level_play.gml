@@ -77,11 +77,17 @@ function scr_begin_level_play(_start_t)
     // MAIN LEVEL START (difficulty music)
     // ----------------------------------------------------
     if (!variable_global_exists("DIFF_SONG_SOUND") || !is_struct(global.DIFF_SONG_SOUND)) {
-        if (variable_global_exists("LEVEL_KEY") && global.LEVEL_KEY == "level01") {
-            global.DIFF_SONG_SOUND = { easy:snd_song_1_easy, normal:snd_song_1_normal, hard:snd_song_1_hard };
-        } else {
-            global.DIFF_SONG_SOUND = { easy:snd_song_3_easy, normal:snd_song_3_normal, hard:snd_song_3_hard };
+        var _level_idx = 1;
+        if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY) && string_length(global.LEVEL_KEY) >= 6) {
+            _level_idx = real(string_copy(global.LEVEL_KEY, 6, string_length(global.LEVEL_KEY) - 5));
         }
+        _level_idx = clamp(_level_idx, 1, 6);
+
+        global.DIFF_SONG_SOUND = {
+            easy   : scr_level_song_sound(_level_idx, "easy"),
+            normal : scr_level_song_sound(_level_idx, "normal"),
+            hard   : scr_level_song_sound(_level_idx, "hard")
+        };
     }
 
     if (!variable_global_exists("song_sound") || is_undefined(global.song_sound) || global.song_sound == -1)
@@ -94,9 +100,12 @@ function scr_begin_level_play(_start_t)
         global.song_sound = global.DIFF_SONG_SOUND[$ d];
 
         if (is_undefined(global.song_sound) || global.song_sound == -1) {
-            // last-ditch default by level
-            if (variable_global_exists("LEVEL_KEY") && global.LEVEL_KEY == "level01") global.song_sound = snd_song_1_normal;
-            else global.song_sound = snd_song_3_normal;
+            var _fallback_level = 1;
+            if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY) && string_length(global.LEVEL_KEY) >= 6) {
+                _fallback_level = real(string_copy(global.LEVEL_KEY, 6, string_length(global.LEVEL_KEY) - 5));
+            }
+            _fallback_level = clamp(_fallback_level, 1, 6);
+            global.song_sound = scr_level_song_sound(_fallback_level, "normal");
         }
     }
 

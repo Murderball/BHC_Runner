@@ -272,6 +272,8 @@ function scr_globals_init()
     global.editor_chart_filename = scr_chart_filename(__editor_level_idx, global.editor_chart_diff, global.editor_chart_is_boss);
     global.editor_chart_fullpath = scr_chart_fullpath(global.editor_chart_filename);
     global.editor_active_chart_label = global.editor_chart_filename;
+    global.editor_preview_sound_asset = -1;
+    global.editor_preview_sound_instance = -1;
 
     global.editor_toggle_key    = vk_tab;
     global.editor_playpause_key = vk_space;
