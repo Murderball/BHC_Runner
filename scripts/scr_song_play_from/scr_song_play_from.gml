@@ -62,7 +62,7 @@ function scr_song_get_pos_s()
     else if (variable_global_exists("OFFSET") && is_real(global.OFFSET)) off = real(global.OFFSET);
 
     // Truth: is the instance actually playing?
-    var is_playing = audio_sound_is_playing(st.inst);
+    var is_playing = audio_is_playing(st.inst);
 
     // Raw track position (may be 0/not supported on non-streamed sounds)
     var raw = audio_sound_get_track_position(st.inst);
@@ -132,7 +132,7 @@ function scr_song_debug_draw(_x, _y)
     var snd_name = "<none>";
     if (scr_song_is_valid_asset(st.sound_asset)) snd_name = scr_song_asset_label(st.sound_asset);
 
-    var inst_playing = (scr_song_is_valid_inst(st.inst)) ? audio_sound_is_playing(st.inst) : false;
+    var inst_playing = (scr_song_is_valid_inst(st.inst)) ? audio_is_playing(st.inst) : false;
     var raw = (scr_song_is_valid_inst(st.inst)) ? audio_sound_get_track_position(st.inst) : 0.0;
 
     var audio_pos = scr_song_get_pos_s();
