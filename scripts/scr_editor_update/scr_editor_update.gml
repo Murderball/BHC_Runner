@@ -238,7 +238,18 @@ function scr_editor_update() {
 			if (script_exists(scr_difficulty_events_from_markers)) scr_difficulty_events_from_markers();
             if (global.song_handle >= 0) audio_stop_sound(global.song_handle);
             var snd_on_exit = (variable_global_exists("song_sound")) ? global.song_sound : -1;
-            scr_song_play_from(snd_on_exit, global.editor_time);
+
+            if (!variable_global_exists("_editor_exit_play_from_ms")) global._editor_exit_play_from_ms = -1000000;
+            var can_restart_on_exit = (current_time - global._editor_exit_play_from_ms) >= 120;
+
+            if (can_restart_on_exit && audio_exists(snd_on_exit)) {
+                global._editor_exit_play_from_ms = current_time;
+                var exit_t = (variable_global_exists("editor_time") && is_real(global.editor_time)) ? max(0.0, global.editor_time) : 0.0;
+                scr_song_play_from(snd_on_exit, exit_t);
+            } else if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+                show_debug_message("[AUDIO] editor exit restart skipped snd=" + string(snd_on_exit)
+                    + " can_restart=" + string(can_restart_on_exit));
+            }
 			return;
         }
     }

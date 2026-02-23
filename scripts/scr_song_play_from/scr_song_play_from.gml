@@ -109,11 +109,40 @@ function scr_song_play_from(time_sec) {
 
     var st = global.song_state;
 
+    if (!variable_global_exists("_song_play_from_window_start_ms")) global._song_play_from_window_start_ms = current_time;
+    if (!variable_global_exists("_song_play_from_window_calls")) global._song_play_from_window_calls = 0;
+    if (!variable_global_exists("_song_play_from_last_reset_call_ms")) global._song_play_from_last_reset_call_ms = -1000000;
+
+    if ((current_time - global._song_play_from_window_start_ms) >= 1000) {
+        if (global.AUDIO_DEBUG_LOG) {
+            show_debug_message("[AUDIO] scr_song_play_from calls/sec=" + string(global._song_play_from_window_calls));
+        }
+        global._song_play_from_window_start_ms = current_time;
+        global._song_play_from_window_calls = 0;
+    }
+    global._song_play_from_window_calls += 1;
+
     var snd_asset = (scr_song_is_valid_asset(st.sound_asset)) ? st.sound_asset : global.song_sound;
     var start_time = 0.0;
     var arg0_is_audio_asset = false;
 
     if (argument_count <= 0) {
+        if ((current_time - global._song_play_from_last_reset_call_ms) < 120) {
+            if (global.AUDIO_DEBUG_LOG) {
+                show_debug_message("[AUDIO] scr_song_play_from argc=0 debounced");
+            }
+            return false;
+        }
+        global._song_play_from_last_reset_call_ms = current_time;
+
+        if (!audio_exists(snd_asset)) {
+            _audio_warn_once(
+                "scr_song_play_from_noargs_no_current",
+                "[AUDIO] scr_song_play_from argc=0 ignored: no valid current sound to restart"
+            );
+            return false;
+        }
+
         start_time = 0.0;
     } else if (argument_count == 1) {
         arg0_is_audio_asset = audio_exists(argument[0]);
@@ -147,12 +176,16 @@ function scr_song_play_from(time_sec) {
             + " arg0_audio_exists=" + string(arg0_is_audio_asset));
     }
 
-    if (!scr_song_is_valid_asset(snd_asset)) {
-        if (scr_song_is_valid_asset(st.sound_asset)) {
+    if (!audio_exists(snd_asset)) {
+        var fallback_snd = -1;
+        if (audio_exists(st.sound_asset)) fallback_snd = st.sound_asset;
+        else if (audio_exists(global.song_sound)) fallback_snd = global.song_sound;
+
+        if (audio_exists(fallback_snd)) {
             _audio_warn_once(
                 "scr_song_play_from_keep_current_invalid_req_" + string(snd_asset),
                 "[AUDIO] scr_song_play_from requested invalid sound " + string(snd_asset)
-                + "; keeping current sound " + string(st.sound_asset) + " inst=" + string(st.inst)
+                + "; keeping current sound " + string(fallback_snd) + " inst=" + string(st.inst)
             );
             return false;
         }
@@ -161,12 +194,6 @@ function scr_song_play_from(time_sec) {
             "scr_song_play_from_invalid_sound_" + string(snd_asset),
             "[AUDIO] scr_song_play_from ignored invalid sound asset index: " + string(snd_asset)
         );
-
-        st.inst = -1;
-        st.sound_asset = -1;
-        global.song_handle = -1;
-        global.song_sound = -1;
-        global.song_playing = false;
         return false;
     }
 
