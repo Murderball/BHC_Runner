@@ -313,10 +313,25 @@ function scr_globals_init()
     global.music_name = ""; // keep as string
     global.music_fade_ms = 350;
 
+    if (!variable_global_exists("AUDIO_DEBUG_LOG")) global.AUDIO_DEBUG_LOG = false;
+
     if (!variable_global_exists("__song_map_inited") || !global.__song_map_inited)
     {
-        global.__song_map_inited = true;
+        scr_song_map_init();
     }
+
+    global.song_state = {
+        sound_asset      : -1,
+        inst             : -1,
+        started_at_time_s: 0.0,
+        chart_offset_s   : 0.0,
+        paused           : false,
+        last_seek_time_s : -1.0,
+        last_seek_real_ms: -1000000,
+        last_known_pos_s : 0.0,
+        started_real_ms  : current_time,
+        last_log_ms      : -1000000
+    };
 
     var __song_level_idx = 1;
     if (is_string(global.LEVEL_KEY) && string_length(global.LEVEL_KEY) >= 6) {
