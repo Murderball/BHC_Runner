@@ -10,7 +10,7 @@
   "compression":3,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":138.84,
+  "duration":0.046666667,
   "exportDir":"",
   "name":"snd_metronome",
   "parent":{
