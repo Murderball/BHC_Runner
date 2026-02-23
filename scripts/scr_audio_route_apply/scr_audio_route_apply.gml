@@ -1,5 +1,10 @@
 function scr_audio_route_apply()
 {
+    if (!variable_global_exists("fmod_ready") || !global.fmod_ready) {
+        show_debug_message("[FMOD] ROUTE SKIP (fmod_ready=false)");
+        return false;
+    }
+
     var bank = "";
     var event_name = "";
 
