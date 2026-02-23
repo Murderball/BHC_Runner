@@ -1,12 +1,3 @@
-/// scr_safe_asset_name(asset) -> string
-function scr_safe_asset_name(_asset)
-{
-    if (!is_real(_asset) || is_nan(_asset) || floor(_asset) <= -1) return "<none>";
-
-    // Runtime-safe fallback: do not call asset_get_name in this project/runtime path.
-    return "<id:" + string(_asset) + ">";
-}
-
 /// scr_chart_key_for_current_level(diff) -> chart path using canonical level resolver.
 function scr_chart_key_for_current_level(_diff)
 {
@@ -50,17 +41,14 @@ function scr_reload_level_media_for_diff(_diff)
     }
 
     var snd = scr_song_asset_for_current_level(d);
-    var snd_valid = is_real(snd) && !is_nan(snd) && snd > -1 && audio_exists(snd);
-    if (snd_valid) {
+    if (audio_exists(snd)) {
         if (script_exists(scr_set_difficulty_song)) scr_set_difficulty_song(d, "diff_hotkey");
-    } else if (variable_global_exists("DEBUG_MEDIA_RELOAD") && global.DEBUG_MEDIA_RELOAD) {
-        show_debug_message("[DIFF HOTKEY] WARN invalid snd for level_key=" + string(level_key)
-            + " diff=" + string(d) + " snd=" + scr_safe_asset_name(snd));
     }
 
-    if (variable_global_exists("DEBUG_MEDIA_RELOAD") && global.DEBUG_MEDIA_RELOAD)
+    if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG)
     {
-        var snd_name = scr_safe_asset_name(snd);
+        var snd_name = string(snd);
+        if (snd != -1) snd_name = asset_get_name(snd);
         show_debug_message("[DIFF HOTKEY] room=" + string(room_get_name(room))
             + " level_key=" + string(level_key)
             + " diff=" + string(d)
