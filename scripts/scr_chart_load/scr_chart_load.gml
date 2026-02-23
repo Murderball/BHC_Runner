@@ -250,3 +250,95 @@ function scr_chart_load()
         + " bpm=" + string(variable_global_exists("chart_bpm") ? global.chart_bpm : -1)
         + " offset=" + string(variable_global_exists("chart_offset") ? global.chart_offset : -1));
 }
+
+function scr_editor_load_chart_file(_filename)
+{
+    var fname = string_trim(string(_filename));
+    if (fname == "") return false;
+
+    if (!variable_global_exists("editor_chart_quickload") || !is_struct(global.editor_chart_quickload)) {
+        global.editor_chart_quickload = {
+            boss_active_level   : 1,
+            normal_active_level : 1,
+            base_path           : "charts/",
+            boss_pattern        : "boss_level{L}_{D}.json",
+            normal_pattern      : "level{L}_{D}.json",
+            use_alt_shift_boss_level_select : true,
+            normal_load_requires_ctrl        : true
+        };
+    }
+
+    var base_path = "charts/";
+    if (variable_struct_exists(global.editor_chart_quickload, "base_path")) {
+        base_path = string(global.editor_chart_quickload.base_path);
+    }
+
+    var candidates = [];
+
+    var direct = base_path + fname;
+    array_push(candidates, direct);
+
+    // Keep support for per-level folder layout: charts/level01/level1_easy.json etc.
+    var inferred_level = -1;
+    if (string_pos("level", fname) == 1)
+    {
+        var us_i = string_pos("_", fname);
+        if (us_i > 6) {
+            inferred_level = real(string_copy(fname, 6, us_i - 6));
+        }
+    }
+    else if (string_pos("boss_level", fname) == 1)
+    {
+        var us_i2 = string_pos("_", fname);
+        if (us_i2 > 11) {
+            inferred_level = real(string_copy(fname, 11, us_i2 - 11));
+        }
+    }
+
+    if (inferred_level >= 1)
+    {
+        var level_num = floor(inferred_level);
+        var level_key = "level" + ((level_num < 10) ? ("0" + string(level_num)) : string(level_num));
+        array_push(candidates, base_path + level_key + "/" + fname);
+    }
+
+    // Compatibility fallback for legacy names actually discovered in this codebase.
+    if (variable_global_exists("editor_chart_legacy_fallback") && is_struct(global.editor_chart_legacy_fallback))
+    {
+        if (variable_struct_exists(global.editor_chart_legacy_fallback, fname))
+        {
+            var legacy = global.editor_chart_legacy_fallback[$ fname];
+            if (is_array(legacy)) {
+                for (var i = 0; i < array_length(legacy); i++) {
+                    array_push(candidates, string(legacy[i]));
+                }
+            }
+        }
+    }
+
+    var chosen = "";
+    for (var c = 0; c < array_length(candidates); c++)
+    {
+        var p = string(candidates[c]);
+        if (file_exists(p) || file_exists("datafiles/" + p)) {
+            chosen = p;
+            break;
+        }
+    }
+
+    if (chosen == "")
+    {
+        show_debug_message("[chart] Missing: " + fname);
+        global.editor_toast_msg = "Missing: " + fname;
+        global.editor_toast_until_ms = current_time + 1800;
+        return false;
+    }
+
+    global.chart_file = chosen;
+    scr_chart_load();
+
+    show_debug_message("[chart] Loaded: " + fname + " -> " + chosen);
+    global.editor_toast_msg = "Loaded: " + fname;
+    global.editor_toast_until_ms = current_time + 1800;
+    return true;
+}

@@ -25,6 +25,18 @@ function scr_editor_update() {
 	if (!variable_global_exists("dbg_marker_track_h")) global.dbg_marker_track_h = 0;
 	if (!variable_global_exists("editor_text_input_active")) global.editor_text_input_active = false;
 
+	if (!variable_global_exists("editor_chart_quickload") || !is_struct(global.editor_chart_quickload)) {
+		global.editor_chart_quickload = {
+			boss_active_level   : 1,
+			normal_active_level : 1,
+			base_path           : "charts/",
+			boss_pattern        : "boss_level{L}_{D}.json",
+			normal_pattern      : "level{L}_{D}.json",
+			use_alt_shift_boss_level_select : true,
+			normal_load_requires_ctrl        : true
+		};
+	}
+
 
 	if (!variable_global_exists("dbg_marker_txtL")) {
 	    global.dbg_marker_txtL =
@@ -62,7 +74,11 @@ function scr_editor_update() {
 	        "  U              Toggle Camera Marker\n" +
 	        "  Shift+7/8/9    Marker Difficulty Toggle\n" +
 
-	       
+	        "CHART QUICK LOAD:\n" +
+	        "  1..5            Select normal level set\n" +
+	        "  Ctrl+4/5/6      Load level{set}_easy/normal/hard\n" +
+	        "  Alt+Shift+1..5  Select boss level set\n" +
+	        "  Shift+4/5/6     Load boss_level{set}_easy/normal/hard\n" +
 
 	        "SPAWN MARKER (type=spawn):\n" +
 	        "  G              cycle enemy_kind\n" +
@@ -286,6 +302,67 @@ function scr_editor_update() {
 		if (scr_hotkey_shift_num(2)) { global.editor_act = global.ACT_ATK2; global.editor_act_i = 1; }
 		if (scr_hotkey_shift_num(3)) { global.editor_act = global.ACT_ATK3; global.editor_act_i = 2; }
 		if (scr_hotkey_shift_num(4)) { global.editor_act = global.ACT_ULT;  global.editor_act_i = 3; }
+	}
+
+	// ----------------------------
+	// CHART QUICK-LOAD HOTKEYS
+	// ----------------------------
+	if (!global.editor_text_input_active)
+	{
+		// Normal level set selector: number row 1..5 (no modifiers)
+		if (!keyboard_check(vk_shift) && !keyboard_check(vk_control) && !keyboard_check(vk_alt))
+		{
+			for (var _nl = 1; _nl <= 5; _nl++) {
+				if (keyboard_check_pressed(ord(string(_nl)))) {
+					global.editor_chart_quickload.normal_active_level = _nl;
+					global.editor_toast_msg = "Normal set: " + string(_nl);
+					global.editor_toast_until_ms = current_time + 1200;
+				}
+			}
+		}
+
+		// Boss level set selector: SHIFT+1..3 conflicts with action-mode binds,
+		// so use ALT+SHIFT+1..5 to avoid disrupting existing editor behavior.
+		if (keyboard_check(vk_alt) && keyboard_check(vk_shift) && !keyboard_check(vk_control))
+		{
+			for (var _bl = 1; _bl <= 5; _bl++) {
+				if (keyboard_check_pressed(ord(string(_bl)))) {
+					global.editor_chart_quickload.boss_active_level = _bl;
+					global.editor_toast_msg = "Boss set: " + string(_bl);
+					global.editor_toast_until_ms = current_time + 1200;
+				}
+			}
+		}
+
+		var qcfg = global.editor_chart_quickload;
+
+		// Boss quick load: SHIFT+4/5/6 -> easy/normal/hard
+		if (scr_hotkey_shift_num(4) && script_exists(scr_editor_load_chart_file)) {
+			var bf4 = string_replace_all(string_replace_all(qcfg.boss_pattern, "{L}", string(qcfg.boss_active_level)), "{D}", "easy");
+			scr_editor_load_chart_file(bf4);
+		}
+		if (scr_hotkey_shift_num(5) && script_exists(scr_editor_load_chart_file)) {
+			var bf5 = string_replace_all(string_replace_all(qcfg.boss_pattern, "{L}", string(qcfg.boss_active_level)), "{D}", "normal");
+			scr_editor_load_chart_file(bf5);
+		}
+		if (scr_hotkey_shift_num(6) && script_exists(scr_editor_load_chart_file)) {
+			var bf6 = string_replace_all(string_replace_all(qcfg.boss_pattern, "{L}", string(qcfg.boss_active_level)), "{D}", "hard");
+			scr_editor_load_chart_file(bf6);
+		}
+
+		// SHIFT+7/8/9 already used by difficulty-marker editing, so regular quick load uses CTRL+4/5/6.
+		if (keyboard_check(vk_control) && keyboard_check_pressed(ord("4")) && script_exists(scr_editor_load_chart_file)) {
+			var nf4 = string_replace_all(string_replace_all(qcfg.normal_pattern, "{L}", string(qcfg.normal_active_level)), "{D}", "easy");
+			scr_editor_load_chart_file(nf4);
+		}
+		if (keyboard_check(vk_control) && keyboard_check_pressed(ord("5")) && script_exists(scr_editor_load_chart_file)) {
+			var nf5 = string_replace_all(string_replace_all(qcfg.normal_pattern, "{L}", string(qcfg.normal_active_level)), "{D}", "normal");
+			scr_editor_load_chart_file(nf5);
+		}
+		if (keyboard_check(vk_control) && keyboard_check_pressed(ord("6")) && script_exists(scr_editor_load_chart_file)) {
+			var nf6 = string_replace_all(string_replace_all(qcfg.normal_pattern, "{L}", string(qcfg.normal_active_level)), "{D}", "hard");
+			scr_editor_load_chart_file(nf6);
+		}
 	}
 
     // ----------------------------
