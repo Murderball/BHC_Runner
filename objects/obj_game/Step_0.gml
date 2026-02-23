@@ -4,6 +4,9 @@ if (room != global.__last_room) {
     global.__last_room = room;
     if (script_exists(scr_audio_route_apply)) scr_audio_route_apply();
 }
+if (keyboard_check_pressed(vk_f8)) {
+    if (script_exists(scr_fmod_debug_probe)) scr_fmod_debug_probe();
+}
 if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED) exit;
 if (!variable_instance_exists(id, "duck_timer")) duck_timer = 0;
 if (duck_timer > 0) duck_timer--;

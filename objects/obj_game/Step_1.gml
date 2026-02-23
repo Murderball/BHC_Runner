@@ -1,10 +1,5 @@
 
 scr_fmod_update();
-if (!variable_global_exists("audio_last_room")) global.audio_last_room = room;
-if (global.audio_last_room != room) {
-    global.audio_last_room = room;
-    if (script_exists(scr_audio_route_apply)) scr_audio_route_apply();
-}
 /// obj_game : Begin Step
 scr_boss_timeline_update();
 
