@@ -86,21 +86,4 @@ function scr_note_trigger_inputs_update()
         global.in_ult = true;
         global.note_last_ult_t = best_u_t;
     }
-
-    // Decay transient note hit FX timers in authoritative gameplay update path
-    for (var j = 0; j < len; j++)
-    {
-        var nj = global.chart[j];
-        if (!is_struct(nj)) continue;
-
-        if (!variable_struct_exists(nj, "hit_fx_t")) nj.hit_fx_t = 0;
-        if (!variable_struct_exists(nj, "hit_fx_dur")) nj.hit_fx_dur = 0.10;
-        if (!variable_struct_exists(nj, "hit_fx_pow")) nj.hit_fx_pow = 0;
-
-        if (nj.hit_fx_t > 0)
-        {
-            nj.hit_fx_t = max(0, nj.hit_fx_t - (delta_time / 1000000.0));
-            if (nj.hit_fx_t <= 0) nj.hit_fx_pow = 0;
-        }
-    }
 }
