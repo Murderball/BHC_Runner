@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"snd_song_2_hard",
+  "audioGroupId":{
+    "name":"audiogroup_default",
+    "path":"audiogroups/audiogroup_default",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":0,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":183.12,
+  "exportDir":"",
+  "name":"snd_song_2_hard",
+  "parent":{
+    "name":"Level_2_Master",
+    "path":"folders/Level_2_Master.yy",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"snd_song_2_hard.mp3",
+  "volume":1.0,
+}

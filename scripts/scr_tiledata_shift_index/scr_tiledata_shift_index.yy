@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_tiledata_shift_index",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_tiledata_shift_index",
+  "parent":{
+    "name":"Scripts_Chunks",
+    "path":"folders/Scripts_Chunks.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

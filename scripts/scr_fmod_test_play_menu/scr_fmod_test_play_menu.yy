@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_fmod_test_play_menu",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_fmod_test_play_menu",
+  "parent":{
+    "name":"Extensions",
+    "path":"folders/Fmod/Extensions.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

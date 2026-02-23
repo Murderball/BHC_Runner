@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_try_hit_jump_note",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_try_hit_jump_note",
+  "parent":{
+    "name":"group1",
+    "path":"folders/group1.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

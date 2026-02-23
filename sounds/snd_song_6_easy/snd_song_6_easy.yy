@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"snd_song_6_easy",
+  "audioGroupId":{
+    "name":"audiogroup_default",
+    "path":"audiogroups/audiogroup_default",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":0,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":158.16,
+  "exportDir":"",
+  "name":"snd_song_6_easy",
+  "parent":{
+    "name":"Level_6_Master",
+    "path":"folders/Level_6_Master.yy",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"snd_song_6_easy.mp3",
+  "volume":1.0,
+}

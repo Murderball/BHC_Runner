@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_editor_delete_enemy_at_cursor",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_editor_delete_enemy_at_cursor",
+  "parent":{
+    "name":"Scripts_Editor",
+    "path":"folders/Scripts_Editor.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
