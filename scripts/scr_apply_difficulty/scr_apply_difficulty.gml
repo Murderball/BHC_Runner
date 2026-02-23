@@ -115,7 +115,7 @@ function scr_apply_difficulty(_diff, _reason, _swap_visual, _swap_audio)
     // -----------------
     // 3) Audio domain (GATED)
     // -----------------
-    if (_swap_audio)
+    if (_swap_audio && (!same || string_lower(string(_reason)) == "editor_switch"))
     {
         if (script_exists(scr_set_difficulty_song))
         {
