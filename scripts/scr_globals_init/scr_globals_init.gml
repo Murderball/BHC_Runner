@@ -315,12 +315,7 @@ function scr_globals_init()
 
     if (!variable_global_exists("__song_map_inited") || !global.__song_map_inited)
     {
-        var __song_map_sid = asset_get_index("scr_song_map_init");
-        if (__song_map_sid != -1 && script_exists(__song_map_sid))
-        {
-            script_execute(__song_map_sid);
-            global.__song_map_inited = true;
-        }
+        global.__song_map_inited = true;
     }
 
     var __song_level_idx = 1;

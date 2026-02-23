@@ -6,11 +6,8 @@ function scr_editor_preview_music_set(_level_index, _diff)
 
     var level_index = clamp(floor(real(_level_index)), 1, 6);
     if (!variable_global_exists("__song_map_inited") || !global.__song_map_inited) {
-        var __song_map_sid = asset_get_index("scr_song_map_init");
-        if (__song_map_sid != -1 && script_exists(__song_map_sid)) {
-            script_execute(__song_map_sid);
-            global.__song_map_inited = true;
-        }
+        scr_song_map_init();
+        global.__song_map_inited = true;
     }
     var diff = string_lower(string(_diff));
     if (diff != "easy" && diff != "normal" && diff != "hard") diff = "normal";

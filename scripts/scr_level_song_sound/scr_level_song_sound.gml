@@ -10,11 +10,8 @@ function scr_level_song_sound(_level_index, _diff)
     }
 
     if (!variable_global_exists("__song_map_inited") || !global.__song_map_inited) {
-        var __song_map_sid = asset_get_index("scr_song_map_init");
-        if (__song_map_sid != -1 && script_exists(__song_map_sid)) {
-            script_execute(__song_map_sid);
-            global.__song_map_inited = true;
-        }
+        scr_song_map_init();
+        global.__song_map_inited = true;
     }
 
     if (!variable_global_exists("__audio_warned") || !is_struct(global.__audio_warned)) {
