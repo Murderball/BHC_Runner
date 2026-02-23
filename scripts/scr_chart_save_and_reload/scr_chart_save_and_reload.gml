@@ -92,16 +92,14 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
         global.editor_chart_diff = diff;
 
         if (script_exists(scr_editor_preview_music_set)) {
-            scr_editor_preview_music_set(level_index, diff);
+            scr_editor_preview_music_set(diff);
         }
     }
 
     global.editor_level_index = level_index;
-    if (variable_global_exists("LEVEL_KEY")) {
-        global.LEVEL_KEY = "level0" + string(level_index);
-    }
+    global.editor_level_key = "level0" + string(level_index);
 
-    show_debug_message("[editor chart switch] " + path);
+    show_debug_message("[editor chart switch] " + path + " editor_level_key=" + string(global.editor_level_key));
     return true;
 }
 

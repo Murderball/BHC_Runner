@@ -301,8 +301,9 @@ function scr_editor_update() {
 
     if (sh && !typing_text)
     {
-        if (!variable_global_exists("editor_level_index")) global.editor_level_index = 1;
-        global.editor_level_index = clamp(global.editor_level_index, 1, 6);
+        if (!variable_global_exists("editor_level_key") || !is_string(global.editor_level_key) || global.editor_level_key == "")
+            global.editor_level_key = scr_level_resolve_key();
+        global.editor_level_index = scr_level_key_to_index(global.editor_level_key);
 
         if (keyboard_check_pressed(ord("1"))) {
             scr_editor_chart_switch(
@@ -953,41 +954,46 @@ if (mm_type == "difficulty" || mm_type == "diff")
 
 		if (ctrl && !typing_text)
 		{
-		    if (!variable_global_exists("editor_level_index")) global.editor_level_index = 1;
-		    global.editor_level_index = clamp(global.editor_level_index, 1, 6);
+		    if (!variable_global_exists("editor_level_key") || !is_string(global.editor_level_key) || global.editor_level_key == "")
+		        global.editor_level_key = scr_level_resolve_key();
 
-		    if (keyboard_check_pressed(ord("7"))) global.editor_level_index = max(1, global.editor_level_index - 1);
-		    if (keyboard_check_pressed(ord("8"))) global.editor_level_index = min(6, global.editor_level_index + 1);
+		    var __editor_level_idx = scr_level_key_to_index(global.editor_level_key);
+
+		    if (keyboard_check_pressed(ord("7"))) __editor_level_idx = max(1, __editor_level_idx - 1);
+		    if (keyboard_check_pressed(ord("8"))) __editor_level_idx = min(6, __editor_level_idx + 1);
+
+		    global.editor_level_index = __editor_level_idx;
+		    global.editor_level_key = "level0" + string(__editor_level_idx);
 
 		    if (keyboard_check_pressed(ord("1")))
 		        scr_editor_chart_switch(
-		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "easy", false)),
-		            global.editor_level_index, "easy", false);
+		            scr_chart_fullpath(scr_chart_filename(__editor_level_idx, "easy", false)),
+		            __editor_level_idx, "easy", false);
 
 		    if (keyboard_check_pressed(ord("2")))
 		        scr_editor_chart_switch(
-		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "normal", false)),
-		            global.editor_level_index, "normal", false);
+		            scr_chart_fullpath(scr_chart_filename(__editor_level_idx, "normal", false)),
+		            __editor_level_idx, "normal", false);
 
 		    if (keyboard_check_pressed(ord("3")))
 		        scr_editor_chart_switch(
-		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "hard", false)),
-		            global.editor_level_index, "hard", false);
+		            scr_chart_fullpath(scr_chart_filename(__editor_level_idx, "hard", false)),
+		            __editor_level_idx, "hard", false);
 
 		    if (keyboard_check_pressed(ord("4")))
 		        scr_editor_chart_switch(
-		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "easy", true)),
-		            global.editor_level_index, "easy", true);
+		            scr_chart_fullpath(scr_chart_filename(__editor_level_idx, "easy", true)),
+		            __editor_level_idx, "easy", true);
 
 		    if (keyboard_check_pressed(ord("5")))
 		        scr_editor_chart_switch(
-		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "normal", true)),
-		            global.editor_level_index, "normal", true);
+		            scr_chart_fullpath(scr_chart_filename(__editor_level_idx, "normal", true)),
+		            __editor_level_idx, "normal", true);
 
 		    if (keyboard_check_pressed(ord("6")))
 		        scr_editor_chart_switch(
-		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "hard", true)),
-		            global.editor_level_index, "hard", true);
+		            scr_chart_fullpath(scr_chart_filename(__editor_level_idx, "hard", true)),
+		            __editor_level_idx, "hard", true);
 		}
 
 
