@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_fmod_event_play",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_fmod_event_play",
+  "parent":{
+    "name":"Fmod",
+    "path":"folders/Fmod.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

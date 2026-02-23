@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_fmod_fs_probe",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_fmod_fs_probe",
+  "parent":{
+    "name":"Fmod",
+    "path":"folders/Fmod.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

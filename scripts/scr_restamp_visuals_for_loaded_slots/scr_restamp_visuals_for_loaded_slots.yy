@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_restamp_visuals_for_loaded_slots",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_restamp_visuals_for_loaded_slots",
+  "parent":{
+    "name":"Scripts_Chunks",
+    "path":"folders/Scripts_Chunks.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

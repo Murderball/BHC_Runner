@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_visual_bands_init",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_visual_bands_init",
+  "parent":{
+    "name":"Scripts_Chunks",
+    "path":"folders/Scripts_Chunks.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

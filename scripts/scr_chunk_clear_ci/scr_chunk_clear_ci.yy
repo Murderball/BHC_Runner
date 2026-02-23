@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_chunk_clear_ci",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_chunk_clear_ci",
+  "parent":{
+    "name":"Scripts_Chunk",
+    "path":"folders/Scripts_Chunk.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
