@@ -37,27 +37,10 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
     // QUICK DEBUG HUD (top-left / misc)
     // ==================================================
     draw_text(500, 40, "Chart: " + string(global.chart_file));
-    if (variable_global_exists("editor_chart_quickload") && is_struct(global.editor_chart_quickload)) {
-        draw_text(500, 62, "Boss set: " + string(global.editor_chart_quickload.boss_active_level)
-            + "  Normal set: " + string(global.editor_chart_quickload.normal_active_level));
-    }
 
     // chart length debug (keep exact behavior)
     draw_set_color(c_black);
     draw_text(20, 250, "chart count: " + string(array_length(global.chart)));
-
-    if (!variable_global_exists("editor_toast_msg")) global.editor_toast_msg = "";
-    if (!variable_global_exists("editor_toast_until_ms")) global.editor_toast_until_ms = 0;
-
-    if (global.editor_toast_msg != "" && current_time <= global.editor_toast_until_ms)
-    {
-        draw_set_alpha(0.88);
-        draw_set_color(c_black);
-        draw_roundrect(18, 18, 440, 52, false);
-        draw_set_alpha(1);
-        draw_set_color(c_white);
-        draw_text(28, 28, string(global.editor_toast_msg));
-    }
 
 
     // ==================================================
