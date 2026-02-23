@@ -1,6 +1,6 @@
-/// scr_set_difficulty_song(diff, reason)
+/// scr_set_difficulty_song(diff, reason, optional_level_key)
 /// Swaps currently selected song based on difficulty with one controlled restart.
-function scr_set_difficulty_song(_diff, _reason)
+function scr_set_difficulty_song(_diff, _reason, _optional_level_key)
 {
     if (variable_global_exists("LEVEL_MODE") && global.LEVEL_MODE == "boss") return;
 
@@ -17,33 +17,41 @@ function scr_set_difficulty_song(_diff, _reason)
     var d = string_lower(string(_diff));
     if (d != "easy" && d != "normal" && d != "hard") d = "normal";
 
-    var lk = "";
-    if (script_exists(scr_active_level_key)) {
-        lk = scr_active_level_key();
-    }
-    if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) {
-        lk = string_lower(global.LEVEL_KEY);
+    var explicit_key = "";
+    if (!is_undefined(_optional_level_key)) explicit_key = string_lower(string(_optional_level_key));
+
+    var lk = explicit_key;
+    if (lk == "") {
+        if (script_exists(scr_active_level_key)) lk = scr_active_level_key();
+        if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) lk = string_lower(global.LEVEL_KEY);
     }
 
     var level_idx = -1;
-    if (string_length(lk) >= 6) {
-        level_idx = clamp(real(string_copy(lk, 6, string_length(lk) - 5)), 1, 99);
+    if (string_length(lk) >= 7 && string_copy(lk, 1, 5) == "level") {
+        level_idx = real(string_copy(lk, 6, string_length(lk) - 5));
     }
 
     if (level_idx < 1) {
-        if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
-            show_debug_message("[EDITOR AUDIO] unable to resolve level key during diff song switch; reason=" + string(_reason));
-        }
+        scr_media_trace("scr_set_difficulty_song", lk, d, -1);
+        show_debug_message("[AUDIO] difficulty song switch aborted: unresolved level key='" + string(lk)
+            + "' reason=" + string(_reason));
         return;
     }
 
+    level_idx = clamp(level_idx, 1, 99);
+
+    var easy_snd   = scr_level_song_sound(level_idx, "easy");
+    var normal_snd = scr_level_song_sound(level_idx, "normal");
+    var hard_snd   = scr_level_song_sound(level_idx, "hard");
+
     global.DIFF_SONG_SOUND = {
-        easy   : scr_level_song_sound(level_idx, "easy"),
-        normal : scr_level_song_sound(level_idx, "normal"),
-        hard   : scr_level_song_sound(level_idx, "hard")
+        easy   : easy_snd,
+        normal : normal_snd,
+        hard   : hard_snd
     };
 
     if (variable_global_exists("song_no_music_level") && global.song_no_music_level) {
+        scr_media_trace("scr_set_difficulty_song", lk, d, -1);
         if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
             show_debug_message("[AUDIO] diff song switch skipped (no music for level=" + string(level_idx)
                 + ") reason=" + string(_reason));
@@ -52,37 +60,22 @@ function scr_set_difficulty_song(_diff, _reason)
     }
 
     var new_snd = real(global.DIFF_SONG_SOUND[$ d]);
-    if (!audio_exists(new_snd)) {
-        new_snd = real(global.DIFF_SONG_SOUND.normal);
-    }
-
-    if (!audio_exists(new_snd) && audio_exists(global.song_state.sound_asset)) {
-        new_snd = global.song_state.sound_asset;
-    }
-
-    if (!audio_exists(new_snd) && variable_global_exists("song_sound") && audio_exists(global.song_sound)) {
-        new_snd = global.song_sound;
-    }
+    if (!audio_exists(new_snd)) new_snd = real(global.DIFF_SONG_SOUND.normal);
 
     if (!audio_exists(new_snd)) {
-        if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
-            show_debug_message("[EDITOR AUDIO] difficulty song switch failed: no valid asset for level=" + string(lk) + " diff=" + d);
-        }
+        scr_media_trace("scr_set_difficulty_song", lk, d, new_snd);
+        show_debug_message("[AUDIO] difficulty song switch aborted: no valid asset level=" + string(lk)
+            + " diff=" + d + " reason=" + string(_reason));
         return;
     }
 
-    if (variable_global_exists("editor_on") && global.editor_on) {
-        show_debug_message("[EDITOR AUDIO] resolved level=" + string(lk)
-            + " diff=" + d
-            + " snd=" + scr_song_asset_label(new_snd)
-            + " [" + string(new_snd) + "]");
-    }
+    scr_media_trace("scr_set_difficulty_song", lk, d, new_snd);
 
     // Debounce repeated calls in same frame/reason.
     if (!variable_global_exists("_last_diff_song_switch_ms")) global._last_diff_song_switch_ms = -1000000;
     if (!variable_global_exists("_last_diff_song_switch_key")) global._last_diff_song_switch_key = "";
 
-    var switch_key = d + "|" + string(_reason) + "|" + string(new_snd);
+    var switch_key = d + "|" + string(_reason) + "|" + string(new_snd) + "|" + string(lk);
     if ((current_time - global._last_diff_song_switch_ms) < 100 && global._last_diff_song_switch_key == switch_key) {
         return;
     }
