@@ -42,6 +42,11 @@ function scr_song_get_pos_s()
     if (!is_real(pos) || is_nan(pos)) pos = st.last_known_pos_s;
 
     var off = st.chart_offset_s;
+    if (variable_global_exists("CHART_TIME_OFFSET_S") && is_real(global.CHART_TIME_OFFSET_S)) {
+        off = real(global.CHART_TIME_OFFSET_S);
+    } else if (variable_global_exists("OFFSET") && is_real(global.OFFSET)) {
+        off = real(global.OFFSET);
+    }
     pos -= off;
     if (pos < 0) pos = 0;
 
@@ -87,7 +92,7 @@ function scr_song_debug_draw(_x, _y)
 }
 
 /// scr_song_play_from(time_sec)
-/// Also accepts scr_song_play_from(sound_asset, time_sec).
+/// Also accepts scr_song_play_from(sound_asset) and scr_song_play_from(sound_asset, time_sec).
 function scr_song_play_from(time_sec) {
     scr_song_state_ensure();
 
@@ -105,9 +110,21 @@ function scr_song_play_from(time_sec) {
     var st = global.song_state;
 
     var snd_asset = (scr_song_is_valid_asset(st.sound_asset)) ? st.sound_asset : global.song_sound;
-    var start_time = time_sec;
+    var start_time = 0.0;
+    var arg0_is_audio_asset = false;
 
-    if (argument_count >= 2) {
+    if (argument_count <= 0) {
+        start_time = 0.0;
+    } else if (argument_count == 1) {
+        arg0_is_audio_asset = audio_exists(argument[0]);
+        if (arg0_is_audio_asset) {
+            snd_asset = argument[0];
+            start_time = 0.0;
+        } else {
+            snd_asset = (scr_song_is_valid_asset(st.sound_asset)) ? st.sound_asset : global.song_sound;
+            start_time = argument[0];
+        }
+    } else {
         snd_asset = argument[0];
         start_time = argument[1];
     }
@@ -116,9 +133,30 @@ function scr_song_play_from(time_sec) {
     if (!is_real(start_time) || is_nan(start_time)) start_time = 0.0;
     start_time = max(0.0, start_time);
 
-    var off = (variable_global_exists("OFFSET") && is_real(global.OFFSET)) ? real(global.OFFSET) : 0.0;
+    var off = 0.0;
+    if (variable_global_exists("CHART_TIME_OFFSET_S") && is_real(global.CHART_TIME_OFFSET_S)) {
+        off = real(global.CHART_TIME_OFFSET_S);
+    } else if (variable_global_exists("OFFSET") && is_real(global.OFFSET)) {
+        off = real(global.OFFSET);
+    }
+
+    if (global.AUDIO_DEBUG_LOG) {
+        show_debug_message("[AUDIO] scr_song_play_from argc=" + string(argument_count)
+            + " resolved_snd=" + string(snd_asset)
+            + " start_s=" + string_format(start_time, 1, 3)
+            + " arg0_audio_exists=" + string(arg0_is_audio_asset));
+    }
 
     if (!scr_song_is_valid_asset(snd_asset)) {
+        if (scr_song_is_valid_asset(st.sound_asset)) {
+            _audio_warn_once(
+                "scr_song_play_from_keep_current_invalid_req_" + string(snd_asset),
+                "[AUDIO] scr_song_play_from requested invalid sound " + string(snd_asset)
+                + "; keeping current sound " + string(st.sound_asset) + " inst=" + string(st.inst)
+            );
+            return false;
+        }
+
         _audio_warn_once(
             "scr_song_play_from_invalid_sound_" + string(snd_asset),
             "[AUDIO] scr_song_play_from ignored invalid sound asset index: " + string(snd_asset)
@@ -141,6 +179,12 @@ function scr_song_play_from(time_sec) {
     }
 
     var inst = audio_play_sound(snd_asset, 1, false);
+    if (global.AUDIO_DEBUG_LOG) {
+        show_debug_message("[AUDIO] scr_song_play_from play_sound snd=" + string(snd_asset)
+            + " inst=" + string(inst)
+            + " audio_exists=" + string(audio_exists(snd_asset)));
+    }
+
     if (!scr_song_is_valid_inst(inst)) {
         _audio_warn_once(
             "scr_song_play_from_play_failed_" + string(snd_asset),

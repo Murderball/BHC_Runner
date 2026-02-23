@@ -38,7 +38,8 @@ function scr_song_time()
         if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
             show_debug_message("[AUDIO] drift-correct seek inst=" + string(st.inst)
                 + " drift=" + string_format(drift, 1, 3)
-                + " target=" + string_format(expect, 1, 3));
+                + " target_chart=" + string_format(expect, 1, 3)
+                + " target_audio=" + string_format(target, 1, 3));
         }
 
         t = expect;
