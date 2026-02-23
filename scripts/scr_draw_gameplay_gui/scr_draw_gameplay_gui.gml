@@ -1,6 +1,10 @@
 function scr_draw_gameplay_gui()
 {
 	
+    var __gui_prev_alpha = draw_get_alpha();
+    var __gui_prev_color = draw_get_color();
+    var __gui_prev_blend = gpu_get_blendmode();
+
     // --------------------------------------------------
     // MENU GUARD: do not draw gameplay UI in menu/loading
     // --------------------------------------------------
@@ -221,7 +225,13 @@ function scr_draw_gameplay_gui()
         scr_song_debug_draw(20, 80);
     }
 
-    if (!variable_global_exists("chart") || is_undefined(global.chart)) return;
+    if (!variable_global_exists("chart") || is_undefined(global.chart)) {
+        draw_set_alpha(__gui_prev_alpha);
+        draw_set_color(__gui_prev_color);
+        gpu_set_blendmode(__gui_prev_blend);
+        shader_reset();
+        return;
+    }
 
     var chart_len = array_length(global.chart);
 
@@ -248,10 +258,25 @@ function scr_draw_gameplay_gui()
         if (start_gx < -400) continue;
         if (start_gx > gw + 400) continue;
 
-        var was_hit = (variable_struct_exists(nref, "hit") && nref.hit);
-        var note_alpha = was_hit ? 0.35 : 1;
-        draw_set_alpha(note_alpha);
-        var alpha_arg = 1;
+        if (!variable_struct_exists(nref, "hit_fx_t")) nref.hit_fx_t = 0;
+        if (!variable_struct_exists(nref, "hit_fx_dur")) nref.hit_fx_dur = 0.10;
+        if (!variable_struct_exists(nref, "hit_fx_pow")) nref.hit_fx_pow = 0;
+
+        if (nref.hit_fx_t > 0) {
+            nref.hit_fx_t = max(0, nref.hit_fx_t - (delta_time / 1000000.0));
+            if (nref.hit_fx_t <= 0) nref.hit_fx_pow = 0;
+        }
+
+        var hf = 0;
+        if (nref.hit_fx_dur > 0) hf = clamp(nref.hit_fx_t / nref.hit_fx_dur, 0, 1);
+
+        var base_a = 1.0;
+        var note_alpha = base_a;
+        var alpha_arg = note_alpha;
+
+        var __note_prev_alpha = draw_get_alpha();
+        var __note_prev_color = draw_get_color();
+        var __note_prev_blend = gpu_get_blendmode();
 
         // Choose sprite per action (falls back to spr_note if missing)
         var note_act = string_lower(string(nref.act));
@@ -299,10 +324,27 @@ function scr_draw_gameplay_gui()
             draw_set_color(c_black);
         }
 
+        if (hf > 0)
+        {
+            var flash_alpha = 0.45 * hf * max(0, nref.hit_fx_pow);
+            gpu_set_blendmode(bm_add);
+            if (spr != -1) {
+                draw_sprite_ext(spr, subimg_start, start_gx, start_gy, 1.08, 1.08, 0, c_white, flash_alpha);
+            } else {
+                draw_set_alpha(flash_alpha);
+                draw_set_color(c_white);
+                draw_rectangle(start_gx - 12, start_gy - 12, start_gx + 12, start_gy + 12, false);
+            }
+            gpu_set_blendmode(bm_normal);
+        }
+
+        draw_set_alpha(__note_prev_alpha);
+        draw_set_color(__note_prev_color);
+        gpu_set_blendmode(__note_prev_blend);
     }
 
-    draw_set_alpha(1);
-    draw_set_color(c_white);
-    gpu_set_blendmode(bm_normal);
+    draw_set_alpha(__gui_prev_alpha);
+    draw_set_color(__gui_prev_color);
+    gpu_set_blendmode(__gui_prev_blend);
     shader_reset();
 }
