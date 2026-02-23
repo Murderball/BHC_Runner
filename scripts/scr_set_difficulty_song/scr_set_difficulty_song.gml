@@ -48,7 +48,7 @@ function scr_reload_level_media_for_diff(_diff)
     if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG)
     {
         var snd_name = string(snd);
-        if (is_real(snd) && !is_nan(snd) && audio_exists(snd)) snd_name = asset_get_name(snd);
+        if (snd != -1) snd_name = asset_get_name(snd);
         show_debug_message("[DIFF HOTKEY] room=" + string(room_get_name(room))
             + " level_key=" + string(level_key)
             + " diff=" + string(d)
