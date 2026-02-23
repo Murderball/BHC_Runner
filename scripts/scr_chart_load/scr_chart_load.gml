@@ -178,7 +178,16 @@ function scr_chart_load()
 
         if (!is_struct(nref))
         {
-            global.chart[i] = { t: 0.0, lane: 0, type: "tap", act: global.ACT_ATK1, y_gui: (legacy_top + legacy_spacing) };
+            global.chart[i] = {
+                t: 0.0,
+                lane: 0,
+                type: "tap",
+                act: global.ACT_ATK1,
+                y_gui: (legacy_top + legacy_spacing),
+                hit_fx_t: 0,
+                hit_fx_dur: 0.10,
+                hit_fx_pow: 0
+            };
             continue;
         }
 
@@ -215,6 +224,10 @@ function scr_chart_load()
         {
             nref.dur = global.SEC_PER_BEAT;
         }
+
+        if (!variable_struct_exists(nref, "hit_fx_t")) nref.hit_fx_t = 0;
+        if (!variable_struct_exists(nref, "hit_fx_dur")) nref.hit_fx_dur = 0.10;
+        if (!variable_struct_exists(nref, "hit_fx_pow")) nref.hit_fx_pow = 0;
     }
 
     // Chart total length (seconds): latest note end + tail margin.

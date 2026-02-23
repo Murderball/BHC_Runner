@@ -61,6 +61,15 @@ function scr_try_trigger(act)
     nn.hit = true;
     nn.hit_judge = result;
     nn.hit_time = t;
+    if (!variable_struct_exists(nn, "hit_fx_t")) nn.hit_fx_t = 0;
+    if (!variable_struct_exists(nn, "hit_fx_dur")) nn.hit_fx_dur = 0.10;
+    if (!variable_struct_exists(nn, "hit_fx_pow")) nn.hit_fx_pow = 0;
+    nn.hit_fx_t = nn.hit_fx_dur;
+    nn.hit_fx_pow = 1;
+
+    if (variable_global_exists("dbg_song_overlay_on") && global.dbg_song_overlay_on) {
+        show_debug_message("[NOTE HIT FX] id=" + string(best_i) + " fx_dur=" + string(nn.hit_fx_dur));
+    }
 
     return result;
 }
