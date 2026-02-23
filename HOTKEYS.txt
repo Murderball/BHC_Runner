@@ -45,6 +45,8 @@ Delete/Backspace - Delete selected note/marker/phrase step                   (sc
 Ctrl+S       - Save chart (and phrase save in phrase tool)                    (scripts/scr_editor_update.gml)
 Ctrl+L       - Load chart (and phrase load in phrase tool)                    (scripts/scr_editor_update.gml)
 Ctrl+1/2/3/4 - Set chart difficulty                                            (scripts/scr_editor_update.gml)
+Shift+1/2/3/4 - Select note kind: Atk1/Atk2/Atk3/Ult                          (scripts/scr_editor_update.gml)
+Shift+5/6     - Select note kind: Jump/Duck                                    (scripts/scr_editor_update.gml)
 Shift+7/8/9 or NumPad7/8/9 - Set marker difficulty                            (scripts/scr_editor_update.gml)
 Ctrl+C       - Copy selected notes                                             (scripts/scr_editor_update.gml)
 Ctrl+V       - Paste notes                                                     (scripts/scr_editor_update.gml)
