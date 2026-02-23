@@ -114,6 +114,7 @@ scr_bg_manager_apply_profile(bg_near);
 if (!variable_global_exists("fmod_inited") || !global.fmod_inited) {
     if (script_exists(scr_fmod_init)) scr_fmod_init();
 }
+if (script_exists(scr_fmod_debug_probe)) scr_fmod_debug_probe();
 if (script_exists(scr_audio_route_apply)) scr_audio_route_apply();
 if (!variable_global_exists("__last_room")) global.__last_room = room;
 global.audio_last_room = room;
