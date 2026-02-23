@@ -318,6 +318,8 @@ function scr_globals_init()
     if (!variable_global_exists("AUDIO_DEBUG_LOG")) global.AUDIO_DEBUG_LOG = true
 	;
 
+    if (!variable_global_exists("DEBUG_MEDIA_RELOAD")) global.DEBUG_MEDIA_RELOAD = false;
+
     if (!variable_global_exists("__song_map_inited") || !global.__song_map_inited)
     {
         scr_song_map_init();
