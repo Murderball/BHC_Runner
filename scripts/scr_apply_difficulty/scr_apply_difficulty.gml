@@ -21,7 +21,11 @@ function scr_apply_difficulty(_diff, _reason, _swap_visual, _swap_audio)
     // -----------------
     // 1) Set chart file (ALWAYS)
     // -----------------
-    if (variable_global_exists("DIFF_CHART") && is_struct(global.DIFF_CHART))
+    if (script_exists(scr_chart_key_for_current_level))
+    {
+        global.chart_file = scr_chart_key_for_current_level(d);
+    }
+    else if (variable_global_exists("DIFF_CHART") && is_struct(global.DIFF_CHART))
     {
         if (variable_struct_exists(global.DIFF_CHART, d))
         {
@@ -125,4 +129,25 @@ function scr_apply_difficulty(_diff, _reason, _swap_visual, _swap_audio)
 
     show_debug_message("[DIFF] apply -> " + d + " (" + string(_reason) + ")"
         + " same=" + string(same) + " V=" + string(_swap_visual) + " A=" + string(_swap_audio));
+}
+
+/// scr_diff_hotkey_update()
+/// CTRL+1/2/3 -> easy/normal/hard for current level context.
+function scr_diff_hotkey_update()
+{
+    var ctrl = keyboard_check(vk_control) || keyboard_check(vk_lcontrol) || keyboard_check(vk_rcontrol);
+    if (!ctrl) return;
+
+    var diff = "";
+    if (keyboard_check_pressed(ord("1"))) diff = "easy";
+    else if (keyboard_check_pressed(ord("2"))) diff = "normal";
+    else if (keyboard_check_pressed(ord("3"))) diff = "hard";
+
+    if (diff == "") return;
+
+    if (script_exists(scr_reload_level_media_for_diff)) {
+        scr_reload_level_media_for_diff(diff);
+    } else {
+        scr_apply_difficulty(diff, "ctrl_hotkey", true, true);
+    }
 }

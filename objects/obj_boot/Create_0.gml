@@ -14,7 +14,8 @@ if (!directory_exists("charts")) directory_create("charts");
 // Default level key if not set by menu yet
 if (!variable_global_exists("LEVEL_KEY") || !is_string(global.LEVEL_KEY) || global.LEVEL_KEY == "")
 {
-    global.LEVEL_KEY = "level03";
+    global.LEVEL_KEY = "level01";
+    global.level_key = global.LEVEL_KEY;
 }
 
 // 1) Init globals (must define ALL globals read anywhere)
