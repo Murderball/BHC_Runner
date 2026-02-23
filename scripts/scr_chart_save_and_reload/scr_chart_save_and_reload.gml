@@ -65,35 +65,7 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
     var diff = string_lower(string(_diff));
     if (diff != "easy" && diff != "normal" && diff != "hard") diff = "normal";
 
-    var path_l = string_lower(path);
-    var pp = string_pos("charts/level", path_l);
-    if (pp > 0) {
-        var pi = pp + string_length("charts/level");
-        var digits = "";
-        while (pi <= string_length(path_l)) {
-            var ch = string_char_at(path_l, pi);
-            if (ch >= "0" && ch <= "9") {
-                digits += ch;
-                pi += 1;
-            } else {
-                break;
-            }
-        }
-        if (digits != "") level_index = clamp(real(digits), 1, 6);
-    }
-
-    var level_key = "level" + string(level_index < 10 ? "0" + string(level_index) : string(level_index));
-
-    global.editor_chart_path = path;
-    global.editor_chart_fullpath = path;
     global.chart_file = path;
-    global.LEVEL_KEY = level_key;
-    global.editor_level_index = level_index;
-
-    global.editor_chart_level_index = level_index;
-    global.editor_chart_diff = diff;
-    global.editor_chart_is_boss = _is_boss;
-    global.editor_chart_filename = scr_chart_filename(level_index, diff, _is_boss);
 
     if (script_exists(scr_chart_load)) scr_chart_load();
 
@@ -104,6 +76,13 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
     if (variable_global_exists("editor_time") && variable_global_exists("CHART_LEN_S") && is_real(global.CHART_LEN_S)) {
         global.editor_time = clamp(global.editor_time, 0, max(0, global.CHART_LEN_S));
     }
+
+    global.editor_chart_level_index = level_index;
+    global.editor_chart_diff = diff;
+    global.editor_chart_is_boss = _is_boss;
+    global.editor_chart_filename = scr_chart_filename(level_index, diff, _is_boss);
+    global.editor_chart_fullpath = path;
+    global.editor_chart_path = path;
 
     global.editor_active_chart_label = global.editor_chart_filename;
 
@@ -117,12 +96,13 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
             scr_editor_preview_music_set(level_index, diff);
         }
 
-        if (script_exists(scr_set_difficulty_song)) {
-            scr_set_difficulty_song(diff, "chart_switch");
-        }
-
-        show_debug_message("[EDITOR AUDIO] chart switch level=" + level_key
+        show_debug_message("[EDITOR AUDIO] chart switch level=level" + (string(level_index < 10 ? "0" + string(level_index) : string(level_index)))
             + " diff=" + diff + " path=" + path);
+    }
+
+    global.editor_level_index = level_index;
+    if (variable_global_exists("LEVEL_KEY")) {
+        global.LEVEL_KEY = "level0" + string(level_index);
     }
 
     show_debug_message("[editor chart switch] " + path);
@@ -144,30 +124,6 @@ function scr_chart_save_and_reload(fname)
         path = "charts/" + path;
     }
 
-    var path_l = string_lower(path);
-    var pp = string_pos("charts/level", path_l);
-    if (pp > 0) {
-        var pi = pp + string_length("charts/level");
-        var digits = "";
-        while (pi <= string_length(path_l)) {
-            var ch = string_char_at(path_l, pi);
-            if (ch >= "0" && ch <= "9") {
-                digits += ch;
-                pi += 1;
-            } else {
-                break;
-            }
-        }
-        if (digits != "") {
-            var level_index = clamp(real(digits), 1, 6);
-            var level_key = "level" + string(level_index < 10 ? "0" + string(level_index) : string(level_index));
-            global.LEVEL_KEY = level_key;
-            global.editor_level_index = level_index;
-        }
-    }
-
-    global.editor_chart_path = path;
-    global.editor_chart_fullpath = path;
     global.chart_file = path;
     if (script_exists(scr_chart_save)) scr_chart_save();
     if (script_exists(scr_chart_load)) scr_chart_load();

@@ -15,33 +15,9 @@ function scr_apply_difficulty_change(new_diff)
     // Ensure we have a valid level key (used for charts)
     // -------------------------------------------------
     var lk = "";
-    if (variable_global_exists("editor_chart_path") && is_string(global.editor_chart_path) && global.editor_chart_path != "") {
-        var pth = string_lower(global.editor_chart_path);
-        var pos = string_pos("charts/level", pth);
-        if (pos > 0) {
-            var i = pos + string_length("charts/level");
-            var digits = "";
-            while (i <= string_length(pth)) {
-                var ch = string_char_at(pth, i);
-                if (ch >= "0" && ch <= "9") {
-                    digits += ch;
-                    i += 1;
-                } else {
-                    break;
-                }
-            }
-            if (digits != "") {
-                var idx_txt = string(clamp(real(digits), 1, 99));
-                if (string_length(idx_txt) < 2) idx_txt = "0" + idx_txt;
-                lk = "level" + idx_txt;
-            }
-        }
-    }
-    if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY) && global.LEVEL_KEY != "") lk = string_lower(global.LEVEL_KEY);
-    if (lk == "") {
-        lk = scr_level_key_from_room(room);
-        if (lk == "") lk = "level01";
-    }
+    if (script_exists(scr_active_level_key)) lk = scr_active_level_key();
+    if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) lk = string_lower(global.LEVEL_KEY);
+    if (lk == "") return;
     global.LEVEL_KEY = lk;
 
     // -------------------------------------------------
