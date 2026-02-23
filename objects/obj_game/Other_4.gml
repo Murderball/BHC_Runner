@@ -31,6 +31,9 @@ if (room == rm_loading) {
 // Re-prepare level context every time we enter a gameplay room.
 // This updates LEVEL_KEY, DIFF_SONG_SOUND, DIFF_CHART, and boss defs.
 // ------------------------------------------------------------
+global.level_key = scr_level_key_from_room(room);
+global.LEVEL_KEY = scr_level_resolve_key();
+global.level_key = global.LEVEL_KEY;
 if (script_exists(scr_level_prepare_for_room)) {
     scr_level_prepare_for_room(room);
 }
