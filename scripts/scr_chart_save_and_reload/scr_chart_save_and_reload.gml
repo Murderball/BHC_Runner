@@ -82,6 +82,7 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
     global.editor_chart_is_boss = _is_boss;
     global.editor_chart_filename = scr_chart_filename(level_index, diff, _is_boss);
     global.editor_chart_fullpath = path;
+    global.editor_chart_path = path;
 
     global.editor_active_chart_label = global.editor_chart_filename;
 
@@ -94,6 +95,9 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
         if (script_exists(scr_editor_preview_music_set)) {
             scr_editor_preview_music_set(level_index, diff);
         }
+
+        show_debug_message("[EDITOR AUDIO] chart switch level=level" + (string(level_index < 10 ? "0" + string(level_index) : string(level_index)))
+            + " diff=" + diff + " path=" + path);
     }
 
     global.editor_level_index = level_index;

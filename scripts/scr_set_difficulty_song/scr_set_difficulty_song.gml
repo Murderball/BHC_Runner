@@ -17,12 +17,24 @@ function scr_set_difficulty_song(_diff, _reason)
     var d = string_lower(string(_diff));
     if (d != "easy" && d != "normal" && d != "hard") d = "normal";
 
-    var lk = "level03";
-    if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) lk = global.LEVEL_KEY;
+    var lk = "";
+    if (script_exists(scr_active_level_key)) {
+        lk = scr_active_level_key();
+    }
+    if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) {
+        lk = string_lower(global.LEVEL_KEY);
+    }
 
-    var level_idx = 3;
+    var level_idx = -1;
     if (string_length(lk) >= 6) {
-        level_idx = clamp(real(string_copy(lk, 6, string_length(lk) - 5)), 1, 6);
+        level_idx = clamp(real(string_copy(lk, 6, string_length(lk) - 5)), 1, 99);
+    }
+
+    if (level_idx < 1) {
+        if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+            show_debug_message("[EDITOR AUDIO] unable to resolve level key during diff song switch; reason=" + string(_reason));
+        }
+        return;
     }
 
     global.DIFF_SONG_SOUND = {
@@ -48,15 +60,22 @@ function scr_set_difficulty_song(_diff, _reason)
         new_snd = global.song_state.sound_asset;
     }
 
-    if (!audio_exists(new_snd) && audio_exists(global.song_sound)) {
+    if (!audio_exists(new_snd) && variable_global_exists("song_sound") && audio_exists(global.song_sound)) {
         new_snd = global.song_sound;
     }
 
     if (!audio_exists(new_snd)) {
         if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
-            show_debug_message("[AUDIO] difficulty song switch failed: no valid asset for level=" + string(lk) + " diff=" + d);
+            show_debug_message("[EDITOR AUDIO] difficulty song switch failed: no valid asset for level=" + string(lk) + " diff=" + d);
         }
         return;
+    }
+
+    if (variable_global_exists("editor_on") && global.editor_on) {
+        show_debug_message("[EDITOR AUDIO] resolved level=" + string(lk)
+            + " diff=" + d
+            + " snd=" + scr_song_asset_label(new_snd)
+            + " [" + string(new_snd) + "]");
     }
 
     // Debounce repeated calls in same frame/reason.
