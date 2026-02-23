@@ -7,13 +7,14 @@ function scr_editor_preview_music_set(_level_index, _diff)
     var level_index = clamp(floor(real(_level_index)), 1, 6);
     if (!variable_global_exists("__song_map_inited") || !global.__song_map_inited) {
         scr_song_map_init();
-        global.__song_map_inited = true;
     }
     var diff = string_lower(string(_diff));
     if (diff != "easy" && diff != "normal" && diff != "hard") diff = "normal";
 
     var snd_asset = scr_level_song_sound(level_index, diff);
-    if (!is_real(snd_asset) || snd_asset == -1) {
+    if (!script_exists(scr_song_is_valid_asset)) return;
+
+    if (!scr_song_is_valid_asset(snd_asset)) {
         show_debug_message("[AUDIO] editor preview music skipped invalid resolve: level=" + string(level_index)
             + " diff=" + diff + " snd_asset=" + string(snd_asset));
         return;
@@ -33,14 +34,6 @@ function scr_editor_preview_music_set(_level_index, _diff)
         return;
     }
 
-    if (global.editor_preview_sound_instance >= 0 && audio_is_playing(global.editor_preview_sound_instance)) {
-        audio_stop_sound(global.editor_preview_sound_instance);
-    } else if (variable_global_exists("song_handle") && global.song_handle >= 0 && audio_is_playing(global.song_handle)) {
-        audio_stop_sound(global.song_handle);
-    }
-
-    global.song_handle = -1;
-    global.song_playing = false;
 
     global.editor_chart_diff = diff;
     global.song_sound = snd_asset;
