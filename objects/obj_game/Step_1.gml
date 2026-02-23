@@ -1,7 +1,5 @@
 
-if (variable_global_exists("fmod_ready") && global.fmod_ready) {
-    fmod_studio_system_update();
-}
+scr_fmod_update();
 if (!variable_global_exists("audio_last_room")) global.audio_last_room = room;
 if (global.audio_last_room != room) {
     global.audio_last_room = room;
