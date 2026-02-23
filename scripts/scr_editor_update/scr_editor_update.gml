@@ -291,21 +291,21 @@ function scr_editor_update() {
 
         if (keyboard_check_pressed(ord("1"))) {
             scr_editor_chart_switch(
-                scr_chart_resolve_for_level(global.editor_level_index, "easy", false),
+                scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "easy", false)),
                 global.editor_level_index, "easy", false
             );
         }
 
         if (keyboard_check_pressed(ord("2"))) {
             scr_editor_chart_switch(
-                scr_chart_resolve_for_level(global.editor_level_index, "normal", false),
+                scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "normal", false)),
                 global.editor_level_index, "normal", false
             );
         }
 
         if (keyboard_check_pressed(ord("3"))) {
             scr_editor_chart_switch(
-                scr_chart_resolve_for_level(global.editor_level_index, "hard", false),
+                scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "hard", false)),
                 global.editor_level_index, "hard", false
             );
         }
@@ -946,32 +946,32 @@ if (mm_type == "difficulty" || mm_type == "diff")
 
 		    if (keyboard_check_pressed(ord("1")))
 		        scr_editor_chart_switch(
-		            scr_chart_resolve_for_level(global.editor_level_index, "easy", false),
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "easy", false)),
 		            global.editor_level_index, "easy", false);
 
 		    if (keyboard_check_pressed(ord("2")))
 		        scr_editor_chart_switch(
-		            scr_chart_resolve_for_level(global.editor_level_index, "normal", false),
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "normal", false)),
 		            global.editor_level_index, "normal", false);
 
 		    if (keyboard_check_pressed(ord("3")))
 		        scr_editor_chart_switch(
-		            scr_chart_resolve_for_level(global.editor_level_index, "hard", false),
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "hard", false)),
 		            global.editor_level_index, "hard", false);
 
 		    if (keyboard_check_pressed(ord("4")))
 		        scr_editor_chart_switch(
-		            scr_chart_resolve_for_level(global.editor_level_index, "easy", true),
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "easy", true)),
 		            global.editor_level_index, "easy", true);
 
 		    if (keyboard_check_pressed(ord("5")))
 		        scr_editor_chart_switch(
-		            scr_chart_resolve_for_level(global.editor_level_index, "normal", true),
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "normal", true)),
 		            global.editor_level_index, "normal", true);
 
 		    if (keyboard_check_pressed(ord("6")))
 		        scr_editor_chart_switch(
-		            scr_chart_resolve_for_level(global.editor_level_index, "hard", true),
+		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "hard", true)),
 		            global.editor_level_index, "hard", true);
 		}
 

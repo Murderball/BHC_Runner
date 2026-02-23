@@ -1,26 +1,13 @@
 function scr_globals_init()
 {
     // ====================================================
-    // IDEMPOTENT BOOT FLAGS
+    // ONE-TIME INIT GUARD
     // ====================================================
-    if (!variable_global_exists("__globals_inited")) global.__globals_inited = false;
-    if (!variable_global_exists("__song_map_inited")) global.__song_map_inited = false;
-    if (!variable_global_exists("__chart_inited")) global.__chart_inited = false;
-    if (!variable_global_exists("__globals_init_in_progress")) global.__globals_init_in_progress = false;
-
-    if (global.__globals_inited) return;
-    if (global.__globals_init_in_progress) return;
-    global.__globals_init_in_progress = true;
-
-    // Legacy flags kept for compatibility.
+    if (variable_global_exists("GLOBALS_INIT") && global.GLOBALS_INIT) return;
     global.GLOBALS_INIT = true;
-    global.GLOBALS_INITIALIZED = true;
 
-    // Defuse old script-name collision if stale global var exists.
-    if (variable_global_exists("scr_song_map_init")) {
-        global.song_map_init_done = !!global.scr_song_map_init;
-        variable_global_remove("scr_song_map_init");
-    }
+    if (variable_global_exists("GLOBALS_INITIALIZED") && global.GLOBALS_INITIALIZED) return;
+    global.GLOBALS_INITIALIZED = true;
 
     // ====================================================
     // CORE SAFETY DEFAULTS (prevent "not set before reading")
@@ -151,9 +138,9 @@ function scr_globals_init()
    // IMPORTANT: These must be REAL paths/strings
 	var __level_idx_init = clamp(real(string_copy(global.LEVEL_KEY, 6, string_length(global.LEVEL_KEY) - 5)), 1, 6);
 	global.DIFF_CHART = {
-	    easy   : scr_chart_resolve_for_level(__level_idx_init, "easy", false),
-	    normal : scr_chart_resolve_for_level(__level_idx_init, "normal", false),
-	    hard   : scr_chart_resolve_for_level(__level_idx_init, "hard", false)
+	    easy   : scr_chart_fullpath(scr_chart_filename(__level_idx_init, "easy", false)),
+	    normal : scr_chart_fullpath(scr_chart_filename(__level_idx_init, "normal", false)),
+	    hard   : scr_chart_fullpath(scr_chart_filename(__level_idx_init, "hard", false))
 	};
 
 
@@ -228,7 +215,6 @@ function scr_globals_init()
     // CHART SYSTEM
     // ====================================================
     global.CHART_ROOT = "charts";
-    global.__chart_inited = true;
 
     global.chart_hot_reload = false;
     global.chart_hot_reload_hz = 4;
@@ -334,18 +320,18 @@ function scr_globals_init()
         scr_song_map_init();
     }
 
-    global.song = {
+    global.song_state = {
         sound_asset      : -1,
         inst             : -1,
-        playing          : false,
+        started_at_time_s: 0.0,
+        chart_offset_s   : 0.0,
         paused           : false,
-        want_pos_s       : 0,
-        started_at_chart_s: 0,
-        last_pos_s       : 0,
-        last_resync_ms   : 0,
-        debug_last_log_ms: 0
+        last_seek_time_s : -1.0,
+        last_seek_real_ms: -1000000,
+        last_known_pos_s : 0.0,
+        started_real_ms  : current_time,
+        last_log_ms      : -1000000
     };
-    global.song_state = global.song;
 
     var __song_level_idx = 1;
     if (is_string(global.LEVEL_KEY) && string_length(global.LEVEL_KEY) >= 6) {
@@ -545,7 +531,4 @@ function scr_globals_init()
     if (script_exists(scr_markers_load)) scr_markers_load();
     if (script_exists(scr_story_events_from_markers)) scr_story_events_from_markers();
     if (script_exists(scr_perf_init)) scr_perf_init();
-
-    global.__globals_inited = true;
-    global.__globals_init_in_progress = false;
 }

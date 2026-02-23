@@ -14,9 +14,7 @@ function scr_draw_gameplay_gui()
     var gh = display_get_gui_height();
 
     if (!variable_global_exists("dbg_song_overlay_on")) global.dbg_song_overlay_on = false;
-    if (!variable_global_exists("dbg_boot_audio_overlay_on")) global.dbg_boot_audio_overlay_on = false;
     if (keyboard_check_pressed(vk_f10)) global.dbg_song_overlay_on = !global.dbg_song_overlay_on;
-    if (keyboard_check_pressed(vk_f4)) global.dbg_boot_audio_overlay_on = !global.dbg_boot_audio_overlay_on;
 
 
 	// --------------------------------------------------
@@ -221,39 +219,6 @@ function scr_draw_gameplay_gui()
 
     if (global.dbg_song_overlay_on && script_exists(scr_song_debug_draw)) {
         scr_song_debug_draw(20, 80);
-    }
-
-    if (global.dbg_boot_audio_overlay_on) {
-        var _audio_pos = script_exists(scr_song_get_pos_s) ? scr_song_get_pos_s() : 0.0;
-        var _chart_pos = script_exists(scr_chart_time) ? scr_chart_time() : 0.0;
-        var _drift = _audio_pos - _chart_pos;
-        var _diff = variable_global_exists("DIFFICULTY") ? string(global.DIFFICULTY) : "?";
-        var _chart = variable_global_exists("chart_file") ? string(global.chart_file) : "";
-
-        var _snd = -1;
-        var _inst = -1;
-        if (variable_global_exists("song") && is_struct(global.song)) {
-            _snd = global.song.sound_asset;
-            _inst = global.song.inst;
-        }
-
-        var _snd_name = "<none>";
-        if (script_exists(scr_song_is_valid_asset) && scr_song_is_valid_asset(_snd)) _snd_name = asset_get_name(_snd);
-
-        draw_set_color(c_white);
-        draw_set_alpha(1);
-        var _x = 20;
-        var _y = 200;
-        draw_text(_x, _y, "Boot/Audio Debug [F4]");
-        draw_text(_x, _y + 16, "globals=" + string(variable_global_exists("__globals_inited") ? global.__globals_inited : false)
-            + " song_map=" + string(variable_global_exists("__song_map_inited") ? global.__song_map_inited : false)
-            + " chart=" + string(variable_global_exists("__chart_inited") ? global.__chart_inited : false));
-        draw_text(_x, _y + 32, "room=" + room_get_name(room) + " diff=" + _diff);
-        draw_text(_x, _y + 48, "chart=" + _chart);
-        draw_text(_x, _y + 64, "song_asset=" + string(_snd) + " (" + _snd_name + ") inst=" + string(_inst));
-        draw_text(_x, _y + 80, "audio_pos=" + string_format(_audio_pos, 1, 3)
-            + " chart_time=" + string_format(_chart_pos, 1, 3)
-            + " drift=" + string_format(_drift, 1, 3));
     }
 
     if (!variable_global_exists("chart") || is_undefined(global.chart)) return;
