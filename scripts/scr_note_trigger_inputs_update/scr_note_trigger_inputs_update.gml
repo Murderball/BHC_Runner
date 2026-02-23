@@ -1,7 +1,7 @@
 /// scr_note_trigger_inputs_update()
 ///
 /// Makes notes "press" actions when they reach the hit window.
-/// - ATK1/ATK2/ATK3: note-triggered + player can press anytime
+/// - JUMP/DUCK/ATK1/ATK2/ATK3: note-triggered + player can press anytime
 /// - ULT: NOTE-ONLY (this is the only way global.in_ult becomes true)
 ///
 /// Call order:
@@ -31,13 +31,14 @@ function scr_note_trigger_inputs_update()
     var len = array_length(global.chart);
 
     // Find nearest note time for each note-triggered action
-	var BIG = 1000000000; 
+    var BIG = 1000000000;
 
-	var best_a1_dt = BIG; var best_a1_t = -1;
-	var best_a2_dt = BIG; var best_a2_t = -1;
-	var best_a3_dt = BIG; var best_a3_t = -1;
-	var best_u_dt  = BIG; var best_u_t  = -1;
-
+    var best_jump_dt = BIG; var best_jump_t = -1;
+    var best_duck_dt = BIG; var best_duck_t = -1;
+    var best_a1_dt = BIG; var best_a1_t = -1;
+    var best_a2_dt = BIG; var best_a2_t = -1;
+    var best_a3_dt = BIG; var best_a3_t = -1;
+    var best_u_dt  = BIG; var best_u_t  = -1;
 
     for (var i = 0; i < len; i++)
     {
@@ -53,7 +54,13 @@ function scr_note_trigger_inputs_update()
         if (dt > global.WIN_BAD) continue;
 
         var a = n.act;
-        if (a == global.ACT_ATK1) {
+        if (a == global.ACT_JUMP) {
+            if (dt < best_jump_dt) { best_jump_dt = dt; best_jump_t = n.t; }
+        }
+        else if (a == global.ACT_DUCK) {
+            if (dt < best_duck_dt) { best_duck_dt = dt; best_duck_t = n.t; }
+        }
+        else if (a == global.ACT_ATK1) {
             if (dt < best_a1_dt) { best_a1_dt = dt; best_a1_t = n.t; }
         }
         else if (a == global.ACT_ATK2) {
@@ -68,6 +75,15 @@ function scr_note_trigger_inputs_update()
     }
 
     // Debounce so it doesn't "press" the same note every frame
+    if (best_jump_dt <= win && best_jump_t != global.note_last_jump_t) {
+        global.in_jump = true;
+        global.note_last_jump_t = best_jump_t;
+    }
+    if (best_duck_dt <= win && best_duck_t != global.note_last_duck_t) {
+        global.in_duck = true;
+        global.note_last_duck_t = best_duck_t;
+    }
+
     if (best_a1_dt <= win && best_a1_t != global.note_last_atk1_t) {
         global.in_atk1 = true;
         global.note_last_atk1_t = best_a1_t;

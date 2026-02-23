@@ -12,6 +12,13 @@ function scr_autohit_reset()
 
     global.auto_prev_time_s = -999999;
 
+    global.note_last_jump_t = -999999;
+    global.note_last_duck_t = -999999;
+    global.note_last_atk1_t = -999999;
+    global.note_last_atk2_t = -999999;
+    global.note_last_atk3_t = -999999;
+    global.note_last_ult_t  = -999999;
+
     // If notes are not deleted on hit (hit-flag system), clear those flags so they can be rehittable
     if (variable_global_exists("chart") && !is_undefined(global.chart)) {
         var len = array_length(global.chart);

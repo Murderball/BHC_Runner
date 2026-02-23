@@ -164,9 +164,17 @@ function scr_chart_load()
     // Normalize notes (LANE-FREE + Y-DRAGGABLE)
     // -------------------------------
     if (!variable_global_exists("ACT_ATK1")) global.ACT_ATK1 = "atk1";
+    if (!variable_global_exists("ACT_ATK2")) global.ACT_ATK2 = "atk2";
+    if (!variable_global_exists("ACT_ATK3")) global.ACT_ATK3 = "atk3";
+    if (!variable_global_exists("ACT_ULT"))  global.ACT_ULT  = "ult";
     if (!variable_global_exists("ACT_JUMP")) global.ACT_JUMP = "jump";
     if (!variable_global_exists("ACT_DUCK")) global.ACT_DUCK = "duck";
     if (!variable_global_exists("SEC_PER_BEAT")) global.SEC_PER_BEAT = 60.0 / 140.0;
+
+    var dev_parse_log = (variable_global_exists("editor_on") && global.editor_on)
+        || (variable_global_exists("DEBUG_INPUT") && global.DEBUG_INPUT);
+    var jump_count = 0;
+    var duck_count = 0;
 
     var legacy_top = (variable_global_exists("GUI_TOP") ? global.GUI_TOP : 350);
     var legacy_bot = (variable_global_exists("GUI_BOT") ? global.GUI_BOT : 580);
@@ -196,9 +204,34 @@ function scr_chart_load()
             nref.act = global.LANE_TO_ACT[lane_i];
         }
 
-        if (nref.act == global.ACT_JUMP || nref.act == global.ACT_DUCK) {
-            nref.act = global.ACT_ATK1;
+        var act_norm = string_lower(string(nref.act));
+        if (act_norm == "ultimate") act_norm = "ult";
+        if (act_norm == "attack1")  act_norm = "atk1";
+        if (act_norm == "attack2")  act_norm = "atk2";
+        if (act_norm == "attack3")  act_norm = "atk3";
+
+        var act_known = (
+            act_norm == string_lower(string(global.ACT_JUMP))
+            || act_norm == string_lower(string(global.ACT_DUCK))
+            || act_norm == string_lower(string(global.ACT_ATK1))
+            || act_norm == string_lower(string(global.ACT_ATK2))
+            || act_norm == string_lower(string(global.ACT_ATK3))
+            || act_norm == string_lower(string(global.ACT_ULT))
+        );
+
+        if (!act_known)
+        {
+            if (dev_parse_log) {
+                show_debug_message("[scr_chart_load] Unknown note act token at i=" + string(i)
+                    + " token=" + string(nref.act) + " -> default atk1");
+            }
+            act_norm = string_lower(string(global.ACT_ATK1));
         }
+
+        nref.act = act_norm;
+
+        if (nref.act == string_lower(string(global.ACT_JUMP))) jump_count += 1;
+        if (nref.act == string_lower(string(global.ACT_DUCK))) duck_count += 1;
 
         if (!variable_struct_exists(nref, "y_gui") || !is_real(nref.y_gui))
         {
@@ -237,6 +270,11 @@ function scr_chart_load()
 
     global.CHART_LEN_S = chart_end_s + tail_margin_s;
     global.chart_len_s = global.CHART_LEN_S;
+
+    if (dev_parse_log && (jump_count > 0 || duck_count > 0)) {
+        show_debug_message("[scr_chart_load] note spawn set includes jump=" + string(jump_count)
+            + " duck=" + string(duck_count));
+    }
 
     scr_chart_sort();
     scr_attack_timeline_build();
