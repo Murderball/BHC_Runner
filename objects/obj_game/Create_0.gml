@@ -111,6 +111,9 @@ bg_near.fade_s       = 0.15;
 bg_near.target_depth = 11000;
 scr_bg_manager_apply_profile(bg_near);
 
-if (script_exists(scr_fmod_init)) scr_fmod_init();
+if (!variable_global_exists("fmod_inited") || !global.fmod_inited) {
+    if (script_exists(scr_fmod_init)) scr_fmod_init();
+}
 if (script_exists(scr_audio_route_apply)) scr_audio_route_apply();
+if (!variable_global_exists("__last_room")) global.__last_room = room;
 global.audio_last_room = room;
