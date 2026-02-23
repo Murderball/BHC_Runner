@@ -114,7 +114,14 @@ scr_bg_manager_apply_profile(bg_near);
 if (!variable_global_exists("fmod_inited") || !global.fmod_inited) {
     if (script_exists(scr_fmod_init)) scr_fmod_init();
 }
+show_debug_message("[obj_game] after scr_fmod_init fmod_ready=" + string(variable_global_exists("fmod_ready") ? global.fmod_ready : false));
 if (script_exists(scr_fmod_debug_probe)) scr_fmod_debug_probe();
-if (script_exists(scr_audio_route_apply)) scr_audio_route_apply();
+if (script_exists(scr_audio_route_apply)) {
+    if (variable_global_exists("fmod_ready") && global.fmod_ready) {
+        scr_audio_route_apply();
+    } else {
+        show_debug_message("[obj_game] skip scr_audio_route_apply (fmod_ready=false)");
+    }
+}
 if (!variable_global_exists("__last_room")) global.__last_room = room;
 global.audio_last_room = room;
