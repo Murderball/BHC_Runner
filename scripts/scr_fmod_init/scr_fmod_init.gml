@@ -15,6 +15,7 @@ function scr_fmod_init()
     // Backward-compatible globals used by existing scripts.
     global.fmod_ready = false;
     global.fmod_inited = false;
+    global.fmod_studio_system = -1;
 
     global.fmod_bank_master = -1;
     global.fmod_bank_strings = -1;
@@ -29,11 +30,20 @@ function scr_fmod_init()
     show_debug_message("[FMOD] working_directory=" + string(working_directory));
 
     global.fmod.sys = fmod_studio_system_create();
+    global.fmod_studio_system = global.fmod.sys;
     show_debug_message("[FMOD] create sys=" + string(global.fmod.sys) + " is_real=" + string(is_real(global.fmod.sys)));
+    show_debug_message("[FMOD] global.fmod_studio_system=" + string(global.fmod_studio_system));
 
     if (!is_real(global.fmod.sys) || global.fmod.sys == 0 || global.fmod.sys == -1) {
         var create_result = fmod_last_result();
         global.fmod.last_error = "fmod_studio_system_create failed: " + fmod_error_string(create_result);
+        show_debug_message("[FMOD] ERROR " + global.fmod.last_error);
+        global.fmod_inited = true;
+        return false;
+    }
+
+    if (!variable_global_exists("fmod_studio_system") || is_undefined(global.fmod_studio_system) || global.fmod_studio_system == 0 || global.fmod_studio_system == -1) {
+        global.fmod.last_error = "Invalid Studio System handle after create.";
         show_debug_message("[FMOD] ERROR " + global.fmod.last_error);
         global.fmod_inited = true;
         return false;

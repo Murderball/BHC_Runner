@@ -2450,7 +2450,8 @@ function fmod_studio_event_instance_get_memory_usage(_event_instance_ref)
 /// @returns {real}
 function fmod_studio_system_load_bank_memory(_buff_data, _length, _mode, _flags)
 {
-	return fmod_studio_system_load_bank_memory_multiplatform(buffer_get_address(_buff_data), _length, _mode, _flags);
+	var _buffer_ptr = buffer_get_address(_buff_data);
+	return fmod_studio_system_load_bank_memory_multiplatform(global.fmod_studio_system, _buffer_ptr, _length, _mode, _flags);
 }
 
 /// @param {real} listener_index
@@ -2797,7 +2798,7 @@ function fmod_studio_system_set_parameter_by_name_with_label(_name, _label, _ign
 
 function fmod_studio_system_update() {
 	fmod_handle_async_events();
-	return fmod_studio_system_update_multiplatform();
+	return fmod_studio_system_update_multiplatform(global.fmod_studio_system);
 }
 
 
