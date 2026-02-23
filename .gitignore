@@ -1,6 +1,3 @@
-# --- Ignore PNGs (your request) ---
-*.png
-
 # --- Common GameMaker / build / cache ---
 *.yyz
 *.yyp~*
