@@ -313,25 +313,25 @@ function scr_globals_init()
     global.music_name = ""; // keep as string
     global.music_fade_ms = 350;
 
-    // Level-aware default song map (prevents globals from "locking" to level03)
-    if (global.LEVEL_KEY == "level01") {
-        global.DIFF_SONG_SOUND = {
-            easy   : snd_song_1_easy,
-            normal : snd_song_1_normal,
-            hard   : snd_song_1_hard
-        };
-    } else {
-        // fallback: level03
-        global.DIFF_SONG_SOUND = {
-            easy   : snd_song_3_easy,
-            normal : snd_song_3_normal,
-            hard   : snd_song_3_hard
-        };
+    if (script_exists(scr_song_map_init)) scr_song_map_init();
+
+    var __song_level_idx = 1;
+    if (is_string(global.LEVEL_KEY) && string_length(global.LEVEL_KEY) >= 6) {
+        __song_level_idx = clamp(real(string_copy(global.LEVEL_KEY, 6, string_length(global.LEVEL_KEY) - 5)), 1, 6);
     }
 
+    global.DIFF_SONG_SOUND = {
+        easy   : scr_level_song_sound(__song_level_idx, "easy"),
+        normal : scr_level_song_sound(__song_level_idx, "normal"),
+        hard   : scr_level_song_sound(__song_level_idx, "hard")
+    };
+
     // Only set song_sound if it's not set yet
-    if (!variable_global_exists("song_sound") || global.song_sound == -1 || is_undefined(global.song_sound))
-        global.song_sound = global.DIFF_SONG_SOUND[$ string_lower(global.DIFFICULTY)];
+    if (!variable_global_exists("song_sound") || global.song_sound == -1 || is_undefined(global.song_sound)) {
+        var __song_diff = string_lower(string(global.DIFFICULTY));
+        if (__song_diff != "easy" && __song_diff != "normal" && __song_diff != "hard") __song_diff = "normal";
+        global.song_sound = real(global.DIFF_SONG_SOUND[$ __song_diff]);
+    }
 
     global.METRONOME_SOUND = snd_metronome;
     global.METRONOME_VOL = 5.0;
