@@ -115,7 +115,7 @@ if (!variable_global_exists("fmod_inited") || !global.fmod_inited) {
     if (script_exists(scr_fmod_init)) scr_fmod_init();
 }
 show_debug_message("[obj_game] post-init global.fmod_ready=" + string(variable_global_exists("fmod_ready") ? global.fmod_ready : false));
-if (script_exists(scr_fmod_debug_probe)) scr_fmod_debug_probe();
+//if (script_exists("scr_fmod_debug_probe")) scr_fmod_debug_probe();//
 if (script_exists(scr_audio_route_apply) && variable_global_exists("fmod_ready") && global.fmod_ready) {
     scr_audio_route_apply();
 } else {

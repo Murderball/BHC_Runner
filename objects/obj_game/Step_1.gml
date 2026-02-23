@@ -1,5 +1,4 @@
 
-scr_fmod_update();
 /// obj_game : Begin Step
 scr_boss_timeline_update();
 

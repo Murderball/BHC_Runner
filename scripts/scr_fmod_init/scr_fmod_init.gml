@@ -36,26 +36,25 @@ function scr_fmod_init()
         var rel = bank_dir + banks[i].file;
         show_debug_message("[FMOD] " + (file_exists(rel) ? "FOUND " : "MISSING ") + rel);
 
-        var abs = fmod_path_bundle(rel);
+        var full_path = fmod_path_bundle(rel);
         var buf = -1;
         var len = -1;
         var bank_ref = -1;
 
         if (!file_exists(rel)) {
             all_ok = false;
-            show_debug_message("[FMOD] SKIP load (missing file): " + rel + " abs=" + string(abs));
+            show_debug_message("[FMOD] SKIP load (missing file): " + rel + " full=" + full_path);
             variable_global_set(banks[i].store, -1);
             continue;
         }
 
-        buf = buffer_load(abs);
+        buf = buffer_load(full_path);
         if (!buffer_exists(buf)) {
             all_ok = false;
-            show_debug_message("[FMOD] buffer_load failed abs=" + string(abs) + " buf=" + string(buf));
+            show_debug_message("[FMOD] buffer_load failed full=" + full_path + " buf=" + string(buf));
             variable_global_set(banks[i].store, -1);
             continue;
         }
-
         len = buffer_get_size(buf);
         show_debug_message("[FMOD] buffer_load abs=" + string(abs) + " buf=" + string(buf) + " len=" + string(len));
 
