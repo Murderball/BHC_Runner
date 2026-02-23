@@ -41,6 +41,11 @@ function scr_song_is_valid_inst(_inst)
     return is_real(_inst) && !is_nan(_inst) && real(_inst) >= 0;
 }
 
+function scr_song_asset_label(_sound_asset)
+{
+    return "snd#" + string(_sound_asset);
+}
+
 // Returns the best-known "song position" in seconds, in chart-time space (offset removed).
 function scr_song_get_pos_s()
 {
@@ -57,7 +62,7 @@ function scr_song_get_pos_s()
     else if (variable_global_exists("OFFSET") && is_real(global.OFFSET)) off = real(global.OFFSET);
 
     // Truth: is the instance actually playing?
-    var is_playing = audio_sound_is_playing(st.inst);
+    var is_playing = audio_is_playing(st.inst);
 
     // Raw track position (may be 0/not supported on non-streamed sounds)
     var raw = audio_sound_get_track_position(st.inst);
@@ -125,9 +130,9 @@ function scr_song_debug_draw(_x, _y)
     if (variable_global_exists("DIFFICULTY")) diff = string(global.DIFFICULTY);
 
     var snd_name = "<none>";
-    if (scr_song_is_valid_asset(st.sound_asset)) snd_name = asset_get_name(st.sound_asset);
+    if (scr_song_is_valid_asset(st.sound_asset)) snd_name = scr_song_asset_label(st.sound_asset);
 
-    var inst_playing = (scr_song_is_valid_inst(st.inst)) ? audio_sound_is_playing(st.inst) : false;
+    var inst_playing = (scr_song_is_valid_inst(st.inst)) ? audio_is_playing(st.inst) : false;
     var raw = (scr_song_is_valid_inst(st.inst)) ? audio_sound_get_track_position(st.inst) : 0.0;
 
     var audio_pos = scr_song_get_pos_s();
@@ -281,7 +286,7 @@ function scr_song_play_from(time_sec)
     global.song_playing = true;
 
     if (global.AUDIO_DEBUG_LOG) {
-        show_debug_message("[AUDIO] start snd=" + asset_get_name(snd_asset)
+        show_debug_message("[AUDIO] start snd=" + scr_song_asset_label(snd_asset)
             + " [" + string(snd_asset) + "] inst=" + string(inst)
             + " seek=" + string_format(start_time + off,1,3));
     }
