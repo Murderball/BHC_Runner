@@ -660,6 +660,8 @@
     {"id":{"name":"scr_fmod_event_path_build","path":"scripts/scr_fmod_event_path_build/scr_fmod_event_path_build.yy",},},
     {"id":{"name":"scr_fmod_fs_probe","path":"scripts/scr_fmod_fs_probe/scr_fmod_fs_probe.yy",},},
     {"id":{"name":"scr_fmod_init","path":"scripts/scr_fmod_init/scr_fmod_init.yy",},},
+    {"id":{"name":"scr_fmod_load_banks","path":"scripts/scr_fmod_load_banks/scr_fmod_load_banks.yy",},},
+    {"id":{"name":"scr_fmod_update","path":"scripts/scr_fmod_update/scr_fmod_update.yy",},},
     {"id":{"name":"scr_fmod_music_play","path":"scripts/scr_fmod_music_play/scr_fmod_music_play.yy",},},
     {"id":{"name":"scr_fmod_music_stop","path":"scripts/scr_fmod_music_stop/scr_fmod_music_stop.yy",},},
     {"id":{"name":"scr_fmod_pause_loop_set","path":"scripts/scr_fmod_pause_loop_set/scr_fmod_pause_loop_set.yy",},},
