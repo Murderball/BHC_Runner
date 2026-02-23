@@ -10,7 +10,10 @@ if (keyboard_check_pressed(vk_f8)) {
 if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED) exit;
 if (!variable_instance_exists(id, "duck_timer")) duck_timer = 0;
 if (duck_timer > 0) duck_timer--;
-
+if (keyboard_check_pressed(vk_f7))
+{
+    if (script_exists(scr_fmod_test_play_menu)) scr_fmod_test_play_menu();
+}
 // --------------------------------------------------
 // HARD GUARDS: do not run gameplay flow in menu/loading
 // --------------------------------------------------

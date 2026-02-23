@@ -1,5 +1,5 @@
 /// obj_game : Create
-
+if (script_exists(scr_fmod_fs_probe)) scr_fmod_fs_probe();
 // Only initialize once (obj_boot already does this)
 if (!variable_global_exists("BOOT_DONE") || !global.BOOT_DONE)
 {

@@ -50,6 +50,8 @@
     {"name":"scr_audio_settings_apply","order":6,"path":"scripts/scr_audio_settings_apply/scr_audio_settings_apply.yy",},
     {"name":"scr_audio_settings_load","order":5,"path":"scripts/scr_audio_settings_load/scr_audio_settings_load.yy",},
     {"name":"scr_audio_settings_save","order":8,"path":"scripts/scr_audio_settings_save/scr_audio_settings_save.yy",},
+    {"name":"scr_fmod_fs_probe","order":2,"path":"scripts/scr_fmod_fs_probe/scr_fmod_fs_probe.yy",},
+    {"name":"scr_fmod_test_play_menu","order":4,"path":"scripts/scr_fmod_test_play_menu/scr_fmod_test_play_menu.yy",},
     {"name":"scr_globals_init","order":57,"path":"scripts/scr_globals_init/scr_globals_init.yy",},
     {"name":"scr_level3_master_sections_init","order":4,"path":"scripts/scr_level3_master_sections_init/scr_level3_master_sections_init.yy",},
     {"name":"scr_menu_game_draw","order":4,"path":"scripts/scr_menu_game_draw/scr_menu_game_draw.yy",},
