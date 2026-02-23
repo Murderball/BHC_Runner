@@ -309,6 +309,7 @@ function scr_globals_init()
 
     global.song_handle = -1;
     global.song_playing = false;
+    global.pending_song_start = false;
 
     global.music_bus = -1;
     global.music_name = ""; // keep as string

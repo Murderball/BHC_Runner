@@ -48,12 +48,20 @@ function scr_editor_preview_music_set(_level_index, _diff)
     if (variable_global_exists("editor_audio_preview_enabled") && !global.editor_audio_preview_enabled) preview_enabled = false;
     if (variable_global_exists("editor_muted") && global.editor_muted) preview_enabled = false;
 
-    if (!preview_enabled) {
+    var audio_start_allowed = !global.editor_on
+        && !(variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED)
+        && !(variable_global_exists("in_menu") && global.in_menu)
+        && !(variable_global_exists("in_loading") && global.in_loading);
+
+    if (!preview_enabled || !audio_start_allowed) {
+        global.pending_song_start = true;
         global.editor_preview_sound_instance = -1;
         return;
     }
 
     var start_t = (variable_global_exists("editor_time") && is_real(global.editor_time)) ? max(0.0, global.editor_time) : 0.0;
+
+    global.pending_song_start = false;
 
     if (script_exists(scr_song_play_from)) {
         scr_song_play_from(snd_asset, start_t);
