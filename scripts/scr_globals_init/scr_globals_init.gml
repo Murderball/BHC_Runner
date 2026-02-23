@@ -311,26 +311,25 @@ function scr_globals_init()
     global.music_name = ""; // keep as string
     global.music_fade_ms = 350;
 
-    var __song_level_idx = clamp(global.editor_level_index, 1, 6);
-    global.DIFF_SONG_SOUND = {
-        easy   : scr_level_song_sound(__song_level_idx, "easy"),
-        normal : scr_level_song_sound(__song_level_idx, "normal"),
-        hard   : scr_level_song_sound(__song_level_idx, "hard")
-    };
-
-    // Only set song_sound if it's not set yet
-    if (!variable_global_exists("song_sound") || global.song_sound == -1 || is_undefined(global.song_sound)) {
-        var __d = string_lower(string(global.DIFFICULTY));
-        if (__d != "easy" && __d != "normal" && __d != "hard") __d = "normal";
-        global.song_sound = global.DIFF_SONG_SOUND[$ __d];
+    // Level-aware default song map (prevents globals from "locking" to level03)
+    if (global.LEVEL_KEY == "level01") {
+        global.DIFF_SONG_SOUND = {
+            easy   : snd_song_1_easy,
+            normal : snd_song_1_normal,
+            hard   : snd_song_1_hard
+        };
+    } else {
+        // fallback: level03
+        global.DIFF_SONG_SOUND = {
+            easy   : snd_song_3_easy,
+            normal : snd_song_3_normal,
+            hard   : snd_song_3_hard
+        };
     }
 
-    if (!variable_global_exists("editor_preview_enabled")) global.editor_preview_enabled = true;
-    if (!variable_global_exists("editor_audio_preview_enabled")) global.editor_audio_preview_enabled = true;
-    if (!variable_global_exists("editor_preview_muted")) global.editor_preview_muted = false;
-    if (!variable_global_exists("editor_preview_volume")) global.editor_preview_volume = 1.0;
-    if (!variable_global_exists("editor_preview_sound_asset")) global.editor_preview_sound_asset = -1;
-    if (!variable_global_exists("editor_preview_sound_instance")) global.editor_preview_sound_instance = -1;
+    // Only set song_sound if it's not set yet
+    if (!variable_global_exists("song_sound") || global.song_sound == -1 || is_undefined(global.song_sound))
+        global.song_sound = global.DIFF_SONG_SOUND[$ string_lower(global.DIFFICULTY)];
 
     global.METRONOME_SOUND = snd_metronome;
     global.METRONOME_VOL = 5.0;

@@ -91,10 +91,6 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
         global.difficulty = diff;
     }
 
-    if (script_exists(scr_editor_preview_music_set)) {
-        scr_editor_preview_music_set(level_index, diff);
-    }
-
     global.editor_level_index = level_index;
     if (variable_global_exists("LEVEL_KEY")) {
         global.LEVEL_KEY = "level0" + string(level_index);

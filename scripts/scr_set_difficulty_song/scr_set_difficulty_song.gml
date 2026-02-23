@@ -13,24 +13,31 @@ function scr_set_difficulty_song(_diff, _reason)
     var lk = "level03";
     if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) lk = global.LEVEL_KEY;
 
-    // --- ALWAYS rebuild mapping by level using snd_song_<level>_<difficulty> ---
-    var level_index = 3;
-    if (string_length(lk) >= 6) {
-        level_index = clamp(real(string_copy(lk, 6, string_length(lk) - 5)), 1, 6);
+    // --- ALWAYS rebuild mapping by level (prevents stale level3 map leaking into level1) ---
+    if (lk == "level01")
+    {
+        global.DIFF_SONG_SOUND = {
+            easy   : snd_song_1_easy,
+            normal : snd_song_1_normal,
+            hard   : snd_song_1_hard
+        };
     }
-
-    global.DIFF_SONG_SOUND = {
-        easy   : scr_level_song_sound(level_index, "easy"),
-        normal : scr_level_song_sound(level_index, "normal"),
-        hard   : scr_level_song_sound(level_index, "hard")
-    };
+    else
+    {
+        // default authored set (your current content)
+        global.DIFF_SONG_SOUND = {
+            easy   : snd_song_3_easy,
+            normal : snd_song_3_normal,
+            hard   : snd_song_3_hard
+        };
+    }
 
     var new_snd = global.DIFF_SONG_SOUND[$ d];
 
     // Failsafe
     if (is_undefined(new_snd) || new_snd == -1)
     {
-        new_snd = scr_level_song_sound(level_index, "normal");
+        new_snd = (lk == "level01") ? snd_song_1_normal : snd_song_3_normal;
     }
 
     // No-op if already selected
