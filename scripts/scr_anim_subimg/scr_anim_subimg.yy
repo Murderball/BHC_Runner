@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"scr_anim_subimg",
   "parent":{
-    "name":"Notes",
-    "path":"folders/Notes.yy",
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
