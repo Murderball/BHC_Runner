@@ -640,6 +640,7 @@
     {"id":{"name":"scr_fx_level01_hard_begin","path":"scripts/scr_fx_level01_hard_begin/scr_fx_level01_hard_begin.yy",},},
     {"id":{"name":"scr_fx_level01_hard_end","path":"scripts/scr_fx_level01_hard_end/scr_fx_level01_hard_end.yy",},},
     {"id":{"name":"scr_globals_init","path":"scripts/scr_globals_init/scr_globals_init.yy",},},
+    {"id":{"name":"scr_hotkey_shift_num","path":"scripts/scr_hotkey_shift_num/scr_hotkey_shift_num.yy",},},
     {"id":{"name":"scr_hitline_time_world","path":"scripts/scr_hitline_time_world/scr_hitline_time_world.yy",},},
     {"id":{"name":"scr_input_init","path":"scripts/scr_input_init/scr_input_init.yy",},},
     {"id":{"name":"scr_input_update","path":"scripts/scr_input_update/scr_input_update.yy",},},
