@@ -49,7 +49,7 @@ function scr_editor_preview_music_set(_level_index, _diff)
     var start_t = (variable_global_exists("editor_time") && is_real(global.editor_time)) ? max(0.0, global.editor_time) : 0.0;
 
     if (script_exists(scr_song_play_from)) {
-        scr_song_play_from(start_t);
+        scr_song_play_from(snd_asset, start_t);
     } else {
         global.song_handle = audio_play_sound(snd_asset, 1, false);
         if (global.song_handle >= 0) {
