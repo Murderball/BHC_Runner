@@ -1,5 +1,5 @@
 /// scr_song_map_init()
-/// Builds one-time level/difficulty -> song sound mapping using direct asset constants.
+/// Builds one-time level/difficulty -> song sound mapping using safe name lookup.
 function scr_song_map_init()
 {
     if (variable_global_exists("__song_map_inited") && global.__song_map_inited
@@ -7,13 +7,19 @@ function scr_song_map_init()
         return;
     }
 
+    function _snd(_name) {
+        var idx = asset_get_index(_name);
+        if (!is_real(idx) || is_nan(idx)) idx = -1;
+        return idx;
+    }
+
     global.SONG_SND = {
-        "1": { easy: snd_song_1_easy, normal: snd_song_1_normal, hard: snd_song_1_hard },
-        "2": { easy: snd_song_2_easy, normal: snd_song_2_normal, hard: snd_song_2_hard },
-        "3": { easy: snd_song_3_easy, normal: snd_song_3_normal, hard: snd_song_3_hard },
-        "4": { easy: snd_song_4_easy, normal: snd_song_4_normal, hard: snd_song_4_hard },
-        "5": { easy: snd_song_5_easy, normal: snd_song_5_normal, hard: snd_song_5_hard },
-        "6": { easy: snd_song_6_easy, normal: snd_song_6_normal, hard: snd_song_6_hard }
+        "1": { easy: _snd("snd_song_1_easy"), normal: _snd("snd_song_1_normal"), hard: _snd("snd_song_1_hard") },
+        "2": { easy: _snd("snd_song_2_easy"), normal: _snd("snd_song_2_normal"), hard: _snd("snd_song_2_hard") },
+        "3": { easy: _snd("snd_song_3_easy"), normal: _snd("snd_song_3_normal"), hard: _snd("snd_song_3_hard") },
+        "4": { easy: _snd("snd_song_4_easy"), normal: _snd("snd_song_4_normal"), hard: _snd("snd_song_4_hard") },
+        "5": { easy: _snd("snd_song_5_easy"), normal: _snd("snd_song_5_normal"), hard: _snd("snd_song_5_hard") },
+        "6": { easy: _snd("snd_song_6_easy"), normal: _snd("snd_song_6_normal"), hard: _snd("snd_song_6_hard") }
     };
 
     global.SONG_SND_READY = true;
