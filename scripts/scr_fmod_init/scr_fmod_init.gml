@@ -1,10 +1,9 @@
 function scr_fmod_debug_probe()
 {
+    show_debug_message("[FMOD] working_directory=" + working_directory);
+
     var bank_dir = "fmod/Desktop/";
     show_debug_message("[FMOD] bank_dir=" + bank_dir);
-
-    show_debug_message("[FMOD] working_directory=" + string(working_directory));
-    show_debug_message("[FMOD] current_directory=" + string(current_directory));
 
     var banks = [
         "Master.bank",
@@ -15,9 +14,9 @@ function scr_fmod_debug_probe()
     ];
 
     for (var i = 0; i < array_length(banks); i++) {
-        var rel_path = bank_dir + banks[i];
-        var found = file_exists(rel_path);
-        show_debug_message("[FMOD] " + (found ? "FOUND " : "MISSING ") + rel_path);
+        var bank_path = bank_dir + banks[i];
+        var found = file_exists(bank_path);
+        show_debug_message("[FMOD] " + (found ? "FOUND " : "MISSING ") + bank_path);
     }
 }
 
