@@ -28,7 +28,6 @@
   "ResourceOrderSettings":[
     {"name":"scr_anim_subimg","order":6,"path":"scripts/scr_anim_subimg/scr_anim_subimg.yy",},
     {"name":"scr_globals_init","order":57,"path":"scripts/scr_globals_init/scr_globals_init.yy",},
-    {"name":"scr_song_map_init","order":0,"path":"scripts/scr_song_map_init/scr_song_map_init.yy",},
     {"name":"scr_level3_master_sections_init","order":4,"path":"scripts/scr_level3_master_sections_init/scr_level3_master_sections_init.yy",},
     {"name":"snd_boss_music_level1","order":3,"path":"sounds/snd_boss_music_level1/snd_boss_music_level1.yy",},
     {"name":"snd_boss_music_level3","order":3,"path":"sounds/snd_boss_music_level3/snd_boss_music_level3.yy",},

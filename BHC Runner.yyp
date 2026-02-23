@@ -708,7 +708,6 @@
     {"id":{"name":"scr_set_playhead_time","path":"scripts/scr_set_playhead_time/scr_set_playhead_time.yy",},},
     {"id":{"name":"scr_snap_time_to_tick","path":"scripts/scr_snap_time_to_tick/scr_snap_time_to_tick.yy",},},
     {"id":{"name":"scr_solid_at","path":"scripts/scr_solid_at/scr_solid_at.yy",},},
-    {"id":{"name":"scr_song_map_init","path":"scripts/scr_song_map_init/scr_song_map_init.yy",},},
     {"id":{"name":"scr_song_play_from","path":"scripts/scr_song_play_from/scr_song_play_from.yy",},},
     {"id":{"name":"scr_song_progress_frac","path":"scripts/scr_song_progress_frac/scr_song_progress_frac.yy",},},
     {"id":{"name":"scr_song_time","path":"scripts/scr_song_time/scr_song_time.yy",},},
