@@ -4,110 +4,99 @@ function scr_fmod_init()
     show_debug_message("========== [FMOD INIT BEGIN] ==========");
 
     global.fmod_ready = false;
-    global.fmod_system = -1;
+    global.fmod_inited = false;
+
+    global.fmod_bank_master = -1;
+    global.fmod_bank_strings = -1;
+    global.fmod_bank_level1 = -1;
+    global.fmod_bank_level3 = -1;
+    global.fmod_bank_menu = -1;
 
     var bank_dir = "fmod/Desktop/";
     show_debug_message("[FMOD] bank_dir = " + bank_dir);
-    show_debug_message("[FMOD] working_directory = " + working_directory);
+    show_debug_message("[FMOD] working_directory = " + string(working_directory));
 
-    // --------------------------------------------------
-    // 1) FILE PROBE
-    // --------------------------------------------------
+    var mode = FMOD_STUDIO_LOAD_MEMORY_MODE.MEMORY;
+    var flags = FMOD_STUDIO_LOAD_BANK.NORMAL;
+    show_debug_message("[FMOD] load_bank_memory mode=" + string(mode) + " flags=" + string(flags));
+
     var banks = [
-        "Master.bank",
-        "Master.strings.bank",
-        "Level_1.bank",
-        "Level_3.bank",
-        "Menu_Sounds.bank"
+        { file: "Master.bank", store: "fmod_bank_master" },
+        { file: "Master.strings.bank", store: "fmod_bank_strings" },
+        { file: "Level_1.bank", store: "fmod_bank_level1" },
+        { file: "Level_3.bank", store: "fmod_bank_level3" },
+        { file: "Menu_Sounds.bank", store: "fmod_bank_menu" }
     ];
 
-    for (var i = 0; i < array_length(banks); i++)
-    {
-        var path = bank_dir + banks[i];
-        show_debug_message("[FMOD] " + (file_exists(path) ? "FOUND  " : "MISSING ") + path);
-    }
-
-    // --------------------------------------------------
-    // 2) CREATE STUDIO SYSTEM
-    // --------------------------------------------------
-    if (!function_exists("fmod_studio_system_create"))
-    {
-        show_debug_message("[FMOD] ERROR: fmod_studio_system_create not found.");
-        return;
-    }
-
-    global.fmod_system = fmod_studio_system_create();
-    show_debug_message("[FMOD] system_create => " + string(global.fmod_system));
-
-    if (global.fmod_system < 0)
-    {
-        show_debug_message("[FMOD] ERROR: invalid system handle.");
-        return;
-    }
-
-    // --------------------------------------------------
-    // 3) INITIALIZE SYSTEM
-    // --------------------------------------------------
-    if (!function_exists("fmod_studio_system_initialize"))
-    {
-        show_debug_message("[FMOD] ERROR: fmod_studio_system_initialize not found.");
-        return;
-    }
-
-    var init_result = fmod_studio_system_initialize(global.fmod_system, 1024, 0, 0);
-    show_debug_message("[FMOD] system_initialize => " + string(init_result));
-
-    if (init_result != 0)
-    {
-        show_debug_message("[FMOD] ERROR: system initialization failed.");
-        return;
-    }
-
-    // --------------------------------------------------
-    // 4) LOAD BANKS
-    // --------------------------------------------------
-    if (!function_exists("fmod_studio_system_load_bank_file"))
-    {
-        show_debug_message("[FMOD] ERROR: load_bank_file function not found.");
-        return;
-    }
-
-    var all_loaded = true;
+    var all_ok = true;
+    var last_result_ok = true;
 
     for (var i = 0; i < array_length(banks); i++)
     {
-        var bpath = bank_dir + banks[i];
-        var result = fmod_studio_system_load_bank_file(global.fmod_system, bpath, 0);
-        show_debug_message("[FMOD] load_bank " + banks[i] + " => " + string(result));
+        var rel = bank_dir + banks[i].file;
+        show_debug_message("[FMOD] " + (file_exists(rel) ? "FOUND " : "MISSING ") + rel);
 
-        if (result != 0)
-        {
-            all_loaded = false;
+        var abs = fmod_path_bundle(rel);
+        var buf = -1;
+        var len = -1;
+        var bank_ref = -1;
+
+        if (!file_exists(rel)) {
+            all_ok = false;
+            show_debug_message("[FMOD] SKIP load (missing file): " + rel + " abs=" + string(abs));
+            variable_global_set(banks[i].store, -1);
+            continue;
+        }
+
+        buf = buffer_load(abs);
+        if (!buffer_exists(buf)) {
+            all_ok = false;
+            show_debug_message("[FMOD] buffer_load failed abs=" + string(abs) + " buf=" + string(buf));
+            variable_global_set(banks[i].store, -1);
+            continue;
+        }
+
+        len = buffer_get_size(buf);
+        show_debug_message("[FMOD] buffer_load abs=" + string(abs) + " buf=" + string(buf) + " len=" + string(len));
+
+        bank_ref = fmod_studio_system_load_bank_memory(buf, len, mode, flags);
+
+        var last_result = fmod_last_result();
+        var last_error = fmod_error_string(last_result);
+        show_debug_message("[FMOD] load_bank_memory " + banks[i].file + " => bank_ref=" + string(bank_ref) + " result=" + string(last_result) + " error=\"" + string(last_error) + "\"");
+
+        if (!is_real(bank_ref) || bank_ref < 0) {
+            all_ok = false;
+        }
+
+        if (last_result != FMOD_RESULT.OK) {
+            last_result_ok = false;
+        }
+
+        variable_global_set(banks[i].store, bank_ref);
+
+        if (buffer_exists(buf)) {
+            buffer_delete(buf);
+            show_debug_message("[FMOD] buffer_delete buf=" + string(buf));
         }
     }
 
-    if (!all_loaded)
-    {
-        show_debug_message("[FMOD] ERROR: One or more banks failed to load.");
-        return;
+    fmod_studio_system_update();
+
+    global.fmod_ready = all_ok && last_result_ok
+        && global.fmod_bank_master >= 0
+        && global.fmod_bank_strings >= 0
+        && global.fmod_bank_level1 >= 0
+        && global.fmod_bank_level3 >= 0
+        && global.fmod_bank_menu >= 0;
+
+    global.fmod_inited = true;
+
+    if (global.fmod_ready) {
+        show_debug_message("========== [FMOD INIT SUCCESS] fmod_ready=true ==========");
+    } else {
+        show_debug_message("========== [FMOD INIT FAIL] fmod_ready=false all_ok=" + string(all_ok) + " last_result_ok=" + string(last_result_ok) + " ==========");
     }
 
-    // --------------------------------------------------
-    // 5) OPTIONAL MASTER BUS SAFETY
-    // --------------------------------------------------
-    if (function_exists("fmod_studio_system_get_bus"))
-    {
-        var bus = fmod_studio_system_get_bus(global.fmod_system, "bus:/");
-        show_debug_message("[FMOD] master bus => " + string(bus));
-
-        if (bus >= 0 && function_exists("fmod_studio_bus_set_volume"))
-        {
-            fmod_studio_bus_set_volume(bus, 1.0);
-            show_debug_message("[FMOD] master bus volume set to 1.0");
-        }
-    }
-
-    global.fmod_ready = true;
-
-    show_debug_message("========== [FMOD INIT SUCCESS] ==========");
+    return global.fmod_ready;
 }
