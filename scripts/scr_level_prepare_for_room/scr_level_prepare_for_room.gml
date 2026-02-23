@@ -10,13 +10,11 @@ function scr_level_prepare_for_room(_room_id)
         scr_globals_init();
     }
 
-    // Determine which level this room belongs to
+    // Determine which level this room belongs to (canonical resolver)
     var key = scr_level_key_from_room(rid);
-
-    // If LEVEL_KEY differs, update it
-    if (!variable_global_exists("LEVEL_KEY") || !is_string(global.LEVEL_KEY) || global.LEVEL_KEY != key) {
-        global.LEVEL_KEY = key;
-    }
+    global.level_key = key;
+    global.LEVEL_KEY = scr_level_resolve_key();
+    global.level_key = global.LEVEL_KEY;
 	// --------------------------------------------------
 	// Keep boss settings synced with LEVEL_KEY
 	// --------------------------------------------------

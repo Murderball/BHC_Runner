@@ -10,6 +10,8 @@ scr_input_update();
 // STORY PAUSES (must run after input, before autoplay/gameplay)
 scr_story_pause_update();
 
+// Debug/manual difficulty hotkeys (CTRL+1/2/3)
+if (script_exists(scr_diff_hotkey_update)) scr_diff_hotkey_update();
 
 scr_difficulty_update();
 

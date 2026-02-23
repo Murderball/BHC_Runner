@@ -1,22 +1,24 @@
-/// scr_editor_preview_music_set(level_index, diff)
-/// Switches editor preview song to snd_song_<level>_<diff> without redundant restarts.
-function scr_editor_preview_music_set(_level_index, _diff)
+/// scr_editor_preview_music_set(diff)
+/// Switches editor preview song for current resolved level without redundant restarts.
+function scr_editor_preview_music_set(_diff)
 {
     if (!variable_global_exists("editor_on") || !global.editor_on) return;
 
-    var level_index = clamp(floor(real(_level_index)), 1, 6);
     if (!variable_global_exists("__song_map_inited") || !global.__song_map_inited) {
         scr_song_map_init();
     }
+
     var diff = string_lower(string(_diff));
     if (diff != "easy" && diff != "normal" && diff != "hard") diff = "normal";
 
-    var snd_asset = scr_level_song_sound(level_index, diff);
+    var level_key = scr_level_resolve_key();
+    var level_index = scr_level_key_to_index(level_key);
+    var snd_asset = scr_song_asset_for_current_level(diff);
     if (!script_exists(scr_song_is_valid_asset)) return;
 
     if (!scr_song_is_valid_asset(snd_asset)) {
         if (!(variable_global_exists("song_no_music_level") && global.song_no_music_level)) {
-            show_debug_message("[AUDIO] editor preview music skipped invalid resolve: level=" + string(level_index)
+            show_debug_message("[AUDIO] editor preview music skipped invalid resolve: level=" + string(level_key)
                 + " diff=" + diff + " snd_asset=" + string(snd_asset));
         } else if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
             show_debug_message("[AUDIO] editor preview music: no music for level=" + string(level_index));
@@ -37,7 +39,6 @@ function scr_editor_preview_music_set(_level_index, _diff)
         global.editor_preview_sound_instance = global.song_handle;
         return;
     }
-
 
     global.editor_chart_diff = diff;
     global.song_sound = snd_asset;
