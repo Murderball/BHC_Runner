@@ -315,7 +315,6 @@ function scr_globals_init()
 
     if (!variable_global_exists("__song_map_inited") || !global.__song_map_inited)
     {
-        scr_song_map_init();
         global.__song_map_inited = true;
     }
 
