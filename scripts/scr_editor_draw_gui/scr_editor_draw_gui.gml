@@ -338,43 +338,9 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
                 var subimg = scr_anim_subimg(spr, idx);
                 var alpha_arg = 1;
                 var note_act = string_lower(string(note_ref.act));
-                var debug_note_alpha = (variable_global_exists("DEBUG_NOTE_ALPHA") && global.DEBUG_NOTE_ALPHA);
+            
                 var is_atk3 = (note_act == "atk3");
 
-                if (debug_note_alpha && is_atk3)
-                {
-                    var dbg_a_state = draw_get_alpha();
-                    var dbg_col = draw_get_color();
-                    var dbg_bm = gpu_get_blendmode();
-                    show_debug_message("[ATK3_ALPHA_EDITOR] act=" + note_act
-                        + " was_hit=0"
-                        + " note_a=" + string_format(global.hold_end_alpha, 1, 3)
-                        + " a_state=" + string_format(dbg_a_state, 1, 3)
-                        + " color=" + string(dbg_col)
-                        + " bm=" + string(dbg_bm)
-                        + " shader=n/a"
-                        + " a_arg=" + string_format(alpha_arg, 1, 3));
-
-                    draw_set_alpha(1);
-                    draw_set_color(c_yellow);
-                    draw_text(end_gx + 24, end_gy - 34,
-                        "ATK3 a_state=" + string_format(dbg_a_state, 1, 2)
-                        + " a_arg=" + string_format(alpha_arg, 1, 2)
-                        + " was_hit=0"
-                        + " note_a=" + string_format(global.hold_end_alpha, 1, 2)
-                        + " bm=" + string(dbg_bm));
-
-                    gpu_set_blendmode(bm_normal);
-                    draw_set_alpha(1);
-                    draw_set_color(c_white);
-                    draw_sprite(scr_note_sprite("atk3"), 0, end_gx + 80, end_gy);
-
-                    draw_set_alpha(global.hold_end_alpha);
-                    draw_set_color(note_col);
-                    gpu_set_blendmode(bm_normal);
-                }
-
-                draw_sprite_ext(spr, subimg, end_gx, end_gy, 1, 1, 0, note_col, alpha_arg);
 
                 draw_set_alpha(1);
             }

@@ -138,18 +138,6 @@ function scr_song_debug_draw(_x, _y)
     var audio_pos = scr_song_get_pos_s();
     var chart_pos = (script_exists(scr_chart_time)) ? scr_chart_time() : 0.0;
     var drift = audio_pos - chart_pos;
-
-    draw_set_color(c_white);
-    draw_set_alpha(1);
-    draw_text(px, py, "Song Debug");
-    draw_text(px, py + 16, "diff: " + diff);
-    draw_text(px, py + 32, "asset: " + snd_name + " [" + string(st.sound_asset) + "]");
-    draw_text(px, py + 48, "inst: " + string(st.inst) + " inst_playing=" + string(inst_playing));
-    draw_text(px, py + 64, "song_playing flag: " + string(global.song_playing));
-    draw_text(px, py + 80, "raw_track_pos: " + (is_real(raw) ? string_format(raw,1,3) : "<bad>"));
-    draw_text(px, py + 96, "audio_pos: " + string_format(audio_pos, 1, 3));
-    draw_text(px, py + 112, "chart_time: " + string_format(chart_pos, 1, 3));
-    draw_text(px, py + 128, "drift: " + string_format(drift, 1, 3));
 }
 
 
