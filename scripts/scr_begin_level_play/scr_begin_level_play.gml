@@ -60,7 +60,11 @@ function scr_begin_level_play(_start_t)
         if (variable_global_exists("BOSS_OFFSET"))     global.OFFSET     = global.BOSS_OFFSET;
 
         if (_start_t < 0) _start_t = 0;
-        scr_song_play_from(global.song_sound, _start_t);
+        if (audio_exists(global.song_sound)) {
+            scr_song_play_from(global.song_sound, _start_t);
+        } else if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+            show_debug_message("[AUDIO] begin_level_play boss start skipped invalid song_sound=" + string(global.song_sound));
+        }
         return;
     }
 
@@ -97,6 +101,18 @@ function scr_begin_level_play(_start_t)
             }
             _fallback_level = clamp(_fallback_level, 1, 6);
             global.song_sound = scr_level_song_sound(_fallback_level, "normal");
+        }
+    }
+
+    if (!audio_exists(global.song_sound))
+    {
+        if (variable_global_exists("song_state") && is_struct(global.song_state) && audio_exists(global.song_state.sound_asset)) {
+            global.song_sound = global.song_state.sound_asset;
+        } else if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+            show_debug_message("[AUDIO] begin_level_play main start skipped invalid song_sound=" + string(global.song_sound));
+            return;
+        } else {
+            return;
         }
     }
 

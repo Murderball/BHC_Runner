@@ -7,6 +7,13 @@ function scr_set_difficulty_song(_diff, _reason)
     if (!script_exists(scr_song_state_ensure)) return;
     scr_song_state_ensure();
 
+    if (variable_global_exists("diff_swap_audio") && !global.diff_swap_audio) {
+        if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+            show_debug_message("[AUDIO] diff song switch skipped (audio swap disabled) reason=" + string(_reason));
+        }
+        return;
+    }
+
     var d = string_lower(string(_diff));
     if (d != "easy" && d != "normal" && d != "hard") d = "normal";
 
@@ -25,15 +32,19 @@ function scr_set_difficulty_song(_diff, _reason)
     };
 
     var new_snd = real(global.DIFF_SONG_SOUND[$ d]);
-    if (!scr_song_is_valid_asset(new_snd)) {
+    if (!audio_exists(new_snd)) {
         new_snd = real(global.DIFF_SONG_SOUND.normal);
     }
 
-    if (!scr_song_is_valid_asset(new_snd) && scr_song_is_valid_asset(global.song_state.sound_asset)) {
+    if (!audio_exists(new_snd) && audio_exists(global.song_state.sound_asset)) {
         new_snd = global.song_state.sound_asset;
     }
 
-    if (!scr_song_is_valid_asset(new_snd)) {
+    if (!audio_exists(new_snd) && audio_exists(global.song_sound)) {
+        new_snd = global.song_sound;
+    }
+
+    if (!audio_exists(new_snd)) {
         show_debug_message("[AUDIO] difficulty song switch failed: no valid asset for level=" + string(lk) + " diff=" + d);
         return;
     }
