@@ -1,4 +1,9 @@
 /// obj_game : Step Event
+if (!variable_global_exists("__last_room")) global.__last_room = room;
+if (room != global.__last_room) {
+    global.__last_room = room;
+    if (script_exists(scr_audio_route_apply)) scr_audio_route_apply();
+}
 if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED) exit;
 if (!variable_instance_exists(id, "duck_timer")) duck_timer = 0;
 if (duck_timer > 0) duck_timer--;
