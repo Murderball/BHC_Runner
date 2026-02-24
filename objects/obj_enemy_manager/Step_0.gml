@@ -83,12 +83,7 @@ var hitx = 448;
 if (variable_global_exists("HIT_X_GUI")) hitx = global.HIT_X_GUI;
 
 // Lead time = how early we should spawn before enemy enters from right
-var _pps_denom = pps;
-if (_pps_denom == 0) {
-    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-    _pps_denom = 1;
-}
-var lead_s = (gw + enemy_margin_px - hitx) / _pps_denom;
+var lead_s = (gw + enemy_margin_px - hitx) / pps;
 
 
 // ----------------------------------------------------

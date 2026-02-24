@@ -37,47 +37,22 @@ if (surface_exists(app))
     gpu_set_texfilter(true);
 
     // scale factors from app size to blur size
-    var _appw_denom = appw;
-    if (_appw_denom == 0) {
-        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-        _appw_denom = 1;
-    }
-    var sx_down = bw / _appw_denom;
-    var _apph_denom = apph;
-    if (_apph_denom == 0) {
-        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-        _apph_denom = 1;
-    }
-    var sy_down = bh / _apph_denom;
+    var sx_down = bw / appw;
+    var sy_down = bh / apph;
 
     draw_surface_ext(app, 0, 0, sx_down, sy_down, 0, c_white, 1);
 
     surface_reset_target();
 
     // draw blur_surf -> GUI full screen (upscaled)
-    var _bw_denom = bw;
-    if (_bw_denom == 0) {
-        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-        _bw_denom = 1;
-    }
-    var sx_up = gw / _bw_denom;
-    var _bh_denom = bh;
-    if (_bh_denom == 0) {
-        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-        _bh_denom = 1;
-    }
-    var sy_up = gh / _bh_denom;
+    var sx_up = gw / bw;
+    var sy_up = gh / bh;
 
     for (var p = 0; p < blur_passes; p++)
     {
         var j = blur_jitter * (p + 1);
 
-        var _passes_denom = blur_passes;
-        if (_passes_denom == 0) {
-            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-            _passes_denom = 1;
-        }
-        draw_set_alpha(blur_alpha * (1.0 / _passes_denom));
+        draw_set_alpha(blur_alpha * (1.0 / blur_passes));
 
         // main
         draw_surface_ext(blur_surf, 0, 0, sx_up, sy_up, 0, c_white, 1);

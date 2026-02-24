@@ -47,10 +47,5 @@ function scr_song_progress_frac()
 
     if (!is_real(total_len_s) || total_len_s <= 0) return 0.0;
 
-    var _len_denom = total_len_s;
-    if (_len_denom == 0) {
-        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-        _len_denom = 1;
-    }
-    return clamp(t / _len_denom, 0.0, 1.0);
+    return clamp(t / total_len_s, 0.0, 1.0);
 }

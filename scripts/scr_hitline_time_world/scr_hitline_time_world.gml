@@ -27,10 +27,5 @@ function scr_hitline_time_world()
     var off = (variable_global_exists("HITLINE_TIME_OFFSET_S") && is_real(global.HITLINE_TIME_OFFSET_S)) ? global.HITLINE_TIME_OFFSET_S : 0.0;
     if (!is_real(off) || is_nan(off)) off = 0.0;
 
-    var _pps_denom = pps;
-    if (_pps_denom == 0) {
-        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-        _pps_denom = 1;
-    }
-    return (hit_world_x / _pps_denom) + off;
+    return (hit_world_x / pps) + off;
 }

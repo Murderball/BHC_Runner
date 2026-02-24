@@ -1,11 +1,6 @@
 /// obj_proj_guitar : Step
 
-var _fps_denom = game_get_speed(gamespeed_fps);
-if (_fps_denom == 0) {
-    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-    _fps_denom = 1;
-}
-var dt = 1 / _fps_denom;
+var dt = 1 / game_get_speed(gamespeed_fps);
 
 // If we have a target, steer toward it (GUI space)
 if (homing && instance_exists(target))

@@ -6,20 +6,10 @@ function scr_beat_pulse_alpha(bpm, t, strength)
     var t_use = is_real(t) ? t : 0.0;
     var str = is_real(strength) ? strength : 0.45;
 
-    var _bpm_denom = bpm_use;
-    if (_bpm_denom == 0) {
-        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-        _bpm_denom = 1;
-    }
-    var beat = 60.0 / _bpm_denom;
+    var beat = 60.0 / bpm_use;
     if (beat <= 0) return 0.35;
 
-    var _beat_denom = beat;
-    if (_beat_denom == 0) {
-        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-        _beat_denom = 1;
-    }
-    var phase = frac(t_use / _beat_denom);
+    var phase = frac(t_use / beat);
 
     // Higher k = sharper attack and quicker decay.
     var k = 5.0;
