@@ -248,10 +248,7 @@ function scr_draw_gameplay_gui()
         if (start_gx < -400) continue;
         if (start_gx > gw + 400) continue;
 
-        var was_hit = (variable_struct_exists(nref, "hit") && nref.hit);
-        var note_alpha = was_hit ? 0.35 : 1;
-        draw_set_alpha(note_alpha);
-        var alpha_arg = 1;
+        var note_alpha = (variable_struct_exists(nref, "hit") && nref.hit) ? 0.5 : 1.0;
 
         // Choose sprite per action (falls back to spr_note if missing)
         var note_act = string_lower(string(nref.act));
@@ -281,21 +278,23 @@ function scr_draw_gameplay_gui()
             draw_line_width(start_gx, start_gy, end_gx, start_gy, 6);
 
             // Hold end marker
-            draw_set_alpha(global.hold_end_alpha);
-            if (spr != -1) draw_sprite_ext(spr, subimg_end, end_gx, start_gy, 1, 1, 0, note_col, alpha_arg);
+            draw_set_alpha(global.hold_end_alpha * note_alpha);
+            if (spr != -1) draw_sprite_ext(spr, subimg_end, end_gx, start_gy, 1, 1, 0, note_col, note_alpha);
             else {
                 draw_set_color(note_col);
                 draw_rectangle(end_gx - 10, start_gy - 10, end_gx + 10, start_gy + 10, false);
             }
-            draw_set_alpha(note_alpha);
+            draw_set_alpha(1);
         }
 
 
         // Start note marker
-        if (spr != -1) draw_sprite_ext(spr, subimg_start, start_gx, start_gy, 1, 1, 0, note_col, alpha_arg);
+        if (spr != -1) draw_sprite_ext(spr, subimg_start, start_gx, start_gy, 1, 1, 0, note_col, note_alpha);
         else {
+            draw_set_alpha(note_alpha);
             draw_set_color(note_col);
             draw_rectangle(start_gx - 10, start_gy - 10, start_gx + 10, start_gy + 10, false);
+            draw_set_alpha(1);
             draw_set_color(c_black);
         }
 
