@@ -164,9 +164,27 @@ function __prime_first_chunk()
 
     var idx;
     if (variable_global_exists("chunk_seconds") && is_real(global.chunk_seconds) && global.chunk_seconds > 0) {
-        idx = floor(t_into / global.chunk_seconds);
+        var denom_chunk_seconds = global.chunk_seconds;
+    if (denom_chunk_seconds == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom_chunk_seconds = 1;
+    }
+    idx = floor(t_into / denom_chunk_seconds);
     } else {
-        idx = floor(t_into / (chunk_w_px / pps));
+        var denom_pps = pps;
+    if (denom_pps == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom_pps = 1;
+    }
+    var denom_chunk_time = (chunk_w_px / denom_pps);
+    if (denom_chunk_time == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom_chunk_time = 1;
+    }
+    idx = floor(t_into / denom_chunk_time);
     }
     idx = clamp(idx, 0, array_length(seq) - 1);
 

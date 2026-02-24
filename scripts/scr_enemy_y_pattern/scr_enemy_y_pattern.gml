@@ -32,7 +32,13 @@ function scr_enemy_y_pattern(mode, i, t_s, seed)
     if (mode == "stairs") {
         var steps = 5;
         var k = i mod steps;
-        return lerp(top, bot, k / (steps - 1));
+        var denom = (steps - 1);
+        if (denom == 0)
+        {
+            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+            denom = 1;
+        }
+        return lerp(top, bot, k / denom);
     }
 
     if (mode == "centerburst") {

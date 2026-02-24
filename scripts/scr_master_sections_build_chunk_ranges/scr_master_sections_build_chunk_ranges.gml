@@ -17,8 +17,20 @@ function scr_master_sections_build_chunk_ranges()
         var s = secs[i];
 
         // stable rounding (float-safe)
-        var ci0 = round(s.t0 / dt); // inclusive
-        var ci1 = round(s.t1 / dt); // exclusive
+        var denom_dt0 = dt;
+    if (denom_dt0 == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom_dt0 = 1;
+    }
+    var ci0 = round(s.t0 / denom_dt0); // inclusive
+        var denom_dt1 = dt;
+    if (denom_dt1 == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom_dt1 = 1;
+    }
+    var ci1 = round(s.t1 / denom_dt1); // exclusive
 
         if (ci1 <= ci0) ci1 = ci0 + 1;
 

@@ -82,7 +82,13 @@ function scr_microprof_end(_name, _token)
 
         var w = max(1, p.frame_window);
         var k = min(c, w);
-        p.avg_ms[idx] = p.avg_ms[idx] + ((ms - p.avg_ms[idx]) / k);
+        var denom_k = k;
+    if (denom_k == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom_k = 1;
+    }
+    p.avg_ms[idx] = p.avg_ms[idx] + ((ms - p.avg_ms[idx]) / denom_k);
         if (ms > p.worst_ms[idx]) p.worst_ms[idx] = ms;
     }
 
@@ -111,7 +117,13 @@ function scr_microprof_frame_end()
 
     var p = global.microprof;
     var w = max(1, p.frame_window);
-    p.frame_avg_ms = p.frame_avg_ms + ((ms - p.frame_avg_ms) / w);
+    var denom_w = w;
+    if (denom_w == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom_w = 1;
+    }
+    p.frame_avg_ms = p.frame_avg_ms + ((ms - p.frame_avg_ms) / denom_w);
     if (ms > p.frame_worst_ms) p.frame_worst_ms = ms;
 
     global.microprof = p;

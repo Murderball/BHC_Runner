@@ -23,8 +23,20 @@ function scr_apply_viewport_fit(_view_w, _view_h)
     }
 
     // Fit while preserving aspect ratio (letterbox / pillarbox)
-    var sx = SW / _view_w;
-    var sy = SH / _view_h;
+    var denom_view_w = _view_w;
+if (denom_view_w == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_view_w = 1;
+}
+var sx = SW / denom_view_w;
+    var denom_view_h = _view_h;
+if (denom_view_h == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_view_h = 1;
+}
+var sy = SH / denom_view_h;
     var s  = min(sx, sy);
 
     var port_w = floor(_view_w * s);

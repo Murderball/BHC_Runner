@@ -11,12 +11,30 @@ function scr_editor_delete_enemy_at_cursor()
 
     var bpm = 140.0;
     if (variable_global_exists("BPM") && is_real(global.BPM) && global.BPM > 0) bpm = global.BPM;
-    var beat_s = 60.0 / bpm;
+    var denom_bpm = bpm;
+    if (denom_bpm == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom_bpm = 1;
+    }
+    var beat_s = 60.0 / denom_bpm;
 
-    var tol_t = beat_s / 8.0;
+    var denom_tol = 8.0;
+    if (denom_tol == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom_tol = 1;
+    }
+    var tol_t = beat_s / denom_tol;
     if (variable_global_exists("SNAP_DIV") && is_real(global.SNAP_DIV) && global.SNAP_DIV > 0)
     {
-        tol_t = (beat_s * (4.0 / global.SNAP_DIV)) * 0.5;
+        var denom_snap = global.SNAP_DIV;
+        if (denom_snap == 0)
+        {
+            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+            denom_snap = 1;
+        }
+        tol_t = (beat_s * (4.0 / denom_snap)) * 0.5;
     }
 
     var best_index = -1;

@@ -19,7 +19,13 @@ var py = y1;
 
 for (var i = 1; i <= segs_local; i++)
 {
-    var t = i / segs_local;
+    var denom = segs_local;
+    if (denom == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom = 1;
+    }
+    var t = i / denom;
 
     var nx = lerp(x1, x2, t) + random_range(-jag, jag);
     var ny = lerp(y1, y2, t) + random_range(-jag, jag);

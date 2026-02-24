@@ -24,7 +24,13 @@ if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED) paused = true;
 if (variable_global_exists("STORY_PAUSED") && global.STORY_PAUSED) paused = true;
 
 // Attack flash decay (seconds)
-atk_flash_t = max(0, atk_flash_t - (1 / game_get_speed(gamespeed_fps)));
+var denom_flash = game_get_speed(gamespeed_fps);
+if (denom_flash == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_flash = 1;
+}
+atk_flash_t = max(0, atk_flash_t - (1 / denom_flash));
 
 // ----------------------------------------------------
 // Pin X to camera (runner)

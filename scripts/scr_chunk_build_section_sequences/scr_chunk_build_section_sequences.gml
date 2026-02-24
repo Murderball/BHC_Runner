@@ -17,7 +17,13 @@ function scr_chunk_build_section_sequences()
     if (pps <= 0) pps = 1;
 
     var chunk_w_px = global.CHUNK_W_TILES * global.TILE_W;
-    global.chunk_seconds = chunk_w_px / pps;
+    var denom_pps = pps;
+if (denom_pps == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_pps = 1;
+}
+global.chunk_seconds = chunk_w_px / denom_pps;
 
     // Rebuild chunk_seq map
     if (variable_global_exists("chunk_seq") && ds_exists(global.chunk_seq, ds_type_map)) {
@@ -50,7 +56,13 @@ function scr_chunk_build_section_sequences()
         var len_s = s.t1 - s.t0;
 
         // How many chunk slots this section needs in time
-        var n = ceil(len_s / global.chunk_seconds);
+        var denom_chunk_seconds = global.chunk_seconds;
+if (denom_chunk_seconds == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_chunk_seconds = 1;
+}
+var n = ceil(len_s / denom_chunk_seconds);
         if (n < 1) n = 1;
 
         // Section name -> stem

@@ -31,7 +31,13 @@ function scr_perf_grade(judge) {
     // compute weighted accuracy %
     var sum_w = 0;
     for (var i = 0; i < global.perf_window; i++) sum_w += global.perf_hist_score[i];
-    global.perf_acc = round((sum_w / global.perf_window) * 100);
+    var denom_perf_window = global.perf_window;
+if (denom_perf_window == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_perf_window = 1;
+}
+global.perf_acc = round((sum_w / denom_perf_window) * 100);
 
     // difficulty target logic w/ hysteresis + lockout
     if (global.diff_lock_timer > 0) global.diff_lock_timer--;

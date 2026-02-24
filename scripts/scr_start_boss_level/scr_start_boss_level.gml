@@ -105,7 +105,13 @@ function scr_start_boss_level()
     global.PX_PER_BEAT = 192;
 
     // Derived scroll speed
-    global.WORLD_PPS = global.PX_PER_BEAT * (global.SONG_BPM / 60.0);
+    var denom_bpm = 60.0;
+    if (denom_bpm == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom_bpm = 1;
+    }
+    global.WORLD_PPS = global.PX_PER_BEAT * (global.SONG_BPM / denom_bpm);
 
     // If you have separate chart PPS, keep them in sync
     global.CHART_PPS = global.WORLD_PPS;

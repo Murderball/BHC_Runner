@@ -70,7 +70,13 @@ if (keyboard_check_pressed(vk_f12))
         {
             // Move to monitor 2 (assumes monitor 2 is to the RIGHT)
             var desktop_w = display_get_width();
-            var primary_w = desktop_w div 2;
+            var denom_div = 2;
+if (denom_div == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_div = 1;
+}
+var primary_w = desktop_w div denom_div;
 
             window_set_position(primary_w + global.win_m2_pad_x, global.win_m2_pad_y);
         }

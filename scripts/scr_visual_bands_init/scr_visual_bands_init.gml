@@ -13,14 +13,26 @@ function scr_visual_bands_init()
     var tile_h = (variable_global_exists("TILE_H") && is_real(global.TILE_H) && global.TILE_H > 0) ? global.TILE_H : 32;
 
     // Tiles per row (1024 / 32 = 32)
-    global.VIS_TILES_PER_ROW = max(1, global.VIS_TS_W_PX div tile_w);
+    var denom_tile_w = tile_w;
+if (denom_tile_w == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_tile_w = 1;
+}
+global.VIS_TILES_PER_ROW = max(1, global.VIS_TS_W_PX div denom_tile_w);
 
     // Convert Y px -> tile index offsets
     global.VIS_BAND_INDEX_OFF = array_create(array_length(global.VIS_BAND_Y_PX), 0);
 
     for (var i = 0; i < array_length(global.VIS_BAND_Y_PX); i++)
     {
-        var row_off = global.VIS_BAND_Y_PX[i] div tile_h; // 768/32=24, 1760/32=55
+        var denom_tile_h = tile_h;
+if (denom_tile_h == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_tile_h = 1;
+}
+var row_off = global.VIS_BAND_Y_PX[i] div denom_tile_h; // 768/32=24, 1760/32=55
         global.VIS_BAND_INDEX_OFF[i] = row_off * global.VIS_TILES_PER_ROW;
     }
 

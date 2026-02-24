@@ -117,13 +117,25 @@ function scr_bg_paint_slot(_slot, _chunk_or_ci)
         if (!is_real(chunk_w_px) || is_nan(chunk_w_px) || chunk_w_px <= 0) chunk_w_px = 1.0;
 
         // Time at start of this CI (unshifted)
-        var t_ci = (ci_now * chunk_w_px) / pps;
+        var denom_t_ci = pps;
+        if (denom_t_ci == 0)
+        {
+            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+            denom_t_ci = 1;
+        }
+        var t_ci = (ci_now * chunk_w_px) / denom_t_ci;
 
         // Apply nudge (positive shift = BG advances earlier/later depending on your design)
         var t_bg = t_ci + bg_shift_s;
 
         // Convert back to a "ci-like" index for frame selection
-        var ci_bg = floor((t_bg * pps) / chunk_w_px);
+        var denom_ci_bg = chunk_w_px;
+        if (denom_ci_bg == 0)
+        {
+            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+            denom_ci_bg = 1;
+        }
+        var ci_bg = floor((t_bg * pps) / denom_ci_bg);
 
         idx = ci_bg mod N;
         if (idx < 0) idx += N;
