@@ -16,6 +16,7 @@ function scr_note_trigger_inputs_update()
     if (variable_global_exists("editor_on") && global.editor_on) return;
 
     if (!variable_global_exists("note_triggers_on") || !global.note_triggers_on) return;
+    if (!scr_autohit_enabled()) return;
     if (!variable_global_exists("chart") || is_undefined(global.chart)) return;
 
     var tnow = scr_chart_time();
