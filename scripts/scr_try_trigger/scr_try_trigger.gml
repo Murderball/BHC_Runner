@@ -13,6 +13,7 @@ function scr_try_trigger(act)
     }
 
     var judge = "miss";
+    var auto_hit = (variable_global_exists("AUTO_HIT_ENABLED") && global.AUTO_HIT_ENABLED);
 
     // If chart isn't loaded, can't judge (safe)
     if (!variable_global_exists("chart") || is_undefined(global.chart)) return "miss";
@@ -40,7 +41,7 @@ function scr_try_trigger(act)
         if (!variable_global_exists("WIN_BAD")) return "miss";
 
         var dt = abs(n.t - t);
-        if (dt > global.WIN_BAD) continue;
+        if (!auto_hit && dt > global.WIN_BAD) continue;
 
         if (dt < best_dt) {
             best_dt = dt;
@@ -52,7 +53,8 @@ function scr_try_trigger(act)
 
     // Judge
     var result;
-    if (variable_global_exists("WIN_PERFECT") && best_dt <= global.WIN_PERFECT) result = "perfect";
+    if (auto_hit) result = "perfect";
+    else if (variable_global_exists("WIN_PERFECT") && best_dt <= global.WIN_PERFECT) result = "perfect";
     else if (variable_global_exists("WIN_GOOD") && best_dt <= global.WIN_GOOD) result = "good";
     else result = "bad";
 

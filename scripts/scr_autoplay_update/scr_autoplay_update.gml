@@ -5,8 +5,8 @@
 function scr_autoplay_update()
 {
 	if (variable_global_exists("STORY_PAUSED") && global.STORY_PAUSED) return;
-    if (!variable_global_exists("AUTO_HIT")) return;
-    if (!global.AUTO_HIT) return;
+    if (!variable_global_exists("AUTO_HIT_ENABLED")) return;
+    if (!global.AUTO_HIT_ENABLED) return;
 
     // Don't autoplay while editor is on
     if (variable_global_exists("editor_on") && global.editor_on) return;

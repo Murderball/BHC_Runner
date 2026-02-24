@@ -38,7 +38,7 @@ function scr_set_playhead_time(t_s)
     // ----------------------------
     // Re-arm autoplay after jumps
     // ----------------------------
-    if (variable_global_exists("AUTO_HIT")) {
+    if (variable_global_exists("AUTO_HIT_ENABLED")) {
         global.auto_last_jump_t = -999999;
         global.auto_last_duck_t = -999999;
         global.auto_last_atk1_t = -999999;
