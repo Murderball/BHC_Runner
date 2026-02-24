@@ -68,8 +68,13 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
     var pps_val = scr_timeline_pps();
 
     // Visible time range based on zoom
-    var left_time  = now_time + (0 - global.HIT_X_GUI) / pps_val;
-    var right_time = now_time + (gui_w - global.HIT_X_GUI) / pps_val;
+    var _pps_denom = pps_val;
+    if (_pps_denom == 0) {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        _pps_denom = 1;
+    }
+    var left_time  = now_time + (0 - global.HIT_X_GUI) / _pps_denom;
+    var right_time = now_time + (gui_w - global.HIT_X_GUI) / _pps_denom;
 
     var left_tick  = scr_time_to_tick(left_time) - 8;
     var right_tick = scr_time_to_tick(right_time) + 8;
@@ -103,7 +108,12 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
                 draw_line_width(grid_gx, 40, grid_gx, gui_h - 140, 2);
 
                 // Measure number (1-based)
-                var bar_num = floor(tick_i / ticks_per_bar) + 1;
+                var _bar_ticks_denom = ticks_per_bar;
+                if (_bar_ticks_denom == 0) {
+                    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+                    _bar_ticks_denom = 1;
+                }
+                var bar_num = floor(tick_i / _bar_ticks_denom) + 1;
                 if (bar_num < 1) bar_num = 1;
 
                 draw_set_color(c_black);
@@ -544,7 +554,12 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
         var thumb_move = max(1, track_h - thumb_h);
         var thumb_y = track_y;
         if (max_scroll > 0) {
-            thumb_y = track_y + ((scroll_y / max_scroll) * thumb_move);
+            var _scroll_denom = max_scroll;
+            if (_scroll_denom == 0) {
+                show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+                _scroll_denom = 1;
+            }
+            thumb_y = track_y + ((scroll_y / _scroll_denom) * thumb_move);
         }
 
         // Panel frame + header are fixed; only text region scrolls.
@@ -616,7 +631,12 @@ if (!variable_global_exists("timeline_zoom") || !is_real(global.timeline_zoom)) 
         var xoff = (variable_global_exists("CHUNK_X_OFFSET_PX") ? global.CHUNK_X_OFFSET_PX : 0);
         var x_now_map = t_now2 * pps + xoff;
 
-        var ci = floor(x_now_map / chunk_w_px);
+        var _chunk_w_denom = chunk_w_px;
+        if (_chunk_w_denom == 0) {
+            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+            _chunk_w_denom = 1;
+        }
+        var ci = floor(x_now_map / _chunk_w_denom);
         if (ci < 0) ci = 0;
 
         var slot = -1;

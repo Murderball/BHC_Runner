@@ -46,7 +46,12 @@ if (hp_max > 0)
     var bx2 = bx1 + bar_w;
     var by2 = by1 + bar_h;
 
-    var r = clamp(hp / hp_max, 0, 1);
+    var _hp_denom = hp_max;
+    if (_hp_denom == 0) {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        _hp_denom = 1;
+    }
+    var r = clamp(hp / _hp_denom, 0, 1);
 
     draw_set_alpha(0.85);
     draw_set_color(c_white);

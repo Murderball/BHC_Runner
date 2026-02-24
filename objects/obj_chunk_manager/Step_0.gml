@@ -182,11 +182,21 @@ if (chunk_w_px <= 0) chunk_w_px = 1;
 // ----------------------------------------------------
 
 // --- CI INDEXING (pure, stable, grid-locked) ---
-cur_ci = floor((t_now * pps) / chunk_w_px);
+var _chunk_w_denom = chunk_w_px;
+if (_chunk_w_denom == 0) {
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    _chunk_w_denom = 1;
+}
+cur_ci = floor((t_now * pps) / _chunk_w_denom);
 if (cur_ci < 0) cur_ci = 0;
 
 // Ring buffer base
-base_ci = floor(cur_ci / buffer_chunks) * buffer_chunks;
+var _buffer_denom = buffer_chunks;
+if (_buffer_denom == 0) {
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    _buffer_denom = 1;
+}
+base_ci = floor(cur_ci / _buffer_denom) * buffer_chunks;
 if (base_ci < 0) base_ci = 0;
 
 var __mp_slots = (script_exists(scr_microprof_begin) ? scr_microprof_begin("chunk.slot_assign") : 0);
@@ -204,7 +214,12 @@ for (var slot = 0; slot < buffer_chunks; slot++)
     var tile_shift = (variable_global_exists("TILE_SECTION_SHIFT_S") ? global.TILE_SECTION_SHIFT_S : 0.0);
 
     // Section lookup time used for TILE selection (not chunk lattice)
-    var t_at = (ci * chunk_w_px) / pps + tile_shift + 0.0001;
+    var _pps_denom = pps;
+    if (_pps_denom == 0) {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        _pps_denom = 1;
+    }
+    var t_at = (ci * chunk_w_px) / _pps_denom + tile_shift + 0.0001;
     var sec = sec_name_at_time(t_at);
 
     // Sequence exists?
@@ -228,9 +243,19 @@ for (var slot = 0; slot < buffer_chunks; slot++)
 
     var idx;
     if (variable_global_exists("chunk_seconds") && is_real(global.chunk_seconds) && global.chunk_seconds > 0) {
-        idx = floor(t_into / global.chunk_seconds);
+        var _chunk_sec_denom = global.chunk_seconds;
+        if (_chunk_sec_denom == 0) {
+            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+            _chunk_sec_denom = 1;
+        }
+        idx = floor(t_into / _chunk_sec_denom);
     } else {
-        idx = floor(t_into / (chunk_w_px / pps));
+        var _pps_inner_denom = pps;
+        if (_pps_inner_denom == 0) {
+            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+            _pps_inner_denom = 1;
+        }
+        idx = floor(t_into / (chunk_w_px / _pps_inner_denom));
     }
 
     idx = clamp(idx, 0, array_length(seq) - 1);

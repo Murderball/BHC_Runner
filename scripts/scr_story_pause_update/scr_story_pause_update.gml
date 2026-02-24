@@ -50,7 +50,12 @@ function scr_story_pause_update()
 
     // Countdown timers
     if (global.story_timer > 0) {
-        global.story_timer -= (1.0 / game_get_speed(gamespeed_fps));
+        var _fps_denom = game_get_speed(gamespeed_fps);
+        if (_fps_denom == 0) {
+            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+            _fps_denom = 1;
+        }
+        global.story_timer -= (1.0 / _fps_denom);
         if (global.story_timer < 0) global.story_timer = 0;
     }
 

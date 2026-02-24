@@ -520,7 +520,12 @@ function scr_editor_update() {
 
                 // Convert mouse X back into time
                 var target_gx = mx_gui + global.editor_marker_drag_dx;
-                var target_t = now_time2 + (target_gx - global.HIT_X_GUI) / pps2;
+                var _pps2_denom = pps2;
+                if (_pps2_denom == 0) {
+                    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+                    _pps2_denom = 1;
+                }
+                var target_t = now_time2 + (target_gx - global.HIT_X_GUI) / _pps2_denom;
 
                 if (global.editor_snap_on) target_t = scr_snap_time_to_tick(target_t);
 
@@ -1283,7 +1288,12 @@ if (keyboard_check_pressed(vk_delete) || keyboard_check_pressed(vk_backspace))
 	if (mouse_check_button(mb_left) && global.drag_mode == "note") {
 	    var now_time2 = scr_chart_time();
 	    var pps = scr_timeline_pps() * global.timeline_zoom;
-	    var target_t = now_time2 + (mx_gui - global.HIT_X_GUI) / pps;
+	    var _pps_denom = pps;
+    if (_pps_denom == 0) {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        _pps_denom = 1;
+    }
+    var target_t = now_time2 + (mx_gui - global.HIT_X_GUI) / _pps_denom;
 
 	    if (global.editor_snap_on) target_t = scr_snap_time_to_tick(target_t);
 
@@ -1328,15 +1338,30 @@ if (keyboard_check_pressed(vk_delete) || keyboard_check_pressed(vk_backspace))
             if (nend.type == "hold") {
                 var now_time3 = scr_chart_time();
                 var pps2 = scr_timeline_pps();
-                var end_target_t = now_time3 + (mx_gui - global.HIT_X_GUI) / pps2;
+                var _pps2_denom = pps2;
+                if (_pps2_denom == 0) {
+                    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+                    _pps2_denom = 1;
+                }
+                var end_target_t = now_time3 + (mx_gui - global.HIT_X_GUI) / _pps2_denom;
 
                 if (global.editor_snap_on) end_target_t = scr_snap_time_to_tick(end_target_t);
 
                 var new_dur = max(0.0, end_target_t - nend.t);
 
                 if (global.editor_snap_on) {
-                    var beats_d = new_dur / global.SEC_PER_BEAT;
-                    beats_d = round(beats_d / global.editor_snap) * global.editor_snap;
+                    var _spb_denom = global.SEC_PER_BEAT;
+                    if (_spb_denom == 0) {
+                        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+                        _spb_denom = 1;
+                    }
+                    var beats_d = new_dur / _spb_denom;
+                    var _snap_denom = global.editor_snap;
+                    if (_snap_denom == 0) {
+                        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+                        _snap_denom = 1;
+                    }
+                    beats_d = round(beats_d / _snap_denom) * global.editor_snap;
                     new_dur = max(0.0, beats_d * global.SEC_PER_BEAT);
                 }
 
@@ -1391,8 +1416,18 @@ if (keyboard_check_pressed(vk_delete) || keyboard_check_pressed(vk_backspace))
 
                     // snap duration to grid
                     if (global.editor_snap_on) {
-                        var beats_d2 = dsec / global.SEC_PER_BEAT;
-                        beats_d2 = round(beats_d2 / global.editor_snap) * global.editor_snap;
+                        var _spb_denom = global.SEC_PER_BEAT;
+                        if (_spb_denom == 0) {
+                            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+                            _spb_denom = 1;
+                        }
+                        var beats_d2 = dsec / _spb_denom;
+                        var _snap_denom = global.editor_snap;
+                        if (_snap_denom == 0) {
+                            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+                            _snap_denom = 1;
+                        }
+                        beats_d2 = round(beats_d2 / _snap_denom) * global.editor_snap;
                         dsec = max(0.0, beats_d2 * global.SEC_PER_BEAT);
                     }
 
