@@ -1,24 +1,47 @@
+/// scr_level_key_from_room_name(room_name) -> "level01", "level03", etc. or ""
+function scr_level_key_from_room_name(_room_name)
+{
+    var rn = string_lower(string(_room_name));
+    if (rn == "") return "";
+
+    // Primary: gameplay rooms
+    if (string_pos("rm_level01", rn) == 1) return "level01";
+    if (string_pos("rm_level02", rn) == 1) return "level02";
+    if (string_pos("rm_level03", rn) == 1) return "level03";
+    if (string_pos("rm_level04", rn) == 1) return "level04";
+    if (string_pos("rm_level05", rn) == 1) return "level05";
+    if (string_pos("rm_level06", rn) == 1) return "level06";
+
+    // Optional: boss rooms
+    if (string_pos("rm_boss_1", rn) == 1) return "level01";
+    if (string_pos("rm_boss_2", rn) == 1) return "level02";
+    if (string_pos("rm_boss_3", rn) == 1) return "level03";
+    if (string_pos("rm_boss_4", rn) == 1) return "level04";
+    if (string_pos("rm_boss_5", rn) == 1) return "level05";
+    if (string_pos("rm_boss_6", rn) == 1) return "level06";
+
+    // Optional: chunk rooms
+    if (string_pos("rm1_chunk_", rn) == 1) return "level01";
+    if (string_pos("rm2_chunk_", rn) == 1) return "level02";
+    if (string_pos("rm3_chunk_", rn) == 1) return "level03";
+    if (string_pos("rm4_chunk_", rn) == 1) return "level04";
+    if (string_pos("rm5_chunk_", rn) == 1) return "level05";
+    if (string_pos("rm6_chunk_", rn) == 1) return "level06";
+    if (string_pos("rm_chunk_", rn) == 1)  return "level03";
+
+    return "";
+}
+
 /// scr_level_key_from_room([room_id]) -> "level01", "level03", etc.
 function scr_level_key_from_room(_room_id)
 {
     var rid = (argument_count >= 1) ? _room_id : room;
 
     var rn = room_get_name(rid);
-    if (!is_string(rn) || rn == "") return "level03"; // safe fallback
+    if (!is_string(rn) || rn == "") return "level03"; // runtime safe fallback
 
-    rn = string_lower(rn);
-
-    // Primary: gameplay rooms
-    if (string_pos("rm_level01", rn) == 1) return "level01";
-    if (string_pos("rm_level03", rn) == 1) return "level03";
-
-    // Optional: boss rooms (if you name them like rm_boss_1, rm_boss_3)
-    if (string_pos("rm_boss_1", rn) == 1) return "level01";
-    if (string_pos("rm_boss_3", rn) == 1) return "level03";
-
-    // Optional: chunk rooms (helps editor/testing if you ever jump into a chunk room directly)
-    if (string_pos("rm1_chunk_", rn) == 1) return "level01";
-    if (string_pos("rm_chunk_", rn) == 1)  return "level03";
+    var room_key = scr_level_key_from_room_name(rn);
+    if (room_key != "") return room_key;
 
     // Fallback
     return "level03";
@@ -93,14 +116,18 @@ function scr_active_level_key()
         var editor_key = scr_editor_level_key_from_path(chart_path);
         if (editor_key != "") return editor_key;
 
-        var rn = string_lower(room_get_name(room));
-        var room_key = scr_editor_level_key_from_path(rn);
+        var rn = room_get_name(room);
+        var room_key = scr_level_key_from_room_name(rn);
+        if (room_key == "") room_key = scr_editor_level_key_from_path(string_lower(string(rn)));
         if (room_key != "") return room_key;
 
         if (variable_global_exists("editor_level_index") && is_real(global.editor_level_index)) {
             var ei = clamp(floor(real(global.editor_level_index)), 1, 99);
             return "level" + ((ei < 10) ? "0" : "") + string(ei);
         }
+
+        // Editor path must never fall back to stale runtime LEVEL_KEY values.
+        return "";
     }
 
     if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY) && global.LEVEL_KEY != "") {
