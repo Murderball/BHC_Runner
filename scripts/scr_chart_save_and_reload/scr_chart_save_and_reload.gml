@@ -86,6 +86,9 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
 
     global.editor_active_chart_label = global.editor_chart_filename;
 
+    global.editor_level_index = level_index;
+    global.LEVEL_KEY = "level" + ((level_index < 10) ? "0" : "") + string(level_index);
+
     if (!_is_boss)
     {
         global.DIFFICULTY = diff;
@@ -99,11 +102,6 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
         }
 
         global.pending_song_start = true;
-    }
-
-    global.editor_level_index = level_index;
-    if (variable_global_exists("LEVEL_KEY")) {
-        global.LEVEL_KEY = "level0" + string(level_index);
     }
 
     show_debug_message("[editor chart switch] " + path);

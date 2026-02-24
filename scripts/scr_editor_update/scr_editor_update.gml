@@ -957,8 +957,36 @@ if (mm_type == "difficulty" || mm_type == "diff")
 		    if (!variable_global_exists("editor_level_index")) global.editor_level_index = 1;
 		    global.editor_level_index = clamp(global.editor_level_index, 1, 6);
 
-		    if (keyboard_check_pressed(ord("7"))) global.editor_level_index = max(1, global.editor_level_index - 1);
-		    if (keyboard_check_pressed(ord("8"))) global.editor_level_index = min(6, global.editor_level_index + 1);
+		    var room_level_key = "";
+		    var room_name_now = string_lower(string(room_get_name(room)));
+		    if (string_pos("rm_level", room_name_now) == 1 && string_length(room_name_now) >= 10) {
+		        var room_digits = string_copy(room_name_now, 9, 2);
+		        if (string_digits(room_digits) == room_digits) {
+		            room_level_key = "level" + room_digits;
+		            global.editor_level_index = clamp(real(room_digits), 1, 6);
+		        }
+		    }
+
+		    var selected_level_key = room_level_key;
+		    if (selected_level_key == "" && variable_global_exists("editor_chart_path")) {
+		        var chart_path_now = string_lower(string(global.editor_chart_path));
+		        var path_pos = string_pos("charts/level", chart_path_now);
+		        if (path_pos > 0) {
+		            var path_digits = string_copy(chart_path_now, path_pos + string_length("charts/level"), 2);
+		            if (string_digits(path_digits) == path_digits) {
+		                selected_level_key = "level" + path_digits;
+		            }
+		        }
+		    }
+		    if (selected_level_key == "") selected_level_key = "level01";
+
+		    var selected_level_index = real(string_copy(selected_level_key, 6, 2));
+		    global.editor_level_index = clamp(selected_level_index, 1, 6);
+
+		    if (room_level_key == "") {
+		        if (keyboard_check_pressed(ord("7"))) global.editor_level_index = max(1, global.editor_level_index - 1);
+		        if (keyboard_check_pressed(ord("8"))) global.editor_level_index = min(6, global.editor_level_index + 1);
+		    }
 
 		    if (keyboard_check_pressed(ord("1")))
 		        scr_editor_chart_switch(
