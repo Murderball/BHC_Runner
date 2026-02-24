@@ -82,6 +82,7 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
     global.editor_chart_is_boss = _is_boss;
     global.editor_chart_filename = scr_chart_filename(level_index, diff, _is_boss);
     global.editor_chart_fullpath = path;
+    global.editor_chart_path = path;
 
     global.editor_active_chart_label = global.editor_chart_filename;
 
