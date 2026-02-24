@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_score_award",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_score_award",
+  "parent":{
+    "name":"Scripts_Scoring",
+    "path":"folders/Scripts/Scripts_Scoring.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
