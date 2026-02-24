@@ -103,7 +103,7 @@ var y_exit   = y_opts + 100;
 btn_start   = { spr: menu_start,   x: left_x, y: y_start,  w: BTN_W, h: BTN_H };
 btn_story   = { spr: menu_story,   x: left_x, y: y_story,  w: BTN_W, h: BTN_H };
 btn_arcade  = { spr: menu_arcade,  x: left_x, y: y_arcade, w: BTN_W, h: BTN_H };
-btn_options = { spr: menu_options, x: left_x, y: y_opts,   w: BTN_W, h: BTN_H };
+btn_options = { spr: menu_options, x: 220, y:600,   w: BTN_W, h: BTN_H };
 
 var spr_menu_game = asset_get_index("menu_game");
 
