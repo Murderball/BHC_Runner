@@ -5,6 +5,12 @@ function scr_editor_preview_music_set(_level_index, _diff)
     if (!variable_global_exists("editor_on") || !global.editor_on) return;
 
     var level_index = clamp(floor(real(_level_index)), 1, 6);
+    var active_level_key = "";
+    if (script_exists(scr_active_level_key)) active_level_key = scr_active_level_key();
+    if (is_string(active_level_key) && string_length(active_level_key) >= 6) {
+        var kdigits = string_delete(active_level_key, 1, 5);
+        if (kdigits != "") level_index = clamp(floor(real(kdigits)), 1, 6);
+    }
     if (!variable_global_exists("__song_map_inited") || !global.__song_map_inited) {
         scr_song_map_init();
     }
@@ -12,12 +18,14 @@ function scr_editor_preview_music_set(_level_index, _diff)
     if (diff != "easy" && diff != "normal" && diff != "hard") diff = "normal";
 
     var snd_asset = scr_level_song_sound(level_index, diff);
+    show_debug_message("[EDITOR AUDIO] request diff=" + diff + " active_level_key=" + string(active_level_key)
+        + " level_index=" + string(level_index));
     if (!script_exists(scr_song_is_valid_asset)) return;
 
     if (!scr_song_is_valid_asset(snd_asset)) {
         if (!(variable_global_exists("song_no_music_level") && global.song_no_music_level)) {
-            show_debug_message("[AUDIO] editor preview music skipped invalid resolve: level=" + string(level_index)
-                + " diff=" + diff + " snd_asset=" + string(snd_asset));
+            show_debug_message("[EDITOR AUDIO] missing/invalid sound: level=" + string(level_index)
+                + " diff=" + diff + " snd_asset=" + string(snd_asset) + " (leaving current audio unchanged)");
         } else if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
             show_debug_message("[AUDIO] editor preview music: no music for level=" + string(level_index));
         }
@@ -25,6 +33,7 @@ function scr_editor_preview_music_set(_level_index, _diff)
     }
 
     snd_asset = real(snd_asset);
+    show_debug_message("[EDITOR AUDIO] selected sound=" + scr_song_asset_label(snd_asset));
 
     if (!variable_global_exists("editor_preview_sound_asset")) global.editor_preview_sound_asset = -1;
     if (!variable_global_exists("editor_preview_sound_instance")) global.editor_preview_sound_instance = -1;

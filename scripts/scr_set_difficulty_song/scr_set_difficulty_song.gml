@@ -17,12 +17,26 @@ function scr_set_difficulty_song(_diff, _reason)
     var d = string_lower(string(_diff));
     if (d != "easy" && d != "normal" && d != "hard") d = "normal";
 
-    var lk = "level03";
-    if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) lk = global.LEVEL_KEY;
+    var lk = "";
+    if (script_exists(scr_active_level_key)) lk = scr_active_level_key();
+    if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) lk = string_lower(string(global.LEVEL_KEY));
 
-    var level_idx = 3;
+    var level_idx = -1;
     if (string_length(lk) >= 6) {
         level_idx = clamp(real(string_copy(lk, 6, string_length(lk) - 5)), 1, 6);
+    }
+
+    if (level_idx < 1) {
+        if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
+            show_debug_message("[AUDIO] difficulty song switch skipped: no valid active level key for diff=" + d);
+        }
+        return;
+    }
+
+    var in_editor = (variable_global_exists("in_editor") && global.in_editor)
+        || (variable_global_exists("editor_on") && global.editor_on);
+    if (in_editor) {
+        show_debug_message("[EDITOR AUDIO] diff=" + d + " active_level_key=" + lk + " level_idx=" + string(level_idx));
     }
 
     global.DIFF_SONG_SOUND = {
@@ -56,6 +70,7 @@ function scr_set_difficulty_song(_diff, _reason)
         if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
             show_debug_message("[AUDIO] difficulty song switch failed: no valid asset for level=" + string(lk) + " diff=" + d);
         }
+        if (in_editor) show_debug_message("[EDITOR AUDIO] no valid sound for level=" + string(lk) + " diff=" + d + " (keeping current audio)");
         return;
     }
 
