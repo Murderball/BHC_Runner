@@ -285,6 +285,11 @@ function scr_song_play_from(time_sec)
     global.song_handle = inst;
     global.song_playing = true;
 
+    if (!(variable_global_exists("editor_on") && global.editor_on)) {
+        if (script_exists(scr_score_reset_run)) scr_score_reset_run();
+        if (script_exists(scr_autohit_reset)) scr_autohit_reset();
+    }
+
     if (global.AUDIO_DEBUG_LOG) {
         show_debug_message("[AUDIO] start snd=" + scr_song_asset_label(snd_asset)
             + " [" + string(snd_asset) + "] inst=" + string(inst)
