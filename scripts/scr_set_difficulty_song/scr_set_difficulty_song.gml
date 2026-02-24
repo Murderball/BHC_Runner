@@ -1,6 +1,6 @@
-/// scr_set_difficulty_song(diff, reason)
+/// scr_set_difficulty_song(diff, reason, [level_key])
 /// Swaps currently selected song based on difficulty with one controlled restart.
-function scr_set_difficulty_song(_diff, _reason)
+function scr_set_difficulty_song(_diff, _reason, _level_key)
 {
     if (variable_global_exists("LEVEL_MODE") && global.LEVEL_MODE == "boss") return;
 
@@ -18,12 +18,43 @@ function scr_set_difficulty_song(_diff, _reason)
     if (d != "easy" && d != "normal" && d != "hard") d = "normal";
 
     var lk = "";
-    if (script_exists(scr_active_level_key)) lk = scr_active_level_key();
-    if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) lk = string_lower(string(global.LEVEL_KEY));
+    if (argument_count >= 3) lk = string_lower(string(_level_key));
+
+    if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) {
+        lk = string_lower(string(global.LEVEL_KEY));
+    }
+
+    if (lk == "") {
+        var chart_path = "";
+        if (variable_global_exists("editor_chart_path")) chart_path = string_lower(string(global.editor_chart_path));
+        if (chart_path == "" && variable_global_exists("editor_chart_fullpath")) chart_path = string_lower(string(global.editor_chart_fullpath));
+        if (chart_path == "" && variable_global_exists("chart_file")) chart_path = string_lower(string(global.chart_file));
+
+        if (chart_path != "") {
+            var path_pos = string_pos("charts/level", chart_path);
+            if (path_pos > 0) {
+                var path_digits = string_copy(chart_path, path_pos + string_length("charts/level"), 2);
+                if (string_digits(path_digits) == path_digits) lk = "level" + path_digits;
+            }
+        }
+    }
+
+    if (lk == "") {
+        var room_name_now = string_lower(string(room_get_name(room)));
+        if (string_pos("rm_level", room_name_now) == 1 && string_length(room_name_now) >= 10) {
+            var room_digits = string_copy(room_name_now, 9, 2);
+            if (string_digits(room_digits) == room_digits) lk = "level" + room_digits;
+        }
+    }
+
+    if (lk == "") lk = "level01";
 
     var level_idx = -1;
-    if (string_length(lk) >= 6) {
-        level_idx = clamp(real(string_copy(lk, 6, string_length(lk) - 5)), 1, 6);
+    if (string_length(lk) == 7 && string_pos("level", lk) == 1) {
+        var lk_digits = string_copy(lk, 6, 2);
+        if (string_digits(lk_digits) == lk_digits) {
+            level_idx = clamp(real(lk_digits), 1, 6);
+        }
     }
 
     if (level_idx < 1) {
@@ -32,6 +63,8 @@ function scr_set_difficulty_song(_diff, _reason)
         }
         return;
     }
+
+    global.LEVEL_KEY = lk;
 
     var in_editor = (variable_global_exists("in_editor") && global.in_editor)
         || (variable_global_exists("editor_on") && global.editor_on);
