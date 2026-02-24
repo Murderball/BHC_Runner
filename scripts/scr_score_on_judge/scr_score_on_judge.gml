@@ -151,7 +151,9 @@ var _combo_norm = min(_st.combo / denom_combo, 1.0);
     var _combo_bonus = min(_cfg.combo_bonus_cap, _st.combo * _cfg.combo_bonus_per_combo);
     var _points_awarded = round((_base * _st.multiplier * _judge_weight) + _combo_bonus);
 
-    _st.score_total += _points_awarded;
+    var _hit_reason = "HIT";
+    if (is_struct(_meta) && variable_struct_exists(_meta, "hit_reason")) _hit_reason = _meta.hit_reason;
+    _points_awarded = scr_score_award(_hit_reason, _points_awarded, 1.0);
 
     // ---- breakdown/debug bookkeeping ----
     switch (_judge)

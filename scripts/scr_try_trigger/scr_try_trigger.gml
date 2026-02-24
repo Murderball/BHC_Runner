@@ -12,13 +12,13 @@ function scr_try_trigger(act)
         return "perfect";
     }
 
-    var judge = "miss";
-    var auto_hit = (variable_global_exists("AUTO_HIT_ENABLED") && global.AUTO_HIT_ENABLED);
-
     // If chart isn't loaded, can't judge (safe)
     if (!variable_global_exists("chart") || is_undefined(global.chart)) return "miss";
+    if (!variable_global_exists("WIN_BAD")) return "miss";
 
     var t = scr_chart_time();
+    var auto_on = scr_autohit_enabled();
+    var input_pressed = true;
 
     var best_i  = -1;
     var best_dt = 1000000000;
@@ -37,11 +37,8 @@ function scr_try_trigger(act)
 
         if (n.act != act) continue;
 
-        // Need timing windows
-        if (!variable_global_exists("WIN_BAD")) return "miss";
-
         var dt = abs(n.t - t);
-        if (!auto_hit && dt > global.WIN_BAD) continue;
+        if (dt > global.WIN_BAD) continue;
 
         if (dt < best_dt) {
             best_dt = dt;
@@ -51,12 +48,46 @@ function scr_try_trigger(act)
 
     if (best_i < 0) return "miss";
 
-    // Judge
-    var result;
-    if (auto_hit) result = "perfect";
-    else if (variable_global_exists("WIN_PERFECT") && best_dt <= global.WIN_PERFECT) result = "perfect";
-    else if (variable_global_exists("WIN_GOOD") && best_dt <= global.WIN_GOOD) result = "good";
-    else result = "bad";
+    var within_hit_window = (best_dt <= global.WIN_BAD);
+
+    var hit_success = false;
+    var hit_accuracy = 0;
+    var hit_reason = "";
+    var result = "miss";
+
+    if (auto_on)
+    {
+        if (within_hit_window)
+        {
+            hit_success = true;
+            hit_accuracy = 1.0;
+            hit_reason = "AUTO";
+            result = "perfect";
+        }
+    }
+    else
+    {
+        if (input_pressed && within_hit_window)
+        {
+            hit_success = true;
+            hit_reason = "INPUT";
+
+            if (variable_global_exists("WIN_PERFECT") && best_dt <= global.WIN_PERFECT) {
+                result = "perfect";
+                hit_accuracy = 1.0;
+            }
+            else if (variable_global_exists("WIN_GOOD") && best_dt <= global.WIN_GOOD) {
+                result = "good";
+                hit_accuracy = 0.75;
+            }
+            else {
+                result = "bad";
+                hit_accuracy = 0.5;
+            }
+        }
+    }
+
+    if (!hit_success) return "miss";
 
     // Mark note as hit (do NOT delete)
     var nn = global.chart[best_i];
@@ -80,6 +111,8 @@ function scr_try_trigger(act)
         act       : act,
         note_time : nn.t,
         hit_time  : t,
+        hit_reason: hit_reason,
+        hit_accuracy: hit_accuracy,
         source    : "scr_try_trigger"
     });
 
@@ -137,6 +170,8 @@ function scr_score_process_passed_misses()
             act       : variable_struct_exists(n, "act") ? n.act : "",
             note_time : n.t,
             hit_time  : _t,
+            hit_reason: "MISS",
+            hit_accuracy: 0,
             source    : "scr_score_process_passed_misses"
         });
 
