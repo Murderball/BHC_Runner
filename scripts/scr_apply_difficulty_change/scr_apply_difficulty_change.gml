@@ -14,9 +14,29 @@ function scr_apply_difficulty_change(new_diff)
     // -------------------------------------------------
     // Ensure we have a valid level key (used for charts)
     // -------------------------------------------------
-    var lk = "level03";
-    if (variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) lk = global.LEVEL_KEY;
-    else global.LEVEL_KEY = lk;
+    var lk = "";
+
+    var room_name_now = string_lower(string(room_get_name(room)));
+    if (string_pos("rm_level", room_name_now) == 1 && string_length(room_name_now) >= 10) {
+        var room_digits = string_copy(room_name_now, 9, 2);
+        if (string_digits(room_digits) == room_digits) lk = "level" + room_digits;
+    }
+
+    if (lk == "" && variable_global_exists("editor_chart_path")) {
+        var chart_path_now = string_lower(string(global.editor_chart_path));
+        var level_pos = string_pos("charts/level", chart_path_now);
+        if (level_pos > 0) {
+            var path_digits = string_copy(chart_path_now, level_pos + string_length("charts/level"), 2);
+            if (string_digits(path_digits) == path_digits) lk = "level" + path_digits;
+        }
+    }
+
+    if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) {
+        lk = string_lower(string(global.LEVEL_KEY));
+    }
+
+    if (lk == "") lk = "level01";
+    global.LEVEL_KEY = lk;
 
     // -------------------------------------------------
     // Rebuild DIFF_CHART per level so chart swaps

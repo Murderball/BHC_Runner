@@ -27,7 +27,7 @@ function scr_level_key_from_room_name(_room_name)
     if (string_pos("rm4_chunk_", rn) == 1) return "level04";
     if (string_pos("rm5_chunk_", rn) == 1) return "level05";
     if (string_pos("rm6_chunk_", rn) == 1) return "level06";
-    if (string_pos("rm_chunk_", rn) == 1)  return "level03";
+    if (string_pos("rm_chunk_", rn) == 1)  return "";
 
     return "";
 }
@@ -38,13 +38,13 @@ function scr_level_key_from_room(_room_id)
     var rid = (argument_count >= 1) ? _room_id : room;
 
     var rn = room_get_name(rid);
-    if (!is_string(rn) || rn == "") return "level03"; // runtime safe fallback
+    if (!is_string(rn) || rn == "") return "";
 
     var room_key = scr_level_key_from_room_name(rn);
     if (room_key != "") return room_key;
 
     // Fallback
-    return "level03";
+    return "";
 }
 
 
