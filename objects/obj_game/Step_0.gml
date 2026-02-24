@@ -127,6 +127,10 @@ if (!global.editor_on && global.LEVEL_MODE == "main")
 
 scr_autoplay_update();
 
+if (!global.editor_on) {
+    scr_score_process_passed_misses();
+}
+
 // Gameplay-only controls
 if (!global.editor_on) {
     // TODO: controller gameplay
