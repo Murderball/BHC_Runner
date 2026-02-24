@@ -28,6 +28,8 @@ function scr_autohit_reset()
                 if (variable_struct_exists(n, "hit")) n.hit = false;
                 if (variable_struct_exists(n, "hit_time")) n.hit_time = 0;
                 if (variable_struct_exists(n, "hit_judge")) n.hit_judge = "";
+                if (variable_struct_exists(n, "judged")) n.judged = false;
+                if (variable_struct_exists(n, "scored")) n.scored = false;
             }
         }
     }

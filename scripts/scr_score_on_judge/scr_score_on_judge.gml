@@ -172,3 +172,42 @@ var _combo_norm = min(_st.combo / denom_combo, 1.0);
 
     return _points_awarded;
 }
+
+
+/// scr_score_base_points(note_kind_or_action)
+function scr_score_base_points(_kind)
+{
+    var _k = string_lower(string(_kind));
+
+    if (variable_global_exists("ACT_ATK1") && _kind == global.ACT_ATK1) _k = "atk1";
+    else if (variable_global_exists("ACT_ATK2") && _kind == global.ACT_ATK2) _k = "atk2";
+    else if (variable_global_exists("ACT_ATK3") && _kind == global.ACT_ATK3) _k = "atk3";
+    else if (variable_global_exists("ACT_ULT") && _kind == global.ACT_ULT) _k = "ult";
+    else if (variable_global_exists("ACT_JUMP") && _kind == global.ACT_JUMP) _k = "jump";
+    else if (variable_global_exists("ACT_DUCK") && _kind == global.ACT_DUCK) _k = "duck";
+
+    switch (_k)
+    {
+        case "atk1":
+        case "attack1":
+            return 100;
+
+        case "atk2":
+        case "attack2":
+            return 110;
+
+        case "atk3":
+        case "attack3":
+            return 120;
+
+        case "ult":
+        case "ultimate":
+            return 150;
+
+        case "jump":
+        case "duck":
+            return 90;
+    }
+
+    return 100;
+}
