@@ -4,11 +4,11 @@
 function scr_note_sprite(_action_key_or_id)
 {
     static note_map = {
-        jump:      { new_name: "spr_jump_note",     old_name: "spr_note_jump" },
-        duck:      { new_name: "spr_duck_note",     old_name: "spr_note_duck" },
-        atk1:      { new_name: "spr_attack_1_note", old_name: "spr_note_attk1" },
-        atk2:      { new_name: "spr_attack_2_note", old_name: "spr_note_attk2" },
-        atk3:      { new_name: "spr_attack_3_note", old_name: "spr_note_attk3" },
+        jump:      { new_name: "spr_jump_note" },
+        duck:      { new_name: "spr_duck_note" },
+        atk1:      { new_name: "spr_attack_1_note" },
+        atk2:      { new_name: "spr_attack_2_note" },
+        atk3:      { new_name: "spr_attack_3_note" },
         ult:       { new_name: "spr_ultimate_note", old_name: "spr_note_ultimate" },
         ultimate:  { new_name: "spr_ultimate_note", old_name: "spr_note_ultimate" }
     };
@@ -35,8 +35,10 @@ function scr_note_sprite(_action_key_or_id)
     var spr_new = scr_asset_get_index_safe(row.new_name, -1);
     if (spr_new != -1 && asset_get_type(spr_new) == asset_sprite) return spr_new;
 
-    var spr_old = scr_asset_get_index_safe(row.old_name, -1);
-    if (spr_old != -1 && asset_get_type(spr_old) == asset_sprite) return spr_old;
+    if (variable_struct_exists(row, "old_name")) {
+        var spr_old = scr_asset_get_index_safe(row.old_name, -1);
+        if (spr_old != -1 && asset_get_type(spr_old) == asset_sprite) return spr_old;
+    }
 
     return -1;
 }
