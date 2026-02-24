@@ -110,7 +110,7 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
 /// scr_chart_save_and_reload(path_or_filename)
 function scr_chart_save_and_reload(fname)
 {
-    if (is_undefined(fname) || string(fname) == "") return;
+    if (argument_count < 1 || string(fname) == "") return;
 
     var raw = string(fname);
     var path = raw;

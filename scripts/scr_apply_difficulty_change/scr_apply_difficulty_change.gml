@@ -17,22 +17,29 @@ function scr_apply_difficulty_change(new_diff)
     var lk = "";
 
     var room_name_now = string_lower(string(room_get_name(room)));
-    if (string_pos("rm_level", room_name_now) == 1 && string_length(room_name_now) >= 10) {
-        var room_digits = string_copy(room_name_now, 9, 2);
-        if (string_digits(room_digits) == room_digits) lk = "level" + room_digits;
+    var room_pos = string_pos("rm_level", room_name_now);
+    if (room_pos == 1) {
+        var room_digits = string_copy(room_name_now, room_pos + 8, 2);
+        if (string_length(room_digits) == 2 && string_digits(room_digits) == room_digits) lk = "level" + room_digits;
     }
 
     if (lk == "" && variable_global_exists("editor_chart_path")) {
         var chart_path_now = string_lower(string(global.editor_chart_path));
         var level_pos = string_pos("charts/level", chart_path_now);
         if (level_pos > 0) {
-            var path_digits = string_copy(chart_path_now, level_pos + string_length("charts/level"), 2);
-            if (string_digits(path_digits) == path_digits) lk = "level" + path_digits;
+            var path_digits = string_copy(chart_path_now, level_pos + 11, 2);
+            if (string_length(path_digits) == 2 && string_digits(path_digits) == path_digits) lk = "level" + path_digits;
         }
     }
 
     if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) {
-        lk = string_lower(string(global.LEVEL_KEY));
+        var lk_existing = string_lower(string(global.LEVEL_KEY));
+        if (string_length(lk_existing) == 7 && string_pos("level", lk_existing) == 1) {
+            var existing_digits = string_copy(lk_existing, 6, 2);
+            if (string_length(existing_digits) == 2 && string_digits(existing_digits) == existing_digits) {
+                lk = lk_existing;
+            }
+        }
     }
 
     if (lk == "") lk = "level01";
@@ -42,7 +49,13 @@ function scr_apply_difficulty_change(new_diff)
     // Rebuild DIFF_CHART per level so chart swaps
     // don't accidentally keep Level 3 paths on Level 1.
     // -------------------------------------------------
-    var __level_idx = clamp(real(string_copy(lk, 6, string_length(lk) - 5)), 1, 6);
+    var __level_idx = 1;
+    if (string_length(lk) == 7 && string_pos("level", lk) == 1) {
+        var lk_digits = string_copy(lk, 6, 2);
+        if (string_length(lk_digits) == 2 && string_digits(lk_digits) == lk_digits) {
+            __level_idx = clamp(real(lk_digits), 1, 6);
+        }
+    }
     global.DIFF_CHART = {
         easy   : scr_chart_fullpath(scr_chart_filename(__level_idx, "easy", false)),
         normal : scr_chart_fullpath(scr_chart_filename(__level_idx, "normal", false)),
