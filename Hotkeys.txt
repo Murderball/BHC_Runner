@@ -1,0 +1,66 @@
+Master Hotkey DEBUG (Toggle: F3)
+
+F12 — Toggle Play Window between screens
+Tab — Play From Editor
+Esc — Pause
+[ or ] — Timeline Zoom
+H — Tap/Hold Note Toggle
+P — Phrase Tool
+F8 — Toggle Auto Hit
+F11 — Toggle Chunk Highlighting
+E — Export Chunk
+
+GLOBAL / FILE
+
+Ctrl + Shift + M — Wipe marker file
+M — Toggle Marker tool
+
+DIFFICULTY
+
+Ctrl + 1 / 2 / 3 / 4 — Chart Difficulty Toggle
+T — Toggle Difficulty Marker
+U — Toggle Camera Marker
+Shift + 7 / 8 / 9 — Marker Difficulty Toggle
+
+MARKER TOOL (When Active)
+
+Ctrl + S — Save markers
+Ctrl + L — Load markers
+LMB — Select / Create marker
+LMB Drag — Move selected marker time
+Shift + LMB — Create SPAWN marker (enemy)
+Shift + Alt + LMB — Create PICKUP marker
+Alt + LMB — Create CAMERA marker
+Delete / Backspace — Delete selected marker
+RMB — Delete marker under mouse
+Shift + D — Swap Visual / Audio Modes
+
+SPAWN MARKER (type = spawn)
+
+G — Cycle enemy_kind
+Up / Down — Nudge Y
+Shift + LMB (Hold) — Set Y to mouse
+
+PICKUP MARKER (type = pickup)
+
+J — Cycle pickup_kind
+Up / Down — Nudge Y
+Shift + LMB (Hold) — Set Y to mouse
+
+CAMERA MARKER (type = camera)
+
+Q / E — Zoom - / +
+Arrow Keys — Pan X / Y
+Shift + Arrow Keys — Fast Pan X / Y
+C / V — Ease Previous / Next
+R — Reset Zoom / Pan
+
+STORY / PAUSE MARKER
+
+N — Toggle Yes / No choices
+R — Toggle loop
+F — Toggle wait_confirm
+C / V — Caption preset Previous / Next
+O / P — Fade out - / + 50ms
+K / L — Fade in - / + 50ms
+Q / E — Sound Previous / Next
