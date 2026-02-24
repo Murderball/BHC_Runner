@@ -76,10 +76,5 @@
     {"name":"spr_attack_3_note","order":9,"path":"sprites/spr_attack_3_note/spr_attack_3_note.yy",},
     {"name":"spr_duck_note","order":11,"path":"sprites/spr_duck_note/spr_duck_note.yy",},
     {"name":"spr_jump_note","order":10,"path":"sprites/spr_jump_note/spr_jump_note.yy",},
-    {"name":"spr_note_attk1","order":3,"path":"sprites/spr_note_attk1/spr_note_attk1.yy",},
-    {"name":"spr_note_attk2","order":5,"path":"sprites/spr_note_attk2/spr_note_attk2.yy",},
-    {"name":"spr_note_attk3","order":4,"path":"sprites/spr_note_attk3/spr_note_attk3.yy",},
-    {"name":"spr_note_duck","order":1,"path":"sprites/spr_note_duck/spr_note_duck.yy",},
-    {"name":"spr_note_jump","order":2,"path":"sprites/spr_note_jump/spr_note_jump.yy",},
   ],
 }
