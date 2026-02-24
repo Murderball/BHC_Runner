@@ -183,7 +183,7 @@ if (!global.song_playing && global.song_handle < 0)
 
             // Select correct song for THIS LEVEL (scr_level_prepare_for_room already set DIFF_SONG_SOUND)
             if (script_exists(scr_set_difficulty_song)) {
-                scr_set_difficulty_song(d0, "prestart@0");
+                scr_set_difficulty_song(d0, "prestart@0", scr_active_level_key());
             }
 
             // Mark event done so scr_difficulty_update won't fire it again on the first frame

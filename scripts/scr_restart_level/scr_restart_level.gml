@@ -30,7 +30,7 @@ function scr_restart_level()
 
     // Apply immediately (safe if called mid-run)
     if (script_exists(scr_apply_difficulty))  scr_apply_difficulty(d, "restart_level");
-    if (script_exists(scr_set_difficulty_song)) scr_set_difficulty_song(d, "restart_level");
+    if (script_exists(scr_set_difficulty_song)) scr_set_difficulty_song(d, "restart_level", scr_active_level_key());
 
     // Stop audio cleanly (prevents overlap during reload)
     if (variable_global_exists("song_handle") && global.song_handle >= 0) {
