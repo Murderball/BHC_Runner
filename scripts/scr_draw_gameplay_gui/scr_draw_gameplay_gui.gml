@@ -16,6 +16,12 @@ function scr_draw_gameplay_gui()
     if (!variable_global_exists("dbg_song_overlay_on")) global.dbg_song_overlay_on = false;
     if (keyboard_check_pressed(vk_f10)) global.dbg_song_overlay_on = !global.dbg_song_overlay_on;
 
+    if (variable_global_exists("AUTO_HIT_ENABLED") && global.AUTO_HIT_ENABLED)
+    {
+        draw_set_color(c_lime);
+        draw_text(20, 20, "AUTO HIT");
+        draw_set_color(c_white);
+    }
 
 	// --------------------------------------------------
 	// Song timeline track (RED bar) + vertical playhead (WHITE, beat-pulsed)

@@ -24,6 +24,14 @@ if (variable_global_exists("in_loading") && global.in_loading) {
     exit;
 }
 
+if (keyboard_check_pressed(vk_f8))
+{
+    if (!variable_global_exists("AUTO_HIT_ENABLED")) global.AUTO_HIT_ENABLED = false;
+    global.AUTO_HIT_ENABLED = !global.AUTO_HIT_ENABLED;
+
+    show_debug_message("[AUTO HIT] " + (global.AUTO_HIT_ENABLED ? "ENABLED" : "DISABLED"));
+}
+
 // ================= STARTUP LOADING GATE =================
 // Purpose: do heavy startup work (chart load / refresh) BEFORE gameplay begins,
 // so the "139ms" hitch doesn't happen mid-run.

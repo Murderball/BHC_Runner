@@ -2,7 +2,7 @@ function scr_master_keybind_debug_update()
 {
     if (!variable_global_exists("DEBUG_KEYBINDS") || !global.DEBUG_KEYBINDS) return;
 
-    if (keyboard_check_pressed(vk_f8))
+    if (keyboard_check_pressed(vk_f9))
     {
         if (!global.GAME_PAUSED)
         {
