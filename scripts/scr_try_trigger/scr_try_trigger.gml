@@ -13,7 +13,10 @@ function scr_try_trigger(act)
     }
 
     var judge = "miss";
-    var auto_hit = (variable_global_exists("AUTO_HIT_ENABLED") && global.AUTO_HIT_ENABLED);
+    var auto_hit = scr_autohit_enabled();
+    var hit_success = false;
+    var hit_accuracy = 0;
+    var hit_reason = "";
 
     // If chart isn't loaded, can't judge (safe)
     if (!variable_global_exists("chart") || is_undefined(global.chart)) return "miss";
@@ -53,10 +56,33 @@ function scr_try_trigger(act)
 
     // Judge
     var result;
-    if (auto_hit) result = "perfect";
-    else if (variable_global_exists("WIN_PERFECT") && best_dt <= global.WIN_PERFECT) result = "perfect";
-    else if (variable_global_exists("WIN_GOOD") && best_dt <= global.WIN_GOOD) result = "good";
-    else result = "bad";
+    if (auto_hit)
+    {
+        hit_success = true;
+        hit_accuracy = 1.0;
+        hit_reason = "AUTO";
+        result = "perfect";
+    }
+    else
+    {
+        hit_success = true;
+        hit_reason = "INPUT";
+
+        if (variable_global_exists("WIN_PERFECT") && best_dt <= global.WIN_PERFECT) {
+            result = "perfect";
+            hit_accuracy = 1.0;
+        }
+        else if (variable_global_exists("WIN_GOOD") && best_dt <= global.WIN_GOOD) {
+            result = "good";
+            hit_accuracy = 0.75;
+        }
+        else {
+            result = "bad";
+            hit_accuracy = 0.5;
+        }
+    }
+
+    if (!hit_success) return "miss";
 
     // Mark note as hit (do NOT delete)
     var nn = global.chart[best_i];
@@ -76,15 +102,17 @@ function scr_try_trigger(act)
     nn.hit_time = t;
 
     var base_points = scr_score_base_points(act);
-    scr_score_on_judge(result, base_points, {
+    var points_awarded = scr_score_on_judge(result, base_points, {
         act       : act,
         note_time : nn.t,
         hit_time  : t,
-        source    : "scr_try_trigger"
+        source    : "scr_try_trigger",
+        hit_reason: hit_reason,
+        accuracy  : hit_accuracy
     });
 
     if (variable_global_exists("DEBUG_SCORE") && global.DEBUG_SCORE) {
-        show_debug_message("[SCORE] " + result + " +" + string(base_points) + " total=" + string(global.score_state.score_total));
+        show_debug_message("[SCORE] " + result + " +" + string(points_awarded) + " total=" + string(global.score_state.score_total));
     }
 
     return result;
@@ -133,7 +161,7 @@ function scr_score_process_passed_misses()
         n.hit_time = _t;
 
         var _base_points = scr_score_base_points(variable_struct_exists(n, "act") ? n.act : "");
-        scr_score_on_judge("miss", _base_points, {
+        var _miss_points = scr_score_on_judge("miss", _base_points, {
             act       : variable_struct_exists(n, "act") ? n.act : "",
             note_time : n.t,
             hit_time  : _t,
@@ -141,7 +169,7 @@ function scr_score_process_passed_misses()
         });
 
         if (variable_global_exists("DEBUG_SCORE") && global.DEBUG_SCORE) {
-            show_debug_message("[SCORE] miss +" + string(_base_points) + " total=" + string(global.score_state.score_total));
+            show_debug_message("[SCORE] miss +" + string(_miss_points) + " total=" + string(global.score_state.score_total));
         }
     }
 }
