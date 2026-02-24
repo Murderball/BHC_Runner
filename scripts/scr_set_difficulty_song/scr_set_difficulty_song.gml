@@ -33,17 +33,18 @@ function scr_set_difficulty_song(_diff, _reason, _level_key)
         if (chart_path != "") {
             var path_pos = string_pos("charts/level", chart_path);
             if (path_pos > 0) {
-                var path_digits = string_copy(chart_path, path_pos + string_length("charts/level"), 2);
-                if (string_digits(path_digits) == path_digits) lk = "level" + path_digits;
+                var path_digits = string_copy(chart_path, path_pos + 11, 2);
+                if (string_length(path_digits) == 2 && string_digits(path_digits) == path_digits) lk = "level" + path_digits;
             }
         }
     }
 
     if (lk == "") {
         var room_name_now = string_lower(string(room_get_name(room)));
-        if (string_pos("rm_level", room_name_now) == 1 && string_length(room_name_now) >= 10) {
-            var room_digits = string_copy(room_name_now, 9, 2);
-            if (string_digits(room_digits) == room_digits) lk = "level" + room_digits;
+        var room_pos = string_pos("rm_level", room_name_now);
+        if (room_pos == 1) {
+            var room_digits = string_copy(room_name_now, room_pos + 8, 2);
+            if (string_length(room_digits) == 2 && string_digits(room_digits) == room_digits) lk = "level" + room_digits;
         }
     }
 

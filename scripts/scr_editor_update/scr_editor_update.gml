@@ -964,8 +964,8 @@ if (mm_type == "difficulty" || mm_type == "diff")
 		    if (chart_path_now != "") {
 		        var path_pos = string_pos("charts/level", chart_path_now);
 		        if (path_pos > 0) {
-		            var path_digits = string_copy(chart_path_now, path_pos + string_length("charts/level"), 2);
-		            if (string_digits(path_digits) == path_digits) {
+		            var path_digits = string_copy(chart_path_now, path_pos + 11, 2);
+		            if (string_length(path_digits) == 2 && string_digits(path_digits) == path_digits) {
 		                level_key_hotkey = "level" + path_digits;
 		            }
 		        }
@@ -973,9 +973,10 @@ if (mm_type == "difficulty" || mm_type == "diff")
 
 		    if (level_key_hotkey == "") {
 		        var room_name_now = string_lower(string(room_get_name(room)));
-		        if (string_pos("rm_level", room_name_now) == 1 && string_length(room_name_now) >= 10) {
-		            var room_digits = string_copy(room_name_now, 9, 2);
-		            if (string_digits(room_digits) == room_digits) {
+		        var room_pos = string_pos("rm_level", room_name_now);
+		        if (room_pos == 1) {
+		            var room_digits = string_copy(room_name_now, room_pos + 8, 2);
+		            if (string_length(room_digits) == 2 && string_digits(room_digits) == room_digits) {
 		                level_key_hotkey = "level" + room_digits;
 		            }
 		        }
@@ -1056,7 +1057,10 @@ if (mm_type == "difficulty" || mm_type == "diff")
 
         if (global.editor_phrase_sel >= 0 && global.editor_phrase_sel < array_length(global.phrases)) {
             var ph = global.phrases[global.editor_phrase_sel];
-            var tick_s = global.SEC_PER_BEAT / global.TICKS_PER_BEAT;
+            var tick_s = 0;
+            if (global.TICKS_PER_BEAT != 0) {
+                tick_s = global.SEC_PER_BEAT / global.TICKS_PER_BEAT;
+            }
 
             if (keyboard_check_pressed(vk_left))  ph.steps[global.editor_phrase_step_sel].dt -= tick_s;
             if (keyboard_check_pressed(vk_right)) ph.steps[global.editor_phrase_step_sel].dt += tick_s;
