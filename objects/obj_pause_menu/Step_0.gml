@@ -66,7 +66,17 @@ if (back && move_cd <= 0 && !menu_game_open)
         paused = false;
         global.GAME_PAUSED = false;
 
-        if (!(variable_global_exists("editor_on") && global.editor_on) &&
+        var did_pending_song_start = false;
+        if (variable_global_exists("pending_song_start") && global.pending_song_start) {
+            if (!(variable_global_exists("editor_on") && global.editor_on) && script_exists(scr_set_difficulty_song)) {
+                var _resume_diff = "normal";
+                if (variable_global_exists("difficulty")) _resume_diff = string_lower(string(global.difficulty));
+                scr_set_difficulty_song(_resume_diff, "resume_pending");
+                did_pending_song_start = true;
+            }
+        }
+
+        if (!did_pending_song_start && !(variable_global_exists("editor_on") && global.editor_on) &&
             variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
             if (variable_global_exists("song_handle") && global.song_handle >= 0) {
                 audio_resume_sound(global.song_handle);
@@ -202,7 +212,17 @@ if (activate)
             paused = false;
             global.GAME_PAUSED = false;
 
-            if (!(variable_global_exists("editor_on") && global.editor_on) &&
+            var did_pending_song_start = false;
+            if (variable_global_exists("pending_song_start") && global.pending_song_start) {
+                if (!(variable_global_exists("editor_on") && global.editor_on) && script_exists(scr_set_difficulty_song)) {
+                    var _resume_diff = "normal";
+                    if (variable_global_exists("difficulty")) _resume_diff = string_lower(string(global.difficulty));
+                    scr_set_difficulty_song(_resume_diff, "resume_pending");
+                    did_pending_song_start = true;
+                }
+            }
+
+            if (!did_pending_song_start && !(variable_global_exists("editor_on") && global.editor_on) &&
                 variable_global_exists("pause_song_was_playing") && global.pause_song_was_playing) {
                 if (variable_global_exists("song_handle") && global.song_handle >= 0) {
                     audio_resume_sound(global.song_handle);

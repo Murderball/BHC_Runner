@@ -246,6 +246,7 @@ function scr_editor_update() {
                 global._editor_exit_play_from_ms = current_time;
                 var exit_t = (variable_global_exists("editor_time") && is_real(global.editor_time)) ? max(0.0, global.editor_time) : 0.0;
                 scr_song_play_from(snd_on_exit, exit_t);
+                global.pending_song_start = false;
             } else if (variable_global_exists("song_no_music_level") && global.song_no_music_level) {
                 if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
                     show_debug_message("[AUDIO] editor exit restart skipped (no music for this level)");
