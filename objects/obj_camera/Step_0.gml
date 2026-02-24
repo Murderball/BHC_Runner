@@ -48,12 +48,7 @@
 
 if (variable_global_exists("CAM_PULSE_ON") && global.CAM_PULSE_ON) {
     var bpm = (variable_global_exists("BPM") && is_real(global.BPM) && global.BPM > 0) ? global.BPM : 140;
-    var _bpm_denom = bpm;
-    if (_bpm_denom == 0) {
-        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-        _bpm_denom = 1;
-    }
-    var beat_s = 60.0 / _bpm_denom;
+    var beat_s = 60.0 / bpm;
 
 	var t_pulse = t;
 
@@ -67,13 +62,8 @@ if (variable_global_exists("CAM_PULSE_ON") && global.CAM_PULSE_ON) {
 	// DO NOT include global.OFFSET here in your project
 
     // Beat index + phase (0..1)
-    var _beat_denom = beat_s;
-    if (_beat_denom == 0) {
-        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-        _beat_denom = 1;
-    }
-    var beat_i = floor(t_pulse / _beat_denom);
-    var beat_phase = (t_pulse - (beat_i * beat_s)) / _beat_denom; // 0..1
+    var beat_i = floor(t_pulse / beat_s);
+    var beat_phase = (t_pulse - (beat_i * beat_s)) / beat_s; // 0..1
 
     // Pulse window length (fraction of beat)
     var len = (variable_global_exists("CAM_PULSE_LEN_BEATS")) ? global.CAM_PULSE_LEN_BEATS : 0.22;
@@ -82,12 +72,7 @@ if (variable_global_exists("CAM_PULSE_ON") && global.CAM_PULSE_ON) {
     // Pulse shape: snap then relax within len, otherwise 0
     var pulse = 0.0;
     if (beat_phase < len) {
-        var _len_denom = len;
-        if (_len_denom == 0) {
-            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-            _len_denom = 1;
-        }
-        var u = 1.0 - (beat_phase / _len_denom); // 1 -> 0
+        var u = 1.0 - (beat_phase / len); // 1 -> 0
         pulse = u * u * (3.0 - 2.0 * u);  // smoothstep
     }
 
@@ -151,12 +136,7 @@ if (variable_global_exists("camera_events") && is_array(global.camera_events) &&
         }
 
         var denom = max(0.0001, next_ev.t - start_t);
-        var _denom_safe = denom;
-        if (_denom_safe == 0) {
-            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-            _denom_safe = 1;
-        }
-        var k = clamp((t - start_t) / _denom_safe, 0.0, 1.0);
+        var k = clamp((t - start_t) / denom, 0.0, 1.0);
 
         var ease_mode = (variable_struct_exists(next_ev, "ease") ? next_ev.ease : "smooth");
         if (ease_mode == "hold") k = (k >= 1.0) ? 1.0 : 0.0;
@@ -180,13 +160,8 @@ dbg_cam_marker_pan_y = marker_pan_y;
 var base_w = global.BASE_W;
 var base_h = global.BASE_H;
 
-var _zoom_denom = zoom;
-if (_zoom_denom == 0) {
-    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-    _zoom_denom = 1;
-}
-var view_w = base_w / _zoom_denom;
-var view_h = base_h / _zoom_denom;
+var view_w = base_w / zoom;
+var view_h = base_h / zoom;
 
 camera_set_view_size(cam, view_w, view_h);
 
@@ -242,12 +217,7 @@ if (variable_global_exists("START_WORLD_X_PX")) x_abs += global.START_WORLD_X_PX
 global.WORLD_X_ABS = x_abs;
 
 // Phase-locked X inside strip
-var _chunk_w_denom = chunk_w_px;
-if (_chunk_w_denom == 0) {
-    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-    _chunk_w_denom = 1;
-}
-var ci_f = x_abs / _chunk_w_denom;     // fractional ci (shows smooth motion)
+var ci_f = x_abs / chunk_w_px;     // fractional ci (shows smooth motion)
 var ci   = floor(ci_f);            // integer ci (chunk index)
 
 var phase = x_abs - (ci * chunk_w_px);
@@ -265,7 +235,7 @@ if (x_vis < 0) x_vis += wrap_w;
 // 3) HITLINE ANCHOR COMPENSATION (keeps hitline fixed)
 // ----------------------------------------------------
 var hitx = global.HITLINE_X; // px from camera left at zoom=1
-var anchor_shift = hitx - (hitx / _zoom_denom);
+var anchor_shift = hitx - (hitx / zoom);
 x_vis += anchor_shift;
 x_vis += marker_pan_x;
 

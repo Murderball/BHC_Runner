@@ -27,12 +27,7 @@ if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED) paused = true;
 if (variable_global_exists("STORY_PAUSED") && global.STORY_PAUSED) paused = true;
 
 // Attack flash decay (seconds)
-var _fps_denom = game_get_speed(gamespeed_fps);
-if (_fps_denom == 0) {
-    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
-    _fps_denom = 1;
-}
-atk_flash_t = max(0, atk_flash_t - (1 / _fps_denom));
+atk_flash_t = max(0, atk_flash_t - (1 / game_get_speed(gamespeed_fps)));
 
 // Inputs (default false if not set yet)
 var in_jump = variable_global_exists("in_jump") ? global.in_jump : false;
