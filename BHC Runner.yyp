@@ -629,6 +629,7 @@
     {"id":{"name":"scr_editor_note_gui_pos","path":"scripts/scr_editor_note_gui_pos/scr_editor_note_gui_pos.yy",},},
     {"id":{"name":"scr_editor_phrase_pick","path":"scripts/scr_editor_phrase_pick/scr_editor_phrase_pick.yy",},},
     {"id":{"name":"scr_editor_preview_music_set","path":"scripts/scr_editor_preview_music_set/scr_editor_preview_music_set.yy",},},
+    {"id":{"name":"scr_reload_level_media_for_diff","path":"scripts/scr_reload_level_media_for_diff/scr_reload_level_media_for_diff.yy",},},
     {"id":{"name":"scr_editor_selection_add","path":"scripts/scr_editor_selection_add/scr_editor_selection_add.yy",},},
     {"id":{"name":"scr_editor_selection_clear","path":"scripts/scr_editor_selection_clear/scr_editor_selection_clear.yy",},},
     {"id":{"name":"scr_editor_selection_has","path":"scripts/scr_editor_selection_has/scr_editor_selection_has.yy",},},
