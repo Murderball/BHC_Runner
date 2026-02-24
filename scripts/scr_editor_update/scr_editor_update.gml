@@ -954,54 +954,69 @@ if (mm_type == "difficulty" || mm_type == "diff")
 
 		if (ctrl && !typing_text)
 		{
-		    if (!variable_global_exists("editor_level_index")) global.editor_level_index = 1;
-		    global.editor_level_index = clamp(global.editor_level_index, 1, 6);
+		    var level_key_hotkey = "";
+		    var chart_path_now = "";
 
-		    var room_level_key = "";
-		    var room_name_now = string_lower(string(room_get_name(room)));
-		    if (string_pos("rm_level", room_name_now) == 1 && string_length(room_name_now) >= 10) {
-		        var room_digits = string_copy(room_name_now, 9, 2);
-		        if (string_digits(room_digits) == room_digits) {
-		            room_level_key = "level" + room_digits;
-		            global.editor_level_index = clamp(real(room_digits), 1, 6);
-		        }
-		    }
+		    if (variable_global_exists("editor_chart_path")) chart_path_now = string_lower(string(global.editor_chart_path));
+		    if (chart_path_now == "" && variable_global_exists("editor_chart_fullpath")) chart_path_now = string_lower(string(global.editor_chart_fullpath));
+		    if (chart_path_now == "" && variable_global_exists("chart_file")) chart_path_now = string_lower(string(global.chart_file));
 
-		    var selected_level_key = room_level_key;
-		    if (selected_level_key == "" && variable_global_exists("editor_chart_path")) {
-		        var chart_path_now = string_lower(string(global.editor_chart_path));
+		    if (chart_path_now != "") {
 		        var path_pos = string_pos("charts/level", chart_path_now);
 		        if (path_pos > 0) {
 		            var path_digits = string_copy(chart_path_now, path_pos + string_length("charts/level"), 2);
 		            if (string_digits(path_digits) == path_digits) {
-		                selected_level_key = "level" + path_digits;
+		                level_key_hotkey = "level" + path_digits;
 		            }
 		        }
 		    }
-		    if (selected_level_key == "") selected_level_key = "level01";
 
-		    var selected_level_index = real(string_copy(selected_level_key, 6, 2));
-		    global.editor_level_index = clamp(selected_level_index, 1, 6);
+		    if (level_key_hotkey == "") {
+		        var room_name_now = string_lower(string(room_get_name(room)));
+		        if (string_pos("rm_level", room_name_now) == 1 && string_length(room_name_now) >= 10) {
+		            var room_digits = string_copy(room_name_now, 9, 2);
+		            if (string_digits(room_digits) == room_digits) {
+		                level_key_hotkey = "level" + room_digits;
+		            }
+		        }
+		    }
 
-		    if (room_level_key == "") {
+		    if (level_key_hotkey == "") level_key_hotkey = "level01";
+
+		    global.LEVEL_KEY = level_key_hotkey;
+
+		    if (string_length(level_key_hotkey) == 7 && string_pos("level", level_key_hotkey) == 1) {
+		        var selected_level_index = real(string_copy(level_key_hotkey, 6, 2));
+		        global.editor_level_index = clamp(selected_level_index, 1, 6);
+		    } else if (!variable_global_exists("editor_level_index")) {
+		        global.editor_level_index = 1;
+		    }
+
+		    if (string_pos("rm_level", string_lower(string(room_get_name(room)))) != 1) {
 		        if (keyboard_check_pressed(ord("7"))) global.editor_level_index = max(1, global.editor_level_index - 1);
 		        if (keyboard_check_pressed(ord("8"))) global.editor_level_index = min(6, global.editor_level_index + 1);
 		    }
 
-		    if (keyboard_check_pressed(ord("1")))
+		    if (keyboard_check_pressed(ord("1"))) {
 		        scr_editor_chart_switch(
 		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "easy", false)),
 		            global.editor_level_index, "easy", false);
+		        if (script_exists(scr_set_difficulty_song)) scr_set_difficulty_song("easy", "editor_hotkey", level_key_hotkey);
+		    }
 
-		    if (keyboard_check_pressed(ord("2")))
+		    if (keyboard_check_pressed(ord("2"))) {
 		        scr_editor_chart_switch(
 		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "normal", false)),
 		            global.editor_level_index, "normal", false);
+		        if (script_exists(scr_set_difficulty_song)) scr_set_difficulty_song("normal", "editor_hotkey", level_key_hotkey);
+		    }
 
-		    if (keyboard_check_pressed(ord("3")))
+		    if (keyboard_check_pressed(ord("3"))) {
 		        scr_editor_chart_switch(
 		            scr_chart_fullpath(scr_chart_filename(global.editor_level_index, "hard", false)),
 		            global.editor_level_index, "hard", false);
+		        if (script_exists(scr_set_difficulty_song)) scr_set_difficulty_song("hard", "editor_hotkey", level_key_hotkey);
+		    }
 
 		    if (keyboard_check_pressed(ord("4")))
 		        scr_editor_chart_switch(
