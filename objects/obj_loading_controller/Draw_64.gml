@@ -7,7 +7,12 @@ var spr = -1;
 if (bg_i >= 0) spr = loading_bgs[bg_i];
 
 // Zoom factor
-var zt = (zoom_ms > 0) ? (zoom_accum_ms / zoom_ms) : 1;
+var _zoom_ms_denom = zoom_ms;
+if (_zoom_ms_denom == 0) {
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    _zoom_ms_denom = 1;
+}
+var zt = (zoom_ms > 0) ? (zoom_accum_ms / _zoom_ms_denom) : 1;
 zt = clamp(zt, 0, 1);
 var z = lerp(zoom_start, zoom_end, zt);
 
@@ -23,8 +28,18 @@ if (spr >= 0)
     var sw = sprite_get_width(spr);
     var sh = sprite_get_height(spr);
 
-    var sx = gw / sw;
-    var sy = gh / sh;
+    var _sw_denom = sw;
+    if (_sw_denom == 0) {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        _sw_denom = 1;
+    }
+    var sx = gw / _sw_denom;
+    var _sh_denom = sh;
+    if (_sh_denom == 0) {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        _sh_denom = 1;
+    }
+    var sy = gh / _sh_denom;
     var s  = max(sx, sy);
 
     // apply zoom
@@ -61,7 +76,12 @@ draw_text(gw * 0.5 - 60, gh * 0.5 - 10, "LOADING...");
 // ----------------------------------
 // Fade-in from black (on top of everything)
 // ----------------------------------
-var ft = (fade_in_ms > 0) ? (fade_accum_ms / fade_in_ms) : 1;
+var _fade_in_denom = fade_in_ms;
+if (_fade_in_denom == 0) {
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    _fade_in_denom = 1;
+}
+var ft = (fade_in_ms > 0) ? (fade_accum_ms / _fade_in_denom) : 1;
 ft = clamp(ft, 0, 1);
 
 var black_a = 1 - ft;

@@ -99,8 +99,13 @@ function scr_draw_gameplay_gui()
         if (variable_global_exists("TICKS_PER_BEAT") && is_real(global.TICKS_PER_BEAT) && global.TICKS_PER_BEAT > 0)
             ticks_per_beat = floor(global.TICKS_PER_BEAT);
 
-        var left_time  = now_time + (0 - global.HIT_X_GUI) / pps_val;
-        var right_time = now_time + (gw - global.HIT_X_GUI) / pps_val;
+        var _pps_denom = pps_val;
+        if (_pps_denom == 0) {
+            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+            _pps_denom = 1;
+        }
+        var left_time  = now_time + (0 - global.HIT_X_GUI) / _pps_denom;
+        var right_time = now_time + (gw - global.HIT_X_GUI) / _pps_denom;
 
         var left_tick  = scr_time_to_tick(left_time) - 8;
         var right_tick = scr_time_to_tick(right_time) + 8;
@@ -128,7 +133,12 @@ function scr_draw_gameplay_gui()
                 draw_set_color(c_black);
                 draw_line_width(grid_gx, 40, grid_gx, gh - 140, 2);
 
-                var bar_num = floor(tick_i / ticks_per_bar) + 1;
+                var _bar_ticks_denom = ticks_per_bar;
+                if (_bar_ticks_denom == 0) {
+                    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+                    _bar_ticks_denom = 1;
+                }
+                var bar_num = floor(tick_i / _bar_ticks_denom) + 1;
                 if (bar_num < 1) bar_num = 1;
                 draw_text(grid_gx + 6, 45, string(bar_num));
             }
@@ -149,7 +159,12 @@ function scr_draw_gameplay_gui()
 
     // Beat-locked pulse (uses *hitline-time* so it stays phase-correct)
     var bpm = (variable_global_exists("BPM") && is_real(global.BPM) && global.BPM > 0) ? global.BPM : 140;
-    var beat_s = 60.0 / bpm;
+    var _bpm_denom = bpm;
+    if (_bpm_denom == 0) {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        _bpm_denom = 1;
+    }
+    var beat_s = 60.0 / _bpm_denom;
 
     var t_pulse = scr_hitline_time_world();
     if (!is_real(t_pulse) || is_nan(t_pulse)) t_pulse = now_time;
@@ -157,8 +172,13 @@ function scr_draw_gameplay_gui()
     // If you treat START_TIME_S as musical zero, include it (optional)
     if (variable_global_exists("START_TIME_S") && is_real(global.START_TIME_S)) t_pulse += global.START_TIME_S;
 
-    var beat_i = floor(t_pulse / beat_s);
-    var beat_phase = (t_pulse - (beat_i * beat_s)) / beat_s; // 0..1
+    var _beat_denom = beat_s;
+    if (_beat_denom == 0) {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        _beat_denom = 1;
+    }
+    var beat_i = floor(t_pulse / _beat_denom);
+    var beat_phase = (t_pulse - (beat_i * beat_s)) / _beat_denom; // 0..1
 
     // Pulse window length (fraction of beat)
     var len = 0.22;
@@ -168,7 +188,12 @@ function scr_draw_gameplay_gui()
     var pulse = 0.0;
     if (beat_phase < len)
     {
-        var u = 1.0 - (beat_phase / len); // 1 -> 0
+        var _len_denom = len;
+        if (_len_denom == 0) {
+            show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+            _len_denom = 1;
+        }
+        var u = 1.0 - (beat_phase / _len_denom); // 1 -> 0
         pulse = u * u * (3.0 - 2.0 * u);  // smoothstep
     }
 
