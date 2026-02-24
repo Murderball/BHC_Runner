@@ -17,6 +17,10 @@ function scr_note_sprite(_action_key_or_id)
         global.NOTE_SPR = note_map;
     }
 
+    if (!variable_global_exists("_note_sprite_missing_logged") || !is_struct(global._note_sprite_missing_logged)) {
+        global._note_sprite_missing_logged = {};
+    }
+
     var key = string_lower(string(_action_key_or_id));
     if (variable_global_exists("ACT_JUMP") && _action_key_or_id == global.ACT_JUMP) key = "jump";
     if (variable_global_exists("ACT_DUCK") && _action_key_or_id == global.ACT_DUCK) key = "duck";
@@ -37,6 +41,13 @@ function scr_note_sprite(_action_key_or_id)
 
     var spr_old = scr_asset_get_index_safe(row.old_name, -1);
     if (spr_old != -1 && asset_get_type(spr_old) == asset_sprite) return spr_old;
+
+    if (!variable_struct_exists(global._note_sprite_missing_logged, key)) {
+        variable_struct_set(global._note_sprite_missing_logged, key, true);
+        if (variable_global_exists("editor_on") && global.editor_on) {
+            show_debug_message("[scr_note_sprite] Missing sprite for note act '" + string(key) + "' (expected " + string(row.new_name) + " or " + string(row.old_name) + ").");
+        }
+    }
 
     return -1;
 }

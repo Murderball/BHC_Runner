@@ -185,6 +185,8 @@ function scr_globals_init()
 
     // Notes trigger actions system (separate from AUTO_HIT)
     global.note_triggers_on = true;
+    global.note_last_jump_t = -1000000000;
+    global.note_last_duck_t = -1000000000;
     global.note_last_atk1_t = -1000000000;
     global.note_last_atk2_t = -1000000000;
     global.note_last_atk3_t = -1000000000;
