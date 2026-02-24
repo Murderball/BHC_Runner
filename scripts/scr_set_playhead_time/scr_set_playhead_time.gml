@@ -45,5 +45,12 @@ function scr_set_playhead_time(t_s)
         global.auto_last_atk2_t = -999999;
         global.auto_last_atk3_t = -999999;
         global.auto_prev_time_s = t;
+
+        global.note_last_jump_t = -999999;
+        global.note_last_duck_t = -999999;
+        global.note_last_atk1_t = -999999;
+        global.note_last_atk2_t = -999999;
+        global.note_last_atk3_t = -999999;
+        global.note_last_ult_t = -999999;
     }
 }

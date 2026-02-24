@@ -190,13 +190,29 @@ function scr_chart_load()
 
         if (!variable_struct_exists(nref, "act"))
         {
-            if (!variable_global_exists("LANE_TO_ACT") || !is_array(global.LANE_TO_ACT) || array_length(global.LANE_TO_ACT) < 4) {
-                global.LANE_TO_ACT = [ "atk1", "atk2", "atk3", "ult" ];
+            if (variable_struct_exists(nref, "kind")) {
+                nref.act = string_lower(string(nref.kind));
+            } else {
+                if (!variable_global_exists("LANE_TO_ACT") || !is_array(global.LANE_TO_ACT) || array_length(global.LANE_TO_ACT) < 4) {
+                    global.LANE_TO_ACT = [ "atk1", "atk2", "atk3", "ult" ];
+                }
+                nref.act = global.LANE_TO_ACT[lane_i];
             }
-            nref.act = global.LANE_TO_ACT[lane_i];
         }
 
-        if (nref.act == global.ACT_JUMP || nref.act == global.ACT_DUCK) {
+        nref.act = string_lower(string(nref.act));
+        if (nref.act == "ultimate") nref.act = global.ACT_ULT;
+
+        if (nref.act != global.ACT_JUMP
+            && nref.act != global.ACT_DUCK
+            && nref.act != global.ACT_ATK1
+            && nref.act != global.ACT_ATK2
+            && nref.act != global.ACT_ATK3
+            && nref.act != global.ACT_ULT)
+        {
+            if (variable_global_exists("editor_on") && global.editor_on) {
+                show_debug_message("[scr_chart_load] Unknown note act token '" + string(nref.act) + "' at index " + string(i) + "; defaulting to atk1.");
+            }
             nref.act = global.ACT_ATK1;
         }
 

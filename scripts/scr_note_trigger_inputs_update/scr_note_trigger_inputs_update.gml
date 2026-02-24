@@ -21,6 +21,9 @@ function scr_note_trigger_inputs_update()
     var tnow = scr_chart_time();
     var win  = global.WIN_PERFECT;
 
+    if (!variable_global_exists("note_last_jump_t")) global.note_last_jump_t = -1000000000;
+    if (!variable_global_exists("note_last_duck_t")) global.note_last_duck_t = -1000000000;
+
     // If time moved backwards (scrub), reset debounce
     if (!variable_global_exists("note_prev_time_s")) global.note_prev_time_s = tnow;
     if (tnow < global.note_prev_time_s - 0.001) {
@@ -33,6 +36,8 @@ function scr_note_trigger_inputs_update()
     // Find nearest note time for each note-triggered action
 	var BIG = 1000000000; 
 
+	var best_j_dt  = BIG; var best_j_t  = -1;
+	var best_d_dt  = BIG; var best_d_t  = -1;
 	var best_a1_dt = BIG; var best_a1_t = -1;
 	var best_a2_dt = BIG; var best_a2_t = -1;
 	var best_a3_dt = BIG; var best_a3_t = -1;
@@ -53,7 +58,13 @@ function scr_note_trigger_inputs_update()
         if (dt > global.WIN_BAD) continue;
 
         var a = n.act;
-        if (a == global.ACT_ATK1) {
+        if (a == global.ACT_JUMP) {
+            if (dt < best_j_dt) { best_j_dt = dt; best_j_t = n.t; }
+        }
+        else if (a == global.ACT_DUCK) {
+            if (dt < best_d_dt) { best_d_dt = dt; best_d_t = n.t; }
+        }
+        else if (a == global.ACT_ATK1) {
             if (dt < best_a1_dt) { best_a1_dt = dt; best_a1_t = n.t; }
         }
         else if (a == global.ACT_ATK2) {
@@ -68,6 +79,14 @@ function scr_note_trigger_inputs_update()
     }
 
     // Debounce so it doesn't "press" the same note every frame
+    if (best_j_dt <= win && best_j_t != global.note_last_jump_t) {
+        global.in_jump = true;
+        global.note_last_jump_t = best_j_t;
+    }
+    if (best_d_dt <= win && best_d_t != global.note_last_duck_t) {
+        global.in_duck = true;
+        global.note_last_duck_t = best_d_t;
+    }
     if (best_a1_dt <= win && best_a1_t != global.note_last_atk1_t) {
         global.in_atk1 = true;
         global.note_last_atk1_t = best_a1_t;
