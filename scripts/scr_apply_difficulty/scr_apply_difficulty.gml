@@ -119,7 +119,7 @@ function scr_apply_difficulty(_diff, _reason, _swap_visual, _swap_audio)
     {
         if (script_exists(scr_set_difficulty_song))
         {
-            scr_set_difficulty_song(d, _reason);
+            scr_set_difficulty_song(d, _reason, scr_active_level_key());
         }
     }
 

@@ -24,7 +24,7 @@ else
             var now_s = scr_chart_time();
             if (now_s >= end_s)
             {
-                var boss_rm = scr_level_boss_room();
+                var boss_rm = scr_level_boss_room(room_get_name(room));
                 if (boss_rm != -1)
                 {
                     boss_transition_fired = true;

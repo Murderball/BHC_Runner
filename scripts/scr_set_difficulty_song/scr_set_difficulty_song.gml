@@ -1,6 +1,6 @@
-/// scr_set_difficulty_song(diff, reason, [level_key])
+/// scr_set_difficulty_song_3(diff, reason, level_key)
 /// Swaps currently selected song based on difficulty with one controlled restart.
-function scr_set_difficulty_song(_diff, _reason, _level_key)
+function scr_set_difficulty_song_3(_diff, _reason, _level_key)
 {
     if (variable_global_exists("LEVEL_MODE") && global.LEVEL_MODE == "boss") return;
 
@@ -18,7 +18,7 @@ function scr_set_difficulty_song(_diff, _reason, _level_key)
     if (d != "easy" && d != "normal" && d != "hard") d = "normal";
 
     var lk = "";
-    if (argument_count >= 3) lk = string_lower(string(_level_key));
+    if (!is_undefined(_level_key)) lk = string_lower(string(_level_key));
 
     if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) {
         lk = string_lower(string(global.LEVEL_KEY));
@@ -163,4 +163,27 @@ function scr_set_difficulty_song(_diff, _reason, _level_key)
             + " snd=" + scr_song_asset_label(new_snd)
             + " t=" + string_format(t_now, 1, 3));
     }
+}
+
+/// scr_set_difficulty_song(diff, reason, [level_key])
+function scr_set_difficulty_song(_diff, _reason, _level_key = undefined)
+{
+    var lk = _level_key;
+
+    if (is_undefined(lk) || !is_string(lk) || lk == "") {
+        lk = "";
+        if (script_exists(scr_active_level_key)) {
+            lk = string_lower(string(scr_active_level_key()));
+        }
+        if (lk == "" && variable_global_exists("LEVEL_KEY") && is_string(global.LEVEL_KEY)) {
+            lk = string_lower(string(global.LEVEL_KEY));
+        }
+    }
+
+    if (lk == "" && !variable_global_exists("_warned_diff_song_missing_level_key")) {
+        global._warned_diff_song_missing_level_key = true;
+        show_debug_message("[AUDIO] scr_set_difficulty_song: missing level key; using fallback resolver.");
+    }
+
+    return scr_set_difficulty_song_3(_diff, _reason, lk);
 }

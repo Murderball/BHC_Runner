@@ -90,7 +90,7 @@ function scr_apply_difficulty_change(new_diff)
     if (variable_global_exists("diff_swap_audio") && global.diff_swap_audio)
     {
         if (script_exists(scr_set_difficulty_song))
-            scr_set_difficulty_song(d, "diff_change");
+            scr_set_difficulty_song(d, "diff_change", scr_active_level_key());
     }
 
     show_debug_message("[DIFF] change -> " + d + " level=" + string(lk));

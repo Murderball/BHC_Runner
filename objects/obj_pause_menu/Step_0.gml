@@ -71,7 +71,7 @@ if (back && move_cd <= 0 && !menu_game_open)
             if (!(variable_global_exists("editor_on") && global.editor_on) && script_exists(scr_set_difficulty_song)) {
                 var _resume_diff = "normal";
                 if (variable_global_exists("difficulty")) _resume_diff = string_lower(string(global.difficulty));
-                scr_set_difficulty_song(_resume_diff, "resume_pending");
+                scr_set_difficulty_song(_resume_diff, "resume_pending", scr_active_level_key());
                 did_pending_song_start = true;
             }
         }
@@ -217,7 +217,7 @@ if (activate)
                 if (!(variable_global_exists("editor_on") && global.editor_on) && script_exists(scr_set_difficulty_song)) {
                     var _resume_diff = "normal";
                     if (variable_global_exists("difficulty")) _resume_diff = string_lower(string(global.difficulty));
-                    scr_set_difficulty_song(_resume_diff, "resume_pending");
+                    scr_set_difficulty_song(_resume_diff, "resume_pending", scr_active_level_key());
                     did_pending_song_start = true;
                 }
             }
