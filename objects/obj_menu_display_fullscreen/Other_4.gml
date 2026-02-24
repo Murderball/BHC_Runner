@@ -21,8 +21,20 @@ var SW = display_get_width();
 var SH = display_get_height();
 
 // Fit VIEW into screen with aspect preserved (letterbox/pillarbox)
-var sx = SW / VIEW_W;
-var sy = SH / VIEW_H;
+var denom_view_w = VIEW_W;
+if (denom_view_w == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_view_w = 1;
+}
+var sx = SW / denom_view_w;
+var denom_view_h = VIEW_H;
+if (denom_view_h == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_view_h = 1;
+}
+var sy = SH / denom_view_h;
 var s  = min(sx, sy);
 
 var port_w = floor(VIEW_W * s);

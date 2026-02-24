@@ -41,7 +41,13 @@ function scr_player_ultimate_guitar(_pl, _judge)
     var gui_w = display_get_gui_width();
     if (gui_w <= 0) return;
 
-    var zoom = camera_get_view_width(cam) / gui_w;
+    var denom_gui_w = gui_w;
+if (denom_gui_w == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_gui_w = 1;
+}
+var zoom = camera_get_view_width(cam) / denom_gui_w;
 
     // Fire point in ROOM space, anchored to bbox (origin-safe)
     var fire_x_room = _pl.bbox_left + 24;

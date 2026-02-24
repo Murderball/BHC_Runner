@@ -13,7 +13,13 @@ var px = x1;
 var py = y1;
 
 for (var i = 1; i <= segs; i++) {
-    var t = i / segs;
+    var denom = segs;
+    if (denom == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom = 1;
+    }
+    var t = i / denom;
     var nx = lerp(x1, x2, t) + random_range(-jag, jag);
     var ny = lerp(y1, y2, t);
 
@@ -32,7 +38,13 @@ draw_set_color(c_white);
 
 px = x1; py = y1;
 for (var i = 1; i <= segs; i++) {
-    var t = i / segs;
+    var denom = segs;
+    if (denom == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom = 1;
+    }
+    var t = i / denom;
     var nx = lerp(x1, x2, t) + random_range(-jag * 0.5, jag * 0.5);
     var ny = lerp(y1, y2, t);
 

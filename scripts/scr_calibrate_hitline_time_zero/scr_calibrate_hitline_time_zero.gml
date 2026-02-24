@@ -13,5 +13,11 @@ function scr_calibrate_hitline_time_zero() {
     var hit_world_x = cam_x + 448;
 
     // Force hitline-time to be 0 right now
-    global.HITLINE_TIME_OFFSET_S = -(hit_world_x / pps);
+    var denom_pps = pps;
+if (denom_pps == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_pps = 1;
+}
+global.HITLINE_TIME_OFFSET_S = -(hit_world_x / denom_pps);
 }

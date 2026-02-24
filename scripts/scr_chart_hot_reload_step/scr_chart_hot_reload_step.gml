@@ -13,7 +13,13 @@ function scr_chart_hot_reload_step()
     if (variable_global_exists("chart_hot_reload_hz")) hz = max(1, global.chart_hot_reload_hz);
 
     global._chart_hot_reload_accum += delta_time / 1000000.0; // seconds
-    var interval = 1.0 / hz;
+    var denom_hz = hz;
+if (denom_hz == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_hz = 1;
+}
+var interval = 1.0 / denom_hz;
     if (global._chart_hot_reload_accum < interval) return;
     global._chart_hot_reload_accum = 0;
 

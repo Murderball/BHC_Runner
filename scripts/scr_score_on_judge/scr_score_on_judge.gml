@@ -45,7 +45,13 @@ function scr_score_on_judge(_judge_string, _base_points, _meta)
             _st.count_bad += 1;
             _st.notes_hit += 1;
             _st.combo = max(0, _st.combo - _cfg.bad_combo_penalty);
-            _st.multiplier = _st.multiplier / _cfg.bad_divider;
+            var denom_bad = _cfg.bad_divider;
+    if (denom_bad == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom_bad = 1;
+    }
+    _st.multiplier = _st.multiplier / denom_bad;
         break;
 
         case "miss":
@@ -53,7 +59,13 @@ function scr_score_on_judge(_judge_string, _base_points, _meta)
             _judge_weight = _cfg.judge_weight_miss;
             _st.count_miss += 1;
             if (_cfg.miss_breaks_combo) _st.combo = 0;
-            _st.multiplier = _st.multiplier / _cfg.miss_divider;
+            var denom_miss = _cfg.miss_divider;
+    if (denom_miss == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom_miss = 1;
+    }
+    _st.multiplier = _st.multiplier / denom_miss;
             _st.multiplier_lock_until_ms = _now_ms + _cfg.mult_lock_ms_after_miss;
         break;
     }
@@ -75,7 +87,13 @@ function scr_score_on_judge(_judge_string, _base_points, _meta)
 
     _st.rolling_window[_idx] = _roll_value;
     _st.rolling_index = (_idx + 1) mod _cfg.rolling_window_size;
-    _st.rolling_accuracy = (_st.rolling_count > 0) ? (_st.rolling_sum / _st.rolling_count) : 1.0;
+    var denom_rolling = _st.rolling_count;
+if (denom_rolling == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_rolling = 1;
+}
+_st.rolling_accuracy = (_st.rolling_count > 0) ? (_st.rolling_sum / denom_rolling) : 1.0;
 
     // ---- overall (all notes) accuracy ----
     var _acc_sum = (_st.count_perfect * _cfg.roll_value_perfect)
@@ -84,7 +102,13 @@ function scr_score_on_judge(_judge_string, _base_points, _meta)
                  + (_st.count_miss    * _cfg.roll_value_miss);
 
     if (_st.notes_total > 0) {
-        _st.accuracy_percent = clamp((_acc_sum / _st.notes_total) * 100.0, 0.0, 100.0);
+        var denom_notes = _st.notes_total;
+if (denom_notes == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_notes = 1;
+}
+_st.accuracy_percent = clamp((_acc_sum / denom_notes) * 100.0, 0.0, 100.0);
     } else {
         _st.accuracy_percent = 100.0;
     }
@@ -100,7 +124,13 @@ function scr_score_on_judge(_judge_string, _base_points, _meta)
     }
 
     // ---- smooth combo tier ----
-    var _combo_norm = min(_st.combo / _cfg.combo_tier_divisor, 1.0);
+    var denom_combo = _cfg.combo_tier_divisor;
+if (denom_combo == 0)
+{
+    show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+    denom_combo = 1;
+}
+var _combo_norm = min(_st.combo / denom_combo, 1.0);
     var _combo_tier = 1.0 + (_combo_norm * _cfg.combo_tier_max_boost);
 
     _st.multiplier_target = _cfg.mult_base * _acc_tier * _combo_tier;

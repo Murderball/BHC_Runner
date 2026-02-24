@@ -7,5 +7,11 @@ function scr_time_to_beat(t)
     var t0 = t;
     if (variable_global_exists("BEAT_ZERO_OFFSET_S")) t0 -= global.BEAT_ZERO_OFFSET_S;
 
-    return t0 / spb;
+    var denom = spb;
+    if (denom == 0)
+    {
+        show_debug_message("[SAFE DIVISION FIX] Zero denominator corrected in " + script_get_name(script_index));
+        denom = 1;
+    }
+    return t0 / denom;
 }
