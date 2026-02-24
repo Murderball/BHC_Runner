@@ -43,39 +43,6 @@ function scr_editor_preview_music_set(_level_index, _diff)
     global.song_sound = snd_asset;
     global.editor_preview_sound_asset = snd_asset;
 
-    var preview_enabled = true;
-    if (variable_global_exists("editor_preview_enabled") && !global.editor_preview_enabled) preview_enabled = false;
-    if (variable_global_exists("editor_audio_preview_enabled") && !global.editor_audio_preview_enabled) preview_enabled = false;
-    if (variable_global_exists("editor_muted") && global.editor_muted) preview_enabled = false;
-
-    if (!preview_enabled) {
-        global.editor_preview_sound_instance = -1;
-        return;
-    }
-
-    var start_t = (variable_global_exists("editor_time") && is_real(global.editor_time)) ? max(0.0, global.editor_time) : 0.0;
-
-    if (script_exists(scr_song_play_from)) {
-        scr_song_play_from(snd_asset, start_t);
-    } else {
-        global.song_handle = audio_play_sound(snd_asset, 1, false);
-        if (global.song_handle >= 0) {
-            var off = (variable_global_exists("OFFSET") && is_real(global.OFFSET)) ? global.OFFSET : 0.0;
-            audio_sound_set_track_position(global.song_handle, start_t + off);
-            global.song_playing = true;
-        }
-    }
-
-    global.editor_preview_sound_instance = global.song_handle;
-
-    if (global.editor_preview_sound_instance >= 0) {
-        var preview_gain = 1.0;
-        if (variable_global_exists("editor_preview_volume") && is_real(global.editor_preview_volume)) {
-            preview_gain *= clamp(global.editor_preview_volume, 0.0, 1.0);
-        }
-        if (variable_global_exists("AUDIO_MASTER") && is_real(global.AUDIO_MASTER)) {
-            preview_gain *= clamp(global.AUDIO_MASTER, 0.0, 1.0);
-        }
-        audio_sound_gain(global.editor_preview_sound_instance, clamp(preview_gain, 0.0, 1.0), 0);
-    }
+    global.editor_preview_sound_instance = -1;
+    global.pending_song_start = true;
 }

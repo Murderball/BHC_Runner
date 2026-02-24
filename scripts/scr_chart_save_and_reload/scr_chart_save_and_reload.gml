@@ -94,6 +94,8 @@ function scr_editor_chart_switch(_fullpath, _level_index, _diff, _is_boss)
         if (script_exists(scr_editor_preview_music_set)) {
             scr_editor_preview_music_set(level_index, diff);
         }
+
+        global.pending_song_start = true;
     }
 
     global.editor_level_index = level_index;

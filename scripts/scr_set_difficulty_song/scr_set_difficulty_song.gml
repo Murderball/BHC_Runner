@@ -79,20 +79,34 @@ function scr_set_difficulty_song(_diff, _reason)
     var was_playing = scr_song_is_valid_inst(global.song_state.inst)
         && (audio_is_playing(global.song_state.inst) || global.song_playing);
 
+    var audio_start_allowed = true;
+    if (variable_global_exists("editor_on") && global.editor_on) audio_start_allowed = false;
+    if (variable_global_exists("GAME_PAUSED") && global.GAME_PAUSED) audio_start_allowed = false;
+    if (variable_global_exists("STORY_PAUSED") && global.STORY_PAUSED) audio_start_allowed = false;
+    if (variable_global_exists("paused") && global.paused) audio_start_allowed = false;
+    if (variable_global_exists("in_menu") && global.in_menu) audio_start_allowed = false;
+    if (variable_global_exists("in_loading") && global.in_loading) audio_start_allowed = false;
+    if (variable_global_exists("STARTUP_LOADING") && global.STARTUP_LOADING) audio_start_allowed = false;
+
     var t_now = 0.0;
     if (script_exists(scr_song_get_pos_s)) t_now = scr_song_get_pos_s();
 
     global.song_sound = new_snd;
 
-    if (!was_playing) {
+    if (!was_playing || !audio_start_allowed) {
         global.song_state.sound_asset = new_snd;
+        if (!audio_start_allowed) {
+            global.pending_song_start = true;
+        }
         if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
-            show_debug_message("[AUDIO] selected idle diff=" + d + " snd=" + scr_song_asset_label(new_snd));
+            show_debug_message("[AUDIO] selected idle diff=" + d + " snd=" + scr_song_asset_label(new_snd)
+                + " start_allowed=" + string(audio_start_allowed));
         }
         return;
     }
 
     scr_song_play_from(new_snd, t_now);
+    global.pending_song_start = false;
 
     if (variable_global_exists("AUDIO_DEBUG_LOG") && global.AUDIO_DEBUG_LOG) {
         show_debug_message("[AUDIO] diff switch -> " + d
