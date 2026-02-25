@@ -698,6 +698,7 @@
     {"id":{"name":"scr_profiles_create","path":"scripts/scr_profiles_create/scr_profiles_create.yy",},},
     {"id":{"name":"scr_profiles_ensure_defaults","path":"scripts/scr_profiles_ensure_defaults/scr_profiles_ensure_defaults.yy",},},
     {"id":{"name":"scr_profiles_get_active","path":"scripts/scr_profiles_get_active/scr_profiles_get_active.yy",},},
+    {"id":{"name":"scr_profiles_get_save_root","path":"scripts/scr_profiles_get_save_root/scr_profiles_get_save_root.yy",},},
     {"id":{"name":"scr_profiles_get_top10","path":"scripts/scr_profiles_get_top10/scr_profiles_get_top10.yy",},},
     {"id":{"name":"scr_profiles_load","path":"scripts/scr_profiles_load/scr_profiles_load.yy",},},
     {"id":{"name":"scr_profiles_record_run","path":"scripts/scr_profiles_record_run/scr_profiles_record_run.yy",},},
