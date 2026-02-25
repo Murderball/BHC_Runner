@@ -53,3 +53,5 @@ zoom_accum_ms = 0;
 pan_strength = 18;      // pixels of drift at full zoom time (0 to disable)
 pan_x = irandom_range(-pan_strength, pan_strength);
 pan_y = irandom_range(-pan_strength, pan_strength);
+
+if (script_exists(scr_profiles_boot)) scr_profiles_boot();

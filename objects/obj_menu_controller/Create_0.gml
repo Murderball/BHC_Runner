@@ -1,6 +1,7 @@
 /// obj_menu_controller : Create
 
 global.in_menu = true;
+if (script_exists(scr_profiles_boot)) scr_profiles_boot();
 global.in_loading = false;
 global.GAME_PAUSED = false;
 global.editor_on = false;
@@ -179,6 +180,18 @@ level_btn[9]  = { name:"Level 4 Boss", spr:spr_locked, x:boss_col_x, y:row_y0 + 
 level_btn[10] = { name:"Level 5 Boss", spr:spr_locked, x:boss_col_x, y:row_y0 + row_gap*4, w:LVL_W, h:LVL_H, enabled:false, room:noone };
 level_btn[11] = { name:"Level 6 Boss", spr:spr_locked, x:boss_col_x, y:row_y0 + row_gap*5, w:LVL_W, h:LVL_H, enabled:false, room:noone };
 
+// Apply story progression gating per active profile
+if (script_exists(scr_story_is_level_unlocked)) {
+    for (var _li = 0; _li < array_length(level_btn); _li++) {
+        var _lb = level_btn[_li];
+        if (_lb.enabled && _lb.room != noone && global.game_mode == "story") {
+            var _rk = room_get_name(_lb.room);
+            _lb.enabled = scr_story_is_level_unlocked(_rk);
+            level_btn[_li] = _lb;
+        }
+    }
+}
+
 // Level selection state
 sel_level = -1;
 level_picked = false;
@@ -280,3 +293,6 @@ if (variable_global_exists("menu_return_to_right") && global.menu_return_to_righ
     cs_focus_upgrade = false;
     cs_focus_play = false;
 }
+
+
+if (!variable_global_exists("profile_panel_focus")) global.profile_panel_focus = false;
