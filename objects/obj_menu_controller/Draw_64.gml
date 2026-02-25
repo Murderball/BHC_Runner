@@ -61,7 +61,7 @@ if (menu_state == 0)
 
     draw_btn_glow(btn_options.spr, btn_options.x - cx, btn_options.y - cy, glow_options, g_a, g_off);
 
-    var options_panel_visible = options_open || (start_open ? (sel_main == 3) : (sel_main == 1));
+    var options_panel_visible = options_open;
     if (options_panel_visible)
     {
         scr_ui_master_volume_panel_draw(btn_options.x - cx, btn_options.y - cy, btn_options.w, btn_options.h, true);
