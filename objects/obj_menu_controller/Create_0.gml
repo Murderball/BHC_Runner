@@ -1,5 +1,7 @@
 /// obj_menu_controller : Create
 
+if (!variable_global_exists("game_mode")) global.game_mode = "arcade";
+
 global.in_menu = true;
 if (script_exists(scr_profiles_boot)) scr_profiles_boot();
 global.in_loading = false;
@@ -184,7 +186,8 @@ level_btn[11] = { name:"Level 6 Boss", spr:spr_locked, x:boss_col_x, y:row_y0 + 
 if (script_exists(scr_story_is_level_unlocked)) {
     for (var _li = 0; _li < array_length(level_btn); _li++) {
         var _lb = level_btn[_li];
-        if (_lb.enabled && _lb.room != noone && global.game_mode == "story") {
+        var gm = (variable_global_exists("game_mode") && is_string(global.game_mode)) ? global.game_mode : "arcade";
+        if (_lb.enabled && _lb.room != noone && gm == "story") {
             var _rk = room_get_name(_lb.room);
             _lb.enabled = scr_story_is_level_unlocked(_rk);
             level_btn[_li] = _lb;
@@ -261,7 +264,7 @@ glow_speed = 0.18;
 
 // Globals
 if (!variable_global_exists("char_id")) global.char_id = 0;
-if (!variable_global_exists("game_mode")) global.game_mode = "story";
+if (!variable_global_exists("game_mode")) global.game_mode = "arcade";
 
 if (!variable_global_exists("DIFFICULTY")) global.DIFFICULTY = "normal";
 if (!variable_global_exists("difficulty")) global.difficulty = string_lower(string(global.DIFFICULTY));

@@ -12,6 +12,8 @@ function scr_globals_init()
     // ====================================================
     // CORE SAFETY DEFAULTS (prevent "not set before reading")
     // ====================================================
+    if (!variable_global_exists("game_mode")) global.game_mode = "arcade";
+
     if (!variable_global_exists("transport_paused")) global.transport_paused = false;
 
     if (!variable_global_exists("GAME_PAUSED"))  global.GAME_PAUSED  = false;
