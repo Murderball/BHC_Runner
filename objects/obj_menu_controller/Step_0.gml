@@ -304,7 +304,7 @@ switch (menu_state)
                     arcade_diff_open = false;
 
                     reset_right_page_state();
-
+					lb_open = false;
                     cam_target_x = page_right_x;
                     right_target_state = 2;
                     menu_state = 1;
@@ -444,7 +444,7 @@ switch (menu_state)
                     global.difficulty = "normal";
 
                     reset_right_page_state();
-
+					lb_open = false;
                     cam_target_x = page_right_x;
                     right_target_state = 2;
                     menu_state = 1;

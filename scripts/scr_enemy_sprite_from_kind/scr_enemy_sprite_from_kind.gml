@@ -22,7 +22,6 @@ function scr_enemy_kinds_list()
 {
     // This is the current contents of your Sprites/Enemy folder (singular "Enemy")
     static kinds = [
-        "boss",
         "desyncr",
         "drone",
         "heckler",
