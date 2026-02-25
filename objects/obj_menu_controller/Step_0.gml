@@ -11,6 +11,14 @@ var back  = keyboard_check_pressed(vk_escape) || keyboard_check_pressed(vk_backs
 var click = mouse_check_button_pressed(mb_left);
 var click_consumed = false;
 
+// --------------------------------------------------
+// Leaderboard button (GUI) + force-hide middle panel
+// --------------------------------------------------
+
+// Hard-disable the "middle leaderboard" panel if it's being drawn somewhere.
+// (The only way it should show is if YOU explicitly re-enable it in Draw GUI.)
+lb_open = false;
+
 if (sprite_exists(spr_leaderboard))
 {
     var gui_w = display_get_gui_width();
@@ -18,15 +26,20 @@ if (sprite_exists(spr_leaderboard))
 
     lb_btn_w = sprite_get_width(spr_leaderboard);
     lb_btn_h = sprite_get_height(spr_leaderboard);
-    lb_btn_x = (gui_w * 0.5) - (lb_btn_w * 0.5) - 50;
+
+    // Move button 250px to the RIGHT from your current placement
+    lb_btn_x = (gui_w * 0.5) - (lb_btn_w * 0.5) - 50 + 250;
     lb_btn_y = (gui_h * 0.5) - (lb_btn_h * 0.5);
 
     var lb_mx = device_mouse_x_to_gui(0);
     var lb_my = device_mouse_y_to_gui(0);
 
+    // Click detection kept (but panel stays hidden because lb_open is forced false above)
     if (click && point_in_rectangle(lb_mx, lb_my, lb_btn_x, lb_btn_y, lb_btn_x + lb_btn_w, lb_btn_y + lb_btn_h))
     {
+        // Optional: you can keep this for future use, but it won't display unless Draw GUI uses lb_open.
         lb_open = !lb_open;
+
         click_consumed = true;
         click = false;
     }
