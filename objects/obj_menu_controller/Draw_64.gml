@@ -158,3 +158,28 @@ if (menu_state == 2)
     // BACK button
     draw_btn_glow(btn_back.spr, btn_back.x - cx, btn_back.y - cy, glow_back, g_a, g_off);
 }
+
+if (sprite_exists(spr_leaderboard))
+{
+    var gui_w = display_get_gui_width();
+    var gui_h = display_get_gui_height();
+
+    lb_btn_w = sprite_get_width(spr_leaderboard);
+    lb_btn_h = sprite_get_height(spr_leaderboard);
+    lb_btn_x = (gui_w * 0.5) - (lb_btn_w * 0.5) - 50;
+    lb_btn_y = (gui_h * 0.5) - (lb_btn_h * 0.5);
+
+    var lb_hover = point_in_rectangle(device_mouse_x_to_gui(0), device_mouse_y_to_gui(0), lb_btn_x, lb_btn_y, lb_btn_x + lb_btn_w, lb_btn_y + lb_btn_h);
+    var lb_alpha = lb_hover ? (0.85 + 0.15 * sin(current_time * 0.01)) : 1;
+
+    draw_set_alpha(lb_alpha);
+    draw_sprite(spr_leaderboard, 0, lb_btn_x, lb_btn_y);
+    draw_set_alpha(1);
+
+    if (lb_open && script_exists(scr_draw_leaderboard_panel))
+    {
+        var _level = variable_global_exists("profile_view_level_key") ? global.profile_view_level_key : "rm_level01";
+        var _diff = variable_global_exists("profile_view_difficulty") ? global.profile_view_difficulty : "normal";
+        scr_draw_leaderboard_panel(lb_btn_x, lb_btn_y, lb_btn_w, 420, "right", _level, _diff, true);
+    }
+}

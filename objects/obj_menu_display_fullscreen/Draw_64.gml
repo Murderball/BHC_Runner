@@ -1,4 +1,6 @@
 /// obj_menu_display_fullscreen : Draw GUI
+if (instance_exists(obj_menu_controller)) exit;
+
 if (script_exists(scr_draw_leaderboard_panel)) {
     var _spr = asset_get_index("spr_leaderboard");
     var _pw = 420;

@@ -299,3 +299,9 @@ if (variable_global_exists("menu_return_to_right") && global.menu_return_to_righ
 
 
 if (!variable_global_exists("profile_panel_focus")) global.profile_panel_focus = false;
+
+lb_open = false;
+lb_btn_x = 0;
+lb_btn_y = 0;
+lb_btn_w = 0;
+lb_btn_h = 0;
