@@ -27,6 +27,59 @@ if (used_kb) kb_nav_timer = 90;
 if (kb_nav_timer > 0) kb_nav_timer--;
 kb_dash_phase = (kb_dash_phase + 1) & 15;
 
+// Profile panel controls (isolated)
+if (keyboard_check_pressed(vk_tab)) global.profile_panel_focus = !global.profile_panel_focus;
+
+if (global.profile_panel_focus && !global.profile_ui_active)
+{
+    if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A"))) {
+        if (variable_global_exists("profiles_data") && is_struct(global.profiles_data) && is_array(global.profiles_data.profiles)) {
+            var _idx = -1;
+            for (var _i = 0; _i < array_length(global.profiles_data.profiles); _i++) if (global.profiles_data.profiles[_i].id == global.profiles_data.active_profile_id) { _idx = _i; break; }
+            if (_idx >= 0) {
+                _idx = (_idx - 1 + array_length(global.profiles_data.profiles)) mod array_length(global.profiles_data.profiles);
+                if (script_exists(scr_profiles_set_active)) scr_profiles_set_active(global.profiles_data.profiles[_idx].id);
+                if (script_exists(scr_profiles_save)) scr_profiles_save();
+            }
+        }
+    }
+    if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"))) {
+        if (variable_global_exists("profiles_data") && is_struct(global.profiles_data) && is_array(global.profiles_data.profiles)) {
+            var _idx2 = -1;
+            for (var _j = 0; _j < array_length(global.profiles_data.profiles); _j++) if (global.profiles_data.profiles[_j].id == global.profiles_data.active_profile_id) { _idx2 = _j; break; }
+            if (_idx2 >= 0) {
+                _idx2 = (_idx2 + 1) mod array_length(global.profiles_data.profiles);
+                if (script_exists(scr_profiles_set_active)) scr_profiles_set_active(global.profiles_data.profiles[_idx2].id);
+                if (script_exists(scr_profiles_save)) scr_profiles_save();
+            }
+        }
+    }
+
+    if (keyboard_check_pressed(ord("N"))) {
+        global.profile_ui_active = true;
+        global.profile_ui_mode = "new";
+        global.profile_ui_text = "";
+        global.profile_ui_prev_keyboard_string = "";
+        keyboard_string = "";
+    }
+    if (keyboard_check_pressed(ord("R")) || keyboard_check_pressed(vk_enter)) {
+        var _p = script_exists(scr_profiles_get_active) ? scr_profiles_get_active() : undefined;
+        global.profile_ui_active = true;
+        global.profile_ui_mode = "rename";
+        global.profile_ui_text = is_struct(_p) ? string(_p.name) : "";
+        global.profile_ui_prev_keyboard_string = "";
+        keyboard_string = global.profile_ui_text;
+    }
+
+    var _diffs = ["easy", "normal", "hard"];
+    var _didx = 1;
+    for (var _di = 0; _di < array_length(_diffs); _di++) if (global.profile_view_difficulty == _diffs[_di]) { _didx = _di; break; }
+    if (keyboard_check_pressed(vk_up)) _didx = (_didx - 1 + array_length(_diffs)) mod array_length(_diffs);
+    if (keyboard_check_pressed(vk_down)) _didx = (_didx + 1) mod array_length(_diffs);
+    global.profile_view_difficulty = _diffs[_didx];
+}
+
+if (variable_global_exists("menu_selected_room") && global.menu_selected_room != noone) global.profile_view_level_key = room_get_name(global.menu_selected_room);
 // Mouse WORLD coords
 var cx = camera_get_view_x(cam);
 var cy = camera_get_view_y(cam);

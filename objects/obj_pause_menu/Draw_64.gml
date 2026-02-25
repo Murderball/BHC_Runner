@@ -211,3 +211,12 @@ if (kb_nav_timer > 0)
         if (yb2 > ya2) draw_line(x2, ya2, x2, yb2);
     }
 }
+
+
+if (script_exists(scr_draw_leaderboard_panel)) {
+    var _pk = room_get_name(room);
+    var _pd = "normal";
+    if (variable_global_exists("difficulty")) _pd = string_lower(string(global.difficulty));
+    else if (variable_global_exists("DIFFICULTY")) _pd = string_lower(string(global.DIFFICULTY));
+    scr_draw_leaderboard_panel(32, 96, 420, 420, "left", _pk, _pd, false);
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_profiles_try_record_from_score_manager",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_profiles_try_record_from_score_manager",
+  "parent":{
+    "name":"Scripts_Story",
+    "path":"folders/Scripts/Scripts_Story.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
