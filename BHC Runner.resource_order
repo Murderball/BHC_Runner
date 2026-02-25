@@ -76,5 +76,6 @@
     {"name":"spr_attack_3_note","order":9,"path":"sprites/spr_attack_3_note/spr_attack_3_note.yy",},
     {"name":"spr_duck_note","order":11,"path":"sprites/spr_duck_note/spr_duck_note.yy",},
     {"name":"spr_jump_note","order":10,"path":"sprites/spr_jump_note/spr_jump_note.yy",},
+    {"name":"spr_leaderboard","order":1,"path":"sprites/spr_leaderboard/spr_leaderboard.yy",},
   ],
 }
