@@ -305,3 +305,4 @@ lb_btn_x = 0;
 lb_btn_y = 0;
 lb_btn_w = 0;
 lb_btn_h = 0;
+global.leaderboard_open = false;

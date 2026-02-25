@@ -170,7 +170,7 @@ if (sprite_exists(spr_leaderboard))
     lb_btn_w = sprite_get_width(spr_leaderboard);
     lb_btn_h = sprite_get_height(spr_leaderboard);
 
-    // Button position (your requested push right)
+    // button position (right shift +250)
     lb_btn_x = (gui_w * 0.5) - (lb_btn_w * 0.5) - 50 + 250;
     lb_btn_y = (gui_h * 0.5) - (lb_btn_h * 0.5);
 
@@ -184,12 +184,12 @@ if (sprite_exists(spr_leaderboard))
     draw_sprite(spr_leaderboard, 0, lb_btn_x, lb_btn_y);
     draw_set_alpha(1);
 
-    // Dropdown: draw panel BELOW the button only when open
+    // dropdown panel
     if (lb_open && script_exists(scr_draw_leaderboard_panel))
     {
         var dd_x = lb_btn_x;
-        var dd_y = lb_btn_y + lb_btn_h + 12; // dropdown gap
-        var dd_w = max(lb_btn_w, 420);       // ensure readable width
+        var dd_y = lb_btn_y + lb_btn_h + 12;
+        var dd_w = max(lb_btn_w, 420);
         var dd_h = 420;
 
         var _level = (variable_global_exists("profile_view_level_key") && is_string(global.profile_view_level_key))
@@ -197,7 +197,6 @@ if (sprite_exists(spr_leaderboard))
         var _diff = (variable_global_exists("profile_view_difficulty") && is_string(global.profile_view_difficulty))
             ? global.profile_view_difficulty : "normal";
 
-        // "right" is fine; panel now positioned by dd_x/dd_y so it won't sit left of the button
         scr_draw_leaderboard_panel(dd_x, dd_y, dd_w, dd_h, "right", _level, _diff, true);
     }
 }
