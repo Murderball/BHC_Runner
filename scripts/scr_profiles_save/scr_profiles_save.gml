@@ -1,21 +1,30 @@
 /// scr_profiles_save()
 function scr_profiles_save()
 {
-    if (!script_exists(scr_profiles_ensure_defaults)) return false;
     scr_profiles_ensure_defaults();
 
-    if (!directory_exists(global.profiles_file_dir)) {
-        directory_create(global.profiles_file_dir);
+    // Update timestamps if desired, but do not crash if missing
+    if (variable_global_exists("profiles_data") && is_struct(global.profiles_data)) {
+        // ok
+    } else {
+        return;
     }
 
-    if (!directory_exists(global.profiles_file_dir)) return false;
+    var json = "";
+    try {
+        json = json_stringify(global.profiles_data);
+    } catch (e) {
+        show_debug_message("[PROFILES] save stringify failed: " + string(e));
+        return;
+    }
 
-    var _txt = json_stringify(global.profiles_data);
-    var _file = file_text_open_write(global.profiles_file_path);
-
-    if (_file < 0) return false;
-
-    file_text_write_string(_file, _txt);
-    file_text_close(_file);
-    return true;
+    var fh = -1;
+    try {
+        fh = file_text_open_write(global.profiles_file_path);
+        file_text_write_string(fh, json);
+        file_text_close(fh);
+    } catch (e2) {
+        if (fh != -1) file_text_close(fh);
+        show_debug_message("[PROFILES] save write failed: " + string(e2));
+    }
 }

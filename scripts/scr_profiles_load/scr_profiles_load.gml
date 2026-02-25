@@ -1,33 +1,53 @@
 /// scr_profiles_load()
 function scr_profiles_load()
 {
-    if (!script_exists(scr_profiles_ensure_defaults)) return false;
     scr_profiles_ensure_defaults();
 
-    if (!directory_exists(global.profiles_file_dir)) directory_create(global.profiles_file_dir);
+    var loaded_ok = false;
 
-    var _ok = false;
     if (file_exists(global.profiles_file_path)) {
-        var _buf = buffer_load(global.profiles_file_path);
-        if (_buf >= 0) {
-            var _raw = buffer_read(_buf, buffer_string);
-            buffer_delete(_buf);
-            if (_raw != "") {
-                var _parsed = json_parse(_raw);
-                if (is_struct(_parsed)) {
-                    global.profiles_data = _parsed;
-                    _ok = true;
+        var raw = "";
+        var fh = -1;
+
+        try {
+            fh = file_text_open_read(global.profiles_file_path);
+            while (!file_text_eof(fh)) {
+                raw += file_text_read_string(fh);
+                if (!file_text_eof(fh)) raw += "\n";
+                file_text_readln(fh);
+            }
+            file_text_close(fh);
+            fh = -1;
+        } catch (e) {
+            if (fh != -1) file_text_close(fh);
+            show_debug_message("[PROFILES] load read failed: " + string(e));
+            raw = "";
+        }
+
+        if (raw != "") {
+            try {
+                var parsed = json_parse(raw);
+                if (is_struct(parsed)) {
+                    global.profiles_data = parsed;
+                    loaded_ok = true;
                 }
+            } catch (e2) {
+                show_debug_message("[PROFILES] load parse failed: " + string(e2));
             }
         }
     }
 
-    if (!_ok) {
-        global.profiles_data = { version: global.profiles_version, active_profile_id: "", profiles: [] };
+    if (!loaded_ok) {
+        global.profiles_data = {
+            version : 1,
+            active_profile_id : "",
+            profiles : []
+        };
+        scr_profiles_ensure_defaults();
+        scr_profiles_save();
+    } else {
+        scr_profiles_ensure_defaults();
     }
 
-    scr_profiles_ensure_defaults();
-    if (!_ok) scr_profiles_save();
-
-    return true;
+    return loaded_ok;
 }
