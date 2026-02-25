@@ -34,7 +34,11 @@ function scr_draw_leaderboard_panel(_x, _y, _w, _h, _side, _level_key, _difficul
             var e = tops[i];
             var en = variable_struct_exists(e, "name") ? string(e.name) : "Player";
             var ea = variable_struct_exists(e, "accuracy") ? real(e.accuracy) : 0;
-            txt = string(i + 1) + ". " + en + "  " + string_format(ea * 100, 0, 2) + "%";
+            if (!is_real(ea) || ea != ea) ea = 0;
+            ea = clamp(ea, 0, 1);
+            var denom = 1;
+            if (denom <= 0) denom = 1;
+            txt = string(i + 1) + ". " + en + "  " + string_format((ea * 100) / denom, 0, 2) + "%";
         }
         draw_text(_x + 20, row_y, txt);
     }
