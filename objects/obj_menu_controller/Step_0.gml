@@ -12,12 +12,8 @@ var click = mouse_check_button_pressed(mb_left);
 var click_consumed = false;
 
 // --------------------------------------------------
-// Leaderboard button (GUI) + force-hide middle panel
+// Leaderboard button (GUI) toggle handling
 // --------------------------------------------------
-
-// Hard-disable the "middle leaderboard" panel if it's being drawn somewhere.
-// (The only way it should show is if YOU explicitly re-enable it in Draw GUI.)
-lb_open = false;
 
 if (sprite_exists(spr_leaderboard))
 {
@@ -34,11 +30,10 @@ if (sprite_exists(spr_leaderboard))
     var lb_mx = device_mouse_x_to_gui(0);
     var lb_my = device_mouse_y_to_gui(0);
 
-    // Click detection kept (but panel stays hidden because lb_open is forced false above)
     if (click && point_in_rectangle(lb_mx, lb_my, lb_btn_x, lb_btn_y, lb_btn_x + lb_btn_w, lb_btn_y + lb_btn_h))
     {
-        // Optional: you can keep this for future use, but it won't display unless Draw GUI uses lb_open.
         lb_open = !lb_open;
+        global.leaderboard_open = lb_open;
 
         click_consumed = true;
         click = false;

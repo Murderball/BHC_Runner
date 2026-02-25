@@ -2,32 +2,6 @@
 function scr_draw_leaderboard_panel(_x, _y, _w, _h, _side, _level_key, _difficulty_key, _allow_manage)
 {
     // --------------------------------------------------
-    // HARD GATE: do not draw unless explicitly opened
-    // This prevents the "always-on black panel" even if
-    // some other object accidentally calls this script.
-    // --------------------------------------------------
-    if (!variable_global_exists("lb_open_global"))
-    {
-        // allow legacy instance variable lb_open to work (obj_menu_controller)
-        // If neither exists, assume closed.
-        if (!variable_global_exists("lb_open_fallback")) { /* no-op */ }
-    }
-
-    // Prefer obj_menu_controller instance var 'lb_open' if it exists; otherwise allow a global fallback
-    var open_ok = false;
-
-    // If caller passed "allow_manage", it’s the menu context; still require lb_open.
-    // Try common places lb_open may live:
-    if (variable_global_exists("lb_open") && is_bool(global.lb_open)) open_ok = global.lb_open;
-
-    // If scr is being called from menu controller, its instance var will exist on that instance, not global.
-    // So also allow an explicit global toggle var: global.leaderboard_open
-    if (variable_global_exists("leaderboard_open") && is_bool(global.leaderboard_open)) open_ok = global.leaderboard_open;
-
-    // If nothing exists, do NOT draw.
-    if (!open_ok) return;
-
-    // --------------------------------------------------
     // Draw panel background (sprite or fallback)
     // --------------------------------------------------
     var spr = asset_get_index("spr_leaderboard");
