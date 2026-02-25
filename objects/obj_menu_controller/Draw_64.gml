@@ -9,26 +9,11 @@ var cy = camera_get_view_y(cam);
 var g_off = 2;
 var g_a   = 0.25;
 
-// Helper: draw sprite with shadow + glow
+// Helper: draw sprite with glow
 function draw_btn_glow(_spr, _x, _y, _glow, _ga, _goff)
 {
     if (_spr < 0) return;
 
-    // -----------------------------------
-    // 1) BLACK DROP SHADOW (new)
-    // -----------------------------------
-    draw_set_color(c_black);
-    draw_set_alpha(0.65);
-
-    var shadow_offset = 3;
-
-    draw_sprite(_spr, 0, _x + shadow_offset, _y + shadow_offset);
-
-    draw_set_alpha(1);
-
-    // -----------------------------------
-    // 2) WHITE GLOW (existing)
-    // -----------------------------------
     if (_glow > 0.01)
     {
         gpu_set_blendmode(bm_add);
@@ -49,10 +34,6 @@ function draw_btn_glow(_spr, _x, _y, _glow, _ga, _goff)
         gpu_set_blendmode(bm_normal);
     }
 
-    // -----------------------------------
-    // 3) MAIN SPRITE
-    // -----------------------------------
-    draw_set_color(c_white);
     draw_sprite(_spr, 0, _x, _y);
 }
 
