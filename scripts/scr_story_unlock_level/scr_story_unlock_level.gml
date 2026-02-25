@@ -25,15 +25,34 @@ function scr_story_unlock_level(_level_key)
     profile.story.unlocked_level_keys = keys;
     profile.updated_at = current_time;
 
-    if (variable_global_exists("profiles_data") && is_struct(global.profiles_data) && is_array(global.profiles_data.profiles)) {
-        for (var pi = 0; pi < array_length(global.profiles_data.profiles); pi++) {
-            var profile_item = global.profiles_data.profiles[pi];
-            if (is_struct(profile_item) && variable_struct_exists(profile_item, "id") && profile_item.id == profile.id) {
-                global.profiles_data.profiles[pi] = profile;
-                break;
+if (variable_global_exists("profiles_data")) {
+    if (is_struct(global.profiles_data)) {
+        if (variable_struct_exists(global.profiles_data, "profiles")) {
+            if (is_array(global.profiles_data.profiles)) {
+
+                var profiles_array = global.profiles_data.profiles;
+                var profiles_len = array_length(profiles_array);
+
+                for (var i = 0; i < profiles_len; i++) {
+
+                    var existing_profile = profiles_array[i];
+
+                    if (is_struct(existing_profile)) {
+                        if (variable_struct_exists(existing_profile, "id")) {
+                            if (existing_profile.id == profile.id) {
+
+                                profiles_array[i] = profile;
+                                global.profiles_data.profiles = profiles_array;
+                                break;
+
+                            }
+                        }
+                    }
+                }
             }
         }
     }
+}
 
     if (script_exists(scr_profiles_save)) scr_profiles_save();
     return true;
