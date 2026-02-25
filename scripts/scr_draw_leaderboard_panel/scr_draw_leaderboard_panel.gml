@@ -2,42 +2,35 @@
 function scr_draw_leaderboard_panel(_x, _y, _w, _h, _side, _level_key, _difficulty_key, _allow_manage)
 {
     // --------------------------------------------------
-    // Draw panel background (sprite or fallback)
+    // Panel background (DO NOT draw spr_leaderboard here)
+    // spr_leaderboard is the BUTTON sprite, not the panel
     // --------------------------------------------------
-    var spr = asset_get_index("spr_leaderboard");
-
     var panel_w = _w;
     var panel_h = _h;
 
-    if (spr >= 0)
-    {
-        // If you want dropdown sizing to follow _w/_h rather than sprite size,
-        // comment these two lines out. For now we keep existing behavior.
-        panel_w = sprite_get_width(spr);
-        panel_h = sprite_get_height(spr);
+    draw_set_alpha(0.85);
+    draw_set_color(c_black);
+    draw_rectangle(_x, _y, _x + panel_w, _y + panel_h, false);
+    draw_set_alpha(1);
 
-        draw_sprite(spr, 0, _x, _y);
-    }
-    else
-    {
-        draw_set_alpha(0.8);
-        draw_set_color(c_black);
-        draw_rectangle(_x, _y, _x + panel_w, _y + panel_h, false);
-        draw_set_alpha(1);
-    }
+    // Optional thin border
+    draw_set_alpha(0.9);
+    draw_set_color(c_white);
+    draw_rectangle(_x, _y, _x + panel_w, _y + panel_h, true);
+    draw_set_alpha(1);
 
     // --------------------------------------------------
-    // Content
+    // Content (rest of your code stays the same)
     // --------------------------------------------------
     var p = script_exists(scr_profiles_get_active) ? scr_profiles_get_active() : undefined;
-    var pname = is_struct(p) ? string(p.name) : "No Profile";
+    var pname = is_struct(p) ? p.name : "No Profile";
     var tops = script_exists(scr_profiles_get_top10) ? scr_profiles_get_top10(_level_key, _difficulty_key) : [];
 
     draw_set_halign(fa_left);
     draw_set_valign(fa_top);
     draw_set_color(c_white);
 
-    draw_text(_x + 20, _y + 18, "Profile: " + pname);
+    draw_text(_x + 20, _y + 18, "Profile: " + string(pname));
     draw_text(_x + 20, _y + 40, "Level: " + string(_level_key));
     draw_text(_x + 20, _y + 62, "Difficulty: " + string_upper(string(_difficulty_key)));
 
