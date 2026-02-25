@@ -93,7 +93,10 @@ if (back && move_cd <= 0 && !menu_game_open)
 }
 
 // Not paused? nothing else
-if (!paused) exit;
+if (!paused) {
+    profile_save_queued = false;
+    exit;
+}
 
 
 // Shared Game submenu
@@ -257,7 +260,10 @@ if (activate)
         case 3: // TITLE MENU
             paused = false;
             if (script_exists(scr_profiles_try_record_from_score_manager)) scr_profiles_try_record_from_score_manager();
-            if (script_exists(scr_profiles_save)) scr_profiles_save();
+            if (!profile_save_queued && script_exists(scr_profiles_save)) {
+                scr_profiles_save();
+                profile_save_queued = true;
+            }
             scr_return_to_title();
         break;
 

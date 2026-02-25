@@ -79,3 +79,5 @@ blur_scale = 0.25;      // 0.20–0.33 = blurrier but softer
 blur_alpha = 1.00;      // overall blurred background strength
 blur_passes = 2;        // 1–3 (2 is a sweet spot)
 blur_jitter = 1.5;      // subtle smear amount (0–3)
+
+profile_save_queued = false;
