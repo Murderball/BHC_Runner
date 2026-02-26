@@ -12,6 +12,12 @@ var click = mouse_check_button_pressed(mb_left);
 var click_release = mouse_check_button_released(mb_left);
 var click_consumed = false;
 
+if (script_exists(scr_menu_layout_editor_step))
+{
+    var _layout_editor_active = scr_menu_layout_editor_step(id);
+    if (_layout_editor_active) return;
+}
+
 // --------------------------------------------------
 // Leaderboard button (GUI) toggle handling
 // --------------------------------------------------
