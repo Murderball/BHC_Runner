@@ -51,6 +51,27 @@ if (menu_state == 0)
         draw_btn_glow(btn_story.spr, btn_story.x - cx, btn_story.y - cy, glow_story, g_a, g_off);
         draw_btn_glow(btn_arcade.spr, btn_arcade.x - cx, btn_arcade.y - cy, glow_arcade, g_a, g_off);
 
+        if (story_submenu_open)
+        {
+            draw_btn_glow(btn_newgame.spr, btn_newgame.x - cx, btn_newgame.y - cy, glow_story, g_a, g_off);
+            draw_btn_glow(btn_loadgame.spr, btn_loadgame.x - cx, btn_loadgame.y - cy, glow_story, g_a, g_off);
+
+            if (spr_menu_newgame_ui_box >= 0 && new_game_panel_open)
+            {
+                draw_sprite(spr_menu_newgame_ui_box, 0, 900 - cx, 200 - cy);
+            }
+            if (spr_menu_story_ui_box >= 0 && load_game_panel_open)
+            {
+                draw_sprite(spr_menu_story_ui_box, 0, 900 - cx, 200 - cy);
+                draw_set_color(c_white);
+                for (var si = 0; si < 3; si++)
+                {
+                    draw_text((980 - cx), (280 + si * 70 - cy), "Slot " + string(si + 1));
+                }
+                if (spr_menu_pointer >= 0) draw_sprite(spr_menu_pointer, 0, 940 - cx, 280 + load_slot_sel * 70 - cy);
+            }
+        }
+
         if (arcade_diff_open)
         {
             draw_btn_glow(btn_easyL.spr,   btn_easyL.x - cx,   btn_easyL.y - cy,   glow_easyL, g_a, g_off);
@@ -60,6 +81,19 @@ if (menu_state == 0)
     }
 
     draw_btn_glow(btn_options.spr, btn_options.x - cx, btn_options.y - cy, glow_options, g_a, g_off);
+    draw_btn_glow(btn_page_right.spr, btn_page_right.x - cx, btn_page_right.y - cy, 0, g_a, g_off);
+
+    if (arcade_diff_open && spr_menu_arcade_ui_box >= 0)
+    {
+        draw_sprite(spr_menu_arcade_ui_box, 0, 900 - cx, 200 - cy);
+        if (spr_menu_pointer >= 0)
+        {
+            var _py = btn_easyL.y - cy;
+            if (sel_diff == 1) _py = btn_normalL.y - cy;
+            else if (sel_diff == 2) _py = btn_hardL.y - cy;
+            draw_sprite(spr_menu_pointer, 0, btn_easyL.x - 40 - cx, _py);
+        }
+    }
 
     var options_panel_visible = options_open;
     if (options_panel_visible)
@@ -88,6 +122,11 @@ if (menu_state == 2)
 	draw_text((1160 - cx), (80 - cy), "BOSSES");
 
 
+    if (spr_menu_level_select >= 0)
+    {
+        draw_sprite(spr_menu_level_select, 0, 900 - cx, 120 - cy);
+    }
+
     // Level buttons (left of characters)
 	for (var i = 0; i < array_length(level_btn); i++)
 	{
@@ -105,6 +144,11 @@ if (menu_state == 2)
 	    draw_set_alpha(1);
 	}
 
+    if (spr_menu_pointer >= 0 && sel_level >= 0 && sel_level < array_length(level_btn))
+    {
+        var _lp = level_btn[sel_level];
+        draw_sprite(spr_menu_pointer, 0, (_lp.x - 34) - cx, _lp.y - cy);
+    }
 
     // Characters (dim + disabled until level picked)
     var char_alpha = level_picked ? 1 : 0.25;
@@ -192,4 +236,14 @@ if (menu_state == 0 && sprite_exists(spr_leaderboard))
             global.profile_view_difficulty,
             true);
     }
+}
+
+
+if (debug_menu_overlay)
+{
+    draw_set_color(c_white);
+    draw_set_alpha(1);
+    draw_text(24, 24, "menu_state: " + string(menu_state));
+    draw_text(24, 46, "page_x: " + string(round(menu_page_x)));
+    draw_text(24, 68, "hover: " + string(hovered_button_id));
 }

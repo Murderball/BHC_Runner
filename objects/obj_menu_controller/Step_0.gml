@@ -44,6 +44,7 @@ var up    = keyboard_check_pressed(vk_up)    || keyboard_check_pressed(ord("W"))
 var down  = keyboard_check_pressed(vk_down)  || keyboard_check_pressed(ord("S"));
 var left  = keyboard_check_pressed(vk_left)  || keyboard_check_pressed(ord("A"));
 var right = keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"));
+if (keyboard_check_pressed(vk_f3)) debug_menu_overlay = !debug_menu_overlay;
 
 // Keyboard usage detection (marching ants)
 var held_dir =
@@ -121,12 +122,18 @@ cam_x = lerp(cam_x, cam_target_x, scroll_lerp);
 cam_x = clamp(cam_x, min_cam_x, max_cam_x);
 cam_y = clamp(cam_y, min_cam_y, max_cam_y);
 camera_set_view_pos(cam, cam_x, cam_y);
+menu_page_x = cam_x;
+menu_page_target_x = cam_target_x;
+global.menu_page_x = menu_page_x;
 
 // Hit checks (left menu)
 var hit_start   = (mx >= btn_start.x   && mx <= btn_start.x   + btn_start.w   && my >= btn_start.y   && my <= btn_start.y   + btn_start.h);
 var hit_story   = (mx >= btn_story.x   && mx <= btn_story.x   + btn_story.w   && my >= btn_story.y   && my <= btn_story.y   + btn_story.h);
 var hit_arcade  = (mx >= btn_arcade.x  && mx <= btn_arcade.x  + btn_arcade.w  && my >= btn_arcade.y  && my <= btn_arcade.y  + btn_arcade.h);
 var hit_options = (mx >= btn_options.x && mx <= btn_options.x + btn_options.w && my >= btn_options.y && my <= btn_options.y + btn_options.h);
+var hit_newgame = (mx >= btn_newgame.x && mx <= btn_newgame.x + btn_newgame.w && my >= btn_newgame.y && my <= btn_newgame.y + btn_newgame.h);
+var hit_loadgame = (mx >= btn_loadgame.x && mx <= btn_loadgame.x + btn_loadgame.w && my >= btn_loadgame.y && my <= btn_loadgame.y + btn_loadgame.h);
+var hit_page_right = (mx >= btn_page_right.x && mx <= btn_page_right.x + btn_page_right.w && my >= btn_page_right.y && my <= btn_page_right.y + btn_page_right.h);
 var hit_game    = (mx >= btn_game.x    && mx <= btn_game.x    + btn_game.w    && my >= btn_game.y    && my <= btn_game.y    + btn_game.h);
 var hit_exit    = (mx >= btn_exit.x    && mx <= btn_exit.x    + btn_exit.w    && my >= btn_exit.y    && my <= btn_exit.y    + btn_exit.h);
 
@@ -187,11 +194,49 @@ switch (menu_state)
 {
     case 0: // left menu
     {
+        hovered_button_id = "none";
+        if (hit_story) hovered_button_id = "story";
+        else if (hit_newgame) hovered_button_id = "new_game";
+        else if (hit_loadgame) hovered_button_id = "load_game";
+        else if (hit_arcade) hovered_button_id = "arcade";
+        else if (hit_options) hovered_button_id = "options";
+        else if (hit_page_right) hovered_button_id = "page_right";
+
         if (back)
         {
             if (options_open) options_open = false;
+            else if (load_game_panel_open) load_game_panel_open = false;
+            else if (new_game_panel_open) new_game_panel_open = false;
+            else if (story_submenu_open) story_submenu_open = false;
             else if (arcade_diff_open) arcade_diff_open = false;
             else if (start_open) { start_open = false; if (sel_main > 0) sel_main = 0; }
+            else game_end();
+        }
+
+        if (load_game_panel_open)
+        {
+            if (up) load_slot_sel = max(0, load_slot_sel - 1);
+            if (down) load_slot_sel = min(2, load_slot_sel + 1);
+
+            if (ok)
+            {
+                if (variable_global_exists("profiles_data") && is_struct(global.profiles_data) && is_array(global.profiles_data.profiles))
+                {
+                    var _pc = array_length(global.profiles_data.profiles);
+                    if (_pc > 0)
+                    {
+                        var _pick = clamp(load_slot_sel, 0, _pc - 1);
+                        if (script_exists(scr_profiles_set_active)) scr_profiles_set_active(global.profiles_data.profiles[_pick].id);
+                        if (script_exists(scr_profiles_save)) scr_profiles_save();
+                    }
+                }
+
+                global.game_mode = "story";
+                reset_right_page_state();
+                cam_target_x = page_right_x;
+                right_target_state = 2;
+                menu_state = 1;
+            }
         }
 
         // -----------------------------
@@ -379,20 +424,13 @@ switch (menu_state)
             }
             else
             {
-                if (hit_start) { clicked_any = true; start_open = false; sel_main = 0; }
+                if (hit_start) { clicked_any = true; start_open = false; story_submenu_open = false; sel_main = 0; }
                 else if (hit_story)
                 {
                     clicked_any = true;
-                    global.game_mode = "story";
-
-                    global.DIFFICULTY = "normal";
-                    global.difficulty = "normal";
-
-                    reset_right_page_state();
-
-                    cam_target_x = page_right_x;
-                    right_target_state = 2;
-                    menu_state = 1;
+                    story_submenu_open = !story_submenu_open;
+                    new_game_panel_open = false;
+                    load_game_panel_open = false;
                 }
                 else if (hit_arcade)
                 {
@@ -405,6 +443,10 @@ switch (menu_state)
                     if (d == "easy") sel_diff = 0;
                     else if (d == "hard") sel_diff = 2;
                     else sel_diff = 1;
+
+                    story_submenu_open = false;
+                    new_game_panel_open = false;
+                    load_game_panel_open = false;
                 }
                 else if (hit_options)
                 {
@@ -412,6 +454,37 @@ switch (menu_state)
                     options_open = true;
                     menu_game_open = false;
                     sel_opt = 0;
+                    story_submenu_open = false;
+                    new_game_panel_open = false;
+                    load_game_panel_open = false;
+                }
+                else if (story_submenu_open && hit_newgame)
+                {
+                    clicked_any = true;
+                    new_game_panel_open = true;
+                    load_game_panel_open = false;
+                    global.game_mode = "story";
+                    global.DIFFICULTY = "normal";
+                    global.difficulty = "normal";
+                    reset_right_page_state();
+                    cam_target_x = page_right_x;
+                    right_target_state = 2;
+                    menu_state = 1;
+                }
+                else if (story_submenu_open && hit_loadgame)
+                {
+                    clicked_any = true;
+                    load_game_panel_open = true;
+                    new_game_panel_open = false;
+                    if (up) load_slot_sel = max(0, load_slot_sel - 1);
+                    if (down) load_slot_sel = min(2, load_slot_sel + 1);
+                }
+                else if (hit_page_right)
+                {
+                    clicked_any = true;
+                    cam_target_x = page_right_x;
+                    right_target_state = 2;
+                    menu_state = 1;
                 }
             }
 
@@ -419,6 +492,7 @@ switch (menu_state)
             {
                 sel_main = -1;
                 sel_opt = -1;
+                if (!hit_story && !hit_newgame && !hit_loadgame) story_submenu_open = false;
             }
 
             break;
