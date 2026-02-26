@@ -2,11 +2,91 @@ function scr_menu_layout_editor_step(_inst)
 {
     if (room != rm_menu) return false;
 
+    function _widget_is_on_page(_w, _page)
+    {
+        if (!is_struct(_w)) return false;
+
+        if (variable_struct_exists(_w, "menu_page")) return (_w.menu_page == _page);
+
+        switch (_w.id)
+        {
+            case "btn_start":
+            case "btn_story":
+            case "btn_arcade":
+            case "btn_options":
+            case "btn_exit":
+                return (_page == 0);
+
+            case "btn_back":
+            case "char_vocalist":
+            case "char_guitarist":
+            case "char_bassist":
+            case "char_drummer":
+            case "char_0":
+            case "char_1":
+            case "char_2":
+            case "char_3":
+                return (_page == 1);
+        }
+
+        return false;
+    }
+
+    function _active_widget_indices(_page)
+    {
+        var _indices = [];
+
+        for (var _i = 0; _i < array_length(global.menu_ui); _i++)
+        {
+            var _w = global.menu_ui[_i];
+            if (_widget_is_on_page(_w, _page)) array_push(_indices, _i);
+        }
+
+        return _indices;
+    }
+
+    function _char_index_from_id(_id)
+    {
+        if (_id == "char_vocalist") return 0;
+        if (_id == "char_guitarist") return 1;
+        if (_id == "char_bassist") return 2;
+        if (_id == "char_drummer") return 3;
+        if (string_pos("char_", _id) == 1) return real(string_delete(_id, 1, 5));
+        return -1;
+    }
+
+    function _set_editor_page(_page)
+    {
+        global.menu_editor_page = clamp(_page, 0, 1);
+
+        var _target_x = _inst.page_left_x;
+        if (global.menu_editor_page == 1) _target_x = _inst.page_right_x;
+
+        _inst.cam_target_x = _target_x;
+
+        if (variable_instance_exists(_inst, "menu_cam_target_x")) _inst.menu_cam_target_x = _target_x;
+        if (variable_instance_exists(_inst, "menu_page_target_x")) _inst.menu_page_target_x = _target_x;
+        if (variable_instance_exists(_inst, "menu_cam_x")) _inst.menu_cam_x = _target_x;
+        if (variable_instance_exists(_inst, "cam_x")) _inst.cam_x = _target_x;
+        if (variable_instance_exists(_inst, "menu_page_x")) _inst.menu_page_x = _target_x;
+
+        if (variable_instance_exists(_inst, "cam") && _inst.cam != noone)
+        {
+            var _target_y = camera_get_view_y(_inst.cam);
+            if (variable_instance_exists(_inst, "menu_cam_y")) _target_y = _inst.menu_cam_y;
+            camera_set_view_pos(_inst.cam, _target_x, _target_y);
+        }
+
+        global.menu_layout_selected = "";
+        global.menu_layout_dragging = false;
+    }
+
     if (!variable_global_exists("menu_layout_editor_on")) global.menu_layout_editor_on = false;
     if (!variable_global_exists("menu_layout_selected")) global.menu_layout_selected = "";
     if (!variable_global_exists("menu_layout_dragging")) global.menu_layout_dragging = false;
     if (!variable_global_exists("menu_layout_drag_dx")) global.menu_layout_drag_dx = 0;
     if (!variable_global_exists("menu_layout_drag_dy")) global.menu_layout_drag_dy = 0;
+    if (!variable_global_exists("menu_editor_page")) global.menu_editor_page = 0;
     if (!variable_global_exists("menu_ui") || !is_array(global.menu_ui)) return false;
 
     if (keyboard_check_pressed(vk_f10))
@@ -17,9 +97,20 @@ function scr_menu_layout_editor_step(_inst)
             global.menu_layout_dragging = false;
             global.menu_layout_selected = "";
         }
+        else
+        {
+            _set_editor_page(global.menu_editor_page);
+        }
     }
 
     if (!global.menu_layout_editor_on) return false;
+
+    if (keyboard_check_pressed(vk_tab))
+    {
+        _set_editor_page(1 - global.menu_editor_page);
+    }
+
+    var _active_indices = _active_widget_indices(global.menu_editor_page);
 
     var _ctrl = keyboard_check(vk_control);
     var _layout_rel = "layouts/menu_layout.json";
@@ -81,9 +172,11 @@ function scr_menu_layout_editor_step(_inst)
     {
         var _pick = -1;
         var _best_z = -1000000;
-        for (var _k = 0; _k < array_length(global.menu_ui); _k++)
+
+        for (var _k = 0; _k < array_length(_active_indices); _k++)
         {
-            var _hit = global.menu_ui[_k];
+            var _idx = _active_indices[_k];
+            var _hit = global.menu_ui[_idx];
             if (!_hit.visible || !_hit.draggable) continue;
 
             var _inside = (_mx >= _hit.x && _mx <= _hit.x + _hit.w && _my >= _hit.y && _my <= _hit.y + _hit.h);
@@ -92,7 +185,7 @@ function scr_menu_layout_editor_step(_inst)
             if (_hit.z >= _best_z)
             {
                 _best_z = _hit.z;
-                _pick = _k;
+                _pick = _idx;
             }
         }
 
@@ -115,9 +208,9 @@ function scr_menu_layout_editor_step(_inst)
     {
         if (mouse_check_button(mb_left) && is_string(global.menu_layout_selected) && global.menu_layout_selected != "")
         {
-            for (var _m = 0; _m < array_length(global.menu_ui); _m++)
+            for (var _m = 0; _m < array_length(_active_indices); _m++)
             {
-                var _drag = global.menu_ui[_m];
+                var _drag = global.menu_ui[_active_indices[_m]];
                 if (_drag.id != global.menu_layout_selected) continue;
 
                 var _nx = _mx - global.menu_layout_drag_dx;
@@ -141,8 +234,10 @@ function scr_menu_layout_editor_step(_inst)
     }
 
     var _id = _inst;
-    if (!variable_instance_exists(_id, "btn_game")) {
-        with (_id) {
+    if (!variable_instance_exists(_id, "btn_game"))
+    {
+        with (_id)
+        {
             var _spr = asset_get_index("menu_game");
             btn_game = { spr: _spr, x: 0, y: 0, w: BTN_W, h: BTN_H };
         }
@@ -184,7 +279,7 @@ function scr_menu_layout_editor_step(_inst)
                     }
                     else if (string_pos("char_", _w.id) == 1)
                     {
-                        var _ci = real(string_delete(_w.id, 1, 5));
+                        var _ci = _char_index_from_id(_w.id);
                         if (_ci >= 0 && _ci < array_length(char_btn))
                         {
                             var _cb = char_btn[_ci];

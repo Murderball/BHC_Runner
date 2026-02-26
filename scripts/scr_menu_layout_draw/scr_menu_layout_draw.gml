@@ -1,7 +1,38 @@
 function scr_menu_layout_draw(_inst)
 {
+    function _widget_is_on_page(_w, _page)
+    {
+        if (!is_struct(_w)) return false;
+
+        if (variable_struct_exists(_w, "menu_page")) return (_w.menu_page == _page);
+
+        switch (_w.id)
+        {
+            case "btn_start":
+            case "btn_story":
+            case "btn_arcade":
+            case "btn_options":
+            case "btn_exit":
+                return (_page == 0);
+
+            case "btn_back":
+            case "char_vocalist":
+            case "char_guitarist":
+            case "char_bassist":
+            case "char_drummer":
+            case "char_0":
+            case "char_1":
+            case "char_2":
+            case "char_3":
+                return (_page == 1);
+        }
+
+        return false;
+    }
+
     if (!variable_global_exists("menu_layout_editor_on") || !global.menu_layout_editor_on) return;
     if (!variable_global_exists("menu_ui") || !is_array(global.menu_ui)) return;
+    if (!variable_global_exists("menu_editor_page")) global.menu_editor_page = 0;
 
     if (!variable_instance_exists(_inst.id, "cam") || _inst.cam == noone) return;
 
@@ -15,6 +46,7 @@ function scr_menu_layout_draw(_inst)
     {
         var _w = global.menu_ui[_i];
         if (!_w.visible) continue;
+        if (!_widget_is_on_page(_w, global.menu_editor_page)) continue;
 
         var _x1 = _w.x - _cx;
         var _y1 = _w.y - _cy;
@@ -29,6 +61,7 @@ function scr_menu_layout_draw(_inst)
         for (var _s = 0; _s < array_length(global.menu_ui); _s++)
         {
             var _sel = global.menu_ui[_s];
+            if (!_widget_is_on_page(_sel, global.menu_editor_page)) continue;
             if (_sel.id != global.menu_layout_selected) continue;
 
             var _sx1 = _sel.x - _cx;
@@ -45,5 +78,6 @@ function scr_menu_layout_draw(_inst)
     }
 
     draw_set_color(c_white);
-    draw_text(16, 16, "MENU LAYOUT EDITOR (F10)  Drag | Shift=Snap | Ctrl+S Save | Ctrl+L Load");
+    var _page_label = (global.menu_editor_page == 0) ? "Left (Start)" : "Right (Character Select)";
+    draw_text(16, 16, "MENU LAYOUT EDITOR (F10)  TAB=Switch Page [" + _page_label + "]  Drag | Shift=Snap | Ctrl+S Save | Ctrl+L Load");
 }

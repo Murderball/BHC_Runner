@@ -1,6 +1,6 @@
 function scr_menu_layout_init(_menu_inst)
 {
-    function _widget_make(_id, _x, _y, _w, _h, _z, _visible, _draggable, _sprite, _draw_fn)
+    function _widget_make(_id, _x, _y, _w, _h, _z, _visible, _draggable, _sprite, _draw_fn, _menu_page)
     {
         return {
             id: _id,
@@ -12,7 +12,8 @@ function scr_menu_layout_init(_menu_inst)
             visible: _visible,
             draggable: _draggable,
             sprite: _sprite,
-            draw_fn: _draw_fn
+            draw_fn: _draw_fn,
+            menu_page: _menu_page
         };
     }
 
@@ -26,7 +27,7 @@ function scr_menu_layout_init(_menu_inst)
         return instance_exists(v) ? v : noone;
     }
 
-    function _widget_from_btn(_id, _btn_inst, _x, _y, _z)
+    function _widget_from_btn(_id, _btn_inst, _x, _y, _z, _menu_page)
     {
         var _spr = -1;
         var _w = 256;
@@ -60,14 +61,15 @@ function scr_menu_layout_init(_menu_inst)
             true,
             true,
             _spr,
-            -1
+            -1,
+            _menu_page
         );
     }
 
-    function _register_btn_widget(_widgets_ref, _menu_inst, _id, _varname, _x, _y, _z)
+    function _register_btn_widget(_widgets_ref, _menu_inst, _id, _varname, _x, _y, _z, _menu_page)
     {
         var _ref = _safe_inst_ref(_menu_inst, _varname);
-        array_push(_widgets_ref, _widget_from_btn(_id, _ref, _x, _y, _z));
+        array_push(_widgets_ref, _widget_from_btn(_id, _ref, _x, _y, _z, _menu_page));
     }
 
     function _apply_widget_pos(_target_inst, _varname, _x, _y)
@@ -84,24 +86,24 @@ function scr_menu_layout_init(_menu_inst)
 
     var _widgets = [];
 
-    _register_btn_widget(_widgets, _menu_inst, "btn_start", "btn_start", 960, 260, 10);
-    _register_btn_widget(_widgets, _menu_inst, "btn_story", "btn_story", 960, 332, 20);
-    _register_btn_widget(_widgets, _menu_inst, "btn_arcade", "btn_arcade", 960, 404, 20);
-    _register_btn_widget(_widgets, _menu_inst, "btn_options", "btn_options", 960, 476, 10);
-    _register_btn_widget(_widgets, _menu_inst, "btn_newgame", "btn_newgame", 960, 360, 30);
-    _register_btn_widget(_widgets, _menu_inst, "btn_loadgame", "btn_loadgame", 960, 432, 30);
-    _register_btn_widget(_widgets, _menu_inst, "btn_page_right", "btn_page_right", 1220, 650, 10);
+    _register_btn_widget(_widgets, _menu_inst, "btn_start", "btn_start", 960, 260, 10, 0);
+    _register_btn_widget(_widgets, _menu_inst, "btn_story", "btn_story", 960, 332, 20, 0);
+    _register_btn_widget(_widgets, _menu_inst, "btn_arcade", "btn_arcade", 960, 404, 20, 0);
+    _register_btn_widget(_widgets, _menu_inst, "btn_options", "btn_options", 960, 476, 10, 0);
+    _register_btn_widget(_widgets, _menu_inst, "btn_newgame", "btn_newgame", 960, 360, 30, -1);
+    _register_btn_widget(_widgets, _menu_inst, "btn_loadgame", "btn_loadgame", 960, 432, 30, -1);
+    _register_btn_widget(_widgets, _menu_inst, "btn_page_right", "btn_page_right", 1220, 650, 10, -1);
 
     var ref_btn_game = _safe_inst_ref(_menu_inst, "btn_game");
-    array_push(_widgets, _widget_from_btn("btn_game", ref_btn_game, 960, 548, 15));
+    array_push(_widgets, _widget_from_btn("btn_game", ref_btn_game, 960, 548, 15, -1));
 
-    _register_btn_widget(_widgets, _menu_inst, "btn_exit", "btn_exit", 960, 620, 15);
-    _register_btn_widget(_widgets, _menu_inst, "btn_easyL", "btn_easyL", 700, 300, 35);
-    _register_btn_widget(_widgets, _menu_inst, "btn_normalL", "btn_normalL", 960, 300, 35);
-    _register_btn_widget(_widgets, _menu_inst, "btn_hardL", "btn_hardL", 1220, 300, 35);
-    _register_btn_widget(_widgets, _menu_inst, "btn_back", "btn_back", 120, 650, 100);
-    _register_btn_widget(_widgets, _menu_inst, "btn_upgrade", "btn_upgrade", 1560, 650, 90);
-    _register_btn_widget(_widgets, _menu_inst, "btn_play", "btn_play", 1760, 650, 90);
+    _register_btn_widget(_widgets, _menu_inst, "btn_exit", "btn_exit", 960, 620, 15, 0);
+    _register_btn_widget(_widgets, _menu_inst, "btn_easyL", "btn_easyL", 700, 300, 35, -1);
+    _register_btn_widget(_widgets, _menu_inst, "btn_normalL", "btn_normalL", 960, 300, 35, -1);
+    _register_btn_widget(_widgets, _menu_inst, "btn_hardL", "btn_hardL", 1220, 300, 35, -1);
+    _register_btn_widget(_widgets, _menu_inst, "btn_back", "btn_back", 120, 650, 100, 1);
+    _register_btn_widget(_widgets, _menu_inst, "btn_upgrade", "btn_upgrade", 1560, 650, 90, -1);
+    _register_btn_widget(_widgets, _menu_inst, "btn_play", "btn_play", 1760, 650, 90, -1);
 
     var _has_level_btn = variable_instance_exists(_menu_inst, "level_btn");
     if (_has_level_btn)
@@ -113,11 +115,12 @@ function scr_menu_layout_init(_menu_inst)
             {
                 var _level_ref = _level_btn_arr[_i];
                 var _level_valid = (!is_undefined(_level_ref) && _level_ref != noone && instance_exists(_level_ref));
-                array_push(_widgets, _widget_from_btn("level_" + string(_i), _level_valid ? _level_ref : noone, 640 + ((_i mod 6) * 220), 200 + ((_i div 6) * 100), 70));
+                array_push(_widgets, _widget_from_btn("level_" + string(_i), _level_valid ? _level_ref : noone, 640 + ((_i mod 6) * 220), 200 + ((_i div 6) * 100), 70, -1));
             }
         }
     }
 
+    var _char_names = ["char_vocalist", "char_guitarist", "char_bassist", "char_drummer"];
     var _has_char_btn = variable_instance_exists(_menu_inst, "char_btn");
     if (_has_char_btn)
     {
@@ -128,7 +131,9 @@ function scr_menu_layout_init(_menu_inst)
             {
                 var _char_ref = _char_btn_arr[_j];
                 var _char_valid = (!is_undefined(_char_ref) && _char_ref != noone && instance_exists(_char_ref));
-                array_push(_widgets, _widget_from_btn("char_" + string(_j), _char_valid ? _char_ref : noone, 640 + ((_j mod 6) * 220), 500 + ((_j div 6) * 100), 80));
+                var _char_id = "char_" + string(_j);
+                if (_j < array_length(_char_names)) _char_id = _char_names[_j];
+                array_push(_widgets, _widget_from_btn(_char_id, _char_valid ? _char_ref : noone, 640 + ((_j mod 6) * 220), 500 + ((_j div 6) * 100), 80, 1));
             }
         }
     }
@@ -140,6 +145,7 @@ function scr_menu_layout_init(_menu_inst)
     global.menu_layout_dragging = false;
     global.menu_layout_drag_dx = 0;
     global.menu_layout_drag_dy = 0;
+    global.menu_editor_page = 0;
 
     var _layout_rel = "layouts/menu_layout.json";
     var _layout_path = working_directory + _layout_rel;
@@ -156,9 +162,18 @@ function scr_menu_layout_init(_menu_inst)
             for (var _k = 0; _k < array_length(global.menu_ui); _k++)
             {
                 var _wgt = global.menu_ui[_k];
-                if (variable_struct_exists(_data, _wgt.id))
+                var _legacy_char_key = "";
+                if (_wgt.id == "char_vocalist") _legacy_char_key = "char_0";
+                else if (_wgt.id == "char_guitarist") _legacy_char_key = "char_1";
+                else if (_wgt.id == "char_bassist") _legacy_char_key = "char_2";
+                else if (_wgt.id == "char_drummer") _legacy_char_key = "char_3";
+
+                var _has_layout = variable_struct_exists(_data, _wgt.id) || (_legacy_char_key != "" && variable_struct_exists(_data, _legacy_char_key));
+                if (_has_layout)
                 {
-                    var _p = variable_struct_get(_data, _wgt.id);
+                    var _key = _wgt.id;
+                    if (!variable_struct_exists(_data, _key) && _legacy_char_key != "") _key = _legacy_char_key;
+                    var _p = variable_struct_get(_data, _key);
                     if (is_struct(_p))
                     {
                         if (variable_struct_exists(_p, "x")) _wgt.x = _p.x;
@@ -204,10 +219,16 @@ function scr_menu_layout_init(_menu_inst)
                         }
                     }
                 }
-                else if (string_pos("char_", _w.id) == 1 && variable_instance_exists(_menu_inst, "char_btn"))
+                else if ((string_pos("char_", _w.id) == 1) && variable_instance_exists(_menu_inst, "char_btn"))
                 {
                     var _char_btn = variable_instance_get(_menu_inst, "char_btn");
-                    var _ci = real(string_delete(_w.id, 1, 5));
+                    var _ci = -1;
+                    if (_w.id == "char_vocalist") _ci = 0;
+                    else if (_w.id == "char_guitarist") _ci = 1;
+                    else if (_w.id == "char_bassist") _ci = 2;
+                    else if (_w.id == "char_drummer") _ci = 3;
+                    else _ci = real(string_delete(_w.id, 1, 5));
+
                     if (is_array(_char_btn) && _ci >= 0 && _ci < array_length(_char_btn))
                     {
                         var _cb = _char_btn[_ci];
