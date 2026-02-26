@@ -140,8 +140,6 @@ var hit_exit    = (mx >= btn_exit.x    && mx <= btn_exit.x    + btn_exit.w    &&
 
 var hit_options_slider_track = false;
 var hit_options_slider_knob = false;
-// Legacy compatibility: treat "start" as story now (since menu is always expanded)
-var hit_start = hit_story;
 
 // Left-page difficulty hits (BEFORE pan)
 var hit_easyL   = (mx >= btn_easyL.x   && mx <= btn_easyL.x   + btn_easyL.w   && my >= btn_easyL.y   && my <= btn_easyL.y   + btn_easyL.h);
@@ -968,8 +966,8 @@ switch (menu_state)
 var gs = glow_speed;
 
 // Left menu glows
-var hov_start   = false; // no longer used on left page
-var hov_story   = (menu_state == 0) && hit_story;
+var hov_start   = (menu_state == 0) && hit_start;
+var hov_story   = (menu_state == 0) && start_open && hit_story;
 var hov_arcade  = (menu_state == 0) && start_open && hit_arcade;
 var hov_options = (menu_state == 0) && hit_options;
 var hov_game    = (menu_state == 0) && options_open && !menu_game_open && hit_game;

@@ -126,30 +126,37 @@ sel_main = 0;
 sel_opt  = 0;
 
 // ----------------------------
-// Layout (WORLD positions)
+// Layout (WORLD positions) — PAGE 1 LEFT COLUMN (Mockup 1)
 // ----------------------------
-var left_x = page_left_x + 90;
 
-var y_start  = 210;
-var y_story  = 320;
-var y_arcade = 430;
-var y_opts   = 550;
-var y_exit   = y_opts + 100;
+// Mockups are 2048x1152, game is 1920x1080 => uniform scale 0.9375
+// These values are already "game space" (1920x1080) approximations.
+var left_x = page_left_x + 80;
 
-// Main menu buttons
-btn_start   = { spr: menu_start,   x: left_x, y: y_start,  w: BTN_W, h: BTN_H };
+// Top-left aligned like the mockup text blocks
+var y_story  = 155;
+var y_arcade = 558;
+var y_opts   = 759;
+var y_exit   = 951;
+
+// Main menu buttons (page 1)
 btn_story   = { spr: menu_story,   x: left_x, y: y_story,  w: BTN_W, h: BTN_H };
 btn_arcade  = { spr: menu_arcade,  x: left_x, y: y_arcade, w: BTN_W, h: BTN_H };
-btn_options = { spr: menu_options, x: 220, y:600,   w: BTN_W, h: BTN_H };
-btn_newgame = { spr: spr_menu_newgame, x: left_x + 290, y: y_story + 0, w: BTN_W, h: BTN_H };
-btn_loadgame = { spr: spr_menu_loadgame, x: left_x + 290, y: y_story + 100, w: BTN_W, h: BTN_H };
+btn_options = { spr: menu_options, x: left_x, y: y_opts,   w: BTN_W, h: BTN_H };
+btn_exit    = { spr: menu_exit,    x: left_x, y: y_exit,   w: BTN_W, h: BTN_H };
+
+// Story submenu (will tune later; placeholder positions near story)
+btn_newgame  = { spr: spr_menu_newgame,  x: left_x, y: y_story + 120, w: BTN_W, h: BTN_H };
+btn_loadgame = { spr: spr_menu_loadgame, x: left_x, y: y_story + 220, w: BTN_W, h: BTN_H };
+
+// Page right button (keep for now; we’ll position later)
 btn_page_right = { spr: menu_main, x: left_x + 620, y: y_exit + 40, w: BTN_W, h: BTN_H };
 
-var spr_menu_game = asset_get_index("menu_game");
+// If you still use btn_start anywhere, keep it defined but parked offscreen
+btn_start = { spr: menu_start, x: -9999, y: -9999, w: BTN_W, h: BTN_H };
 
-btn_game = { spr: spr_menu_game, x: left_x, y: y_opts + 100, w: BTN_W, h: BTN_H };
-btn_exit    = { spr: menu_exit,    x: left_x, y: y_exit + 10,   w: BTN_W, h: BTN_H };
-
+// Default: left menu is expanded on load
+start_open = true;
 // ----------------------------
 // ARCADE DIFFICULTY (LEFT PAGE — shows BEFORE pan)
 // ----------------------------
