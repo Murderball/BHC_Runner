@@ -343,3 +343,8 @@ lb_btn_y = 0;
 lb_btn_w = 0;
 lb_btn_h = 0;
 global.leaderboard_open = false;
+
+if (script_exists(scr_menu_layout_init))
+{
+    scr_menu_layout_init(id);
+}
