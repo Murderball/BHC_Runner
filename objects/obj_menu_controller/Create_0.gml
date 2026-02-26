@@ -32,25 +32,38 @@ diff_focus_back = false;
 view_w = display_get_gui_width();
 view_h = display_get_gui_height();
 
-// Camera bounds
-min_cam_x = 0;
-max_cam_x = max(0, room_width - view_w);
-min_cam_y = 0;
-max_cam_y = max(0, room_height - view_h);
+// Menu world is a fixed 3840x1080 (two 1920px pages side-by-side).
+MENU_WORLD_WIDTH = 3840;
+MENU_WORLD_HEIGHT = 1080;
+MENU_PAGE_WIDTH = 1920;
+MENU_PAGE_1_X = 0;
+MENU_PAGE_2_X = 1920;
 
-// Pages
-page_left_x  = 0;
-page_right_x = 1920;
-max_cam_x = page_right_x;
+// Note: we keep runtime camera math at 3840x1080 even if room size is authored differently.
+// Camera bounds for menu world math (do not zoom/scale UI; we only offset by camera X).
+min_cam_x = MENU_PAGE_1_X;
+max_cam_x = MENU_PAGE_2_X;
+min_cam_y = 0;
+max_cam_y = max(0, MENU_WORLD_HEIGHT - view_h);
+
+// Keep legacy names for compatibility with existing layout code.
+page_left_x = MENU_PAGE_1_X;
+page_right_x = MENU_PAGE_2_X;
 
 // Camera motion
-cam_x = page_left_x;
-cam_target_x = page_left_x;
-cam_y = 0;
-scroll_lerp = 0.14;
-global.menu_page_x = page_left_x;
-menu_page_x = page_left_x;
-menu_page_target_x = page_left_x;
+menu_cam_x = MENU_PAGE_1_X;
+menu_cam_target_x = MENU_PAGE_1_X;
+menu_cam_speed = 0.15;
+menu_cam_y = 0;
+
+// Legacy compatibility mirrors
+cam_x = menu_cam_x;
+cam_target_x = menu_cam_target_x;
+cam_y = menu_cam_y;
+scroll_lerp = menu_cam_speed;
+global.menu_page_x = menu_cam_x;
+menu_page_x = menu_cam_x;
+menu_page_target_x = menu_cam_target_x;
 
 // States: 0=left menu, 1=scrolling, 2=right page (LEVEL SELECT -> CHARACTER SELECT)
 MENU_STATE_INIT = 0;
@@ -325,8 +338,10 @@ if (variable_global_exists("menu_return_to_right") && global.menu_return_to_righ
 
     menu_state = 2;
 
-    cam_x = page_right_x;
-    cam_target_x = page_right_x;
+    menu_cam_x = MENU_PAGE_2_X;
+    menu_cam_target_x = MENU_PAGE_2_X;
+    cam_x = menu_cam_x;
+    cam_target_x = menu_cam_target_x;
 
     sel_char = global.char_id;
     picked_char_id = global.char_id;
