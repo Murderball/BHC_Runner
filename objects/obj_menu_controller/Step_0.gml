@@ -2,8 +2,10 @@
 
 // Camera safety
 if (!variable_instance_exists(id, "cam") || cam == noone) cam = view_camera[0];
-if (!variable_instance_exists(id, "cam_x")) cam_x = camera_get_view_x(cam);
-if (!variable_instance_exists(id, "cam_y")) cam_y = camera_get_view_y(cam);
+if (!variable_instance_exists(id, "menu_cam_x")) menu_cam_x = camera_get_view_x(cam);
+if (!variable_instance_exists(id, "menu_cam_target_x")) menu_cam_target_x = menu_cam_x;
+if (!variable_instance_exists(id, "menu_cam_speed")) menu_cam_speed = 0.15;
+if (!variable_instance_exists(id, "menu_cam_y")) menu_cam_y = 0;
 
 // Input
 var ok    = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space);
@@ -118,34 +120,42 @@ if (global.profile_panel_focus && !global.profile_ui_active)
 }
 
 if (variable_global_exists("menu_selected_room") && global.menu_selected_room != noone) global.profile_view_level_key = room_get_name(global.menu_selected_room);
-// Mouse WORLD coords
-var cx = camera_get_view_x(cam);
-var cy = camera_get_view_y(cam);
-var mx = device_mouse_x_to_gui(0) + cx;
-var my = device_mouse_y_to_gui(0) + cy;
 
 if (variable_global_exists("MENU_LAYOUT_EDIT_MODE") && global.MENU_LAYOUT_EDIT_MODE) return;
 if (variable_global_exists("menu_layout_editor_on") && global.menu_layout_editor_on) return;
 
-// Smooth camera
-cam_x = lerp(cam_x, cam_target_x, scroll_lerp);
-cam_x = clamp(cam_x, min_cam_x, max_cam_x);
-cam_y = clamp(cam_y, min_cam_y, max_cam_y);
-camera_set_view_pos(cam, cam_x, cam_y);
-menu_page_x = cam_x;
-menu_page_target_x = cam_target_x;
+// Smooth camera over a 3840x1080 world using a 1920px page slide.
+menu_cam_target_x = clamp(menu_cam_target_x, MENU_PAGE_1_X, MENU_PAGE_2_X);
+menu_cam_x = lerp(menu_cam_x, menu_cam_target_x, menu_cam_speed);
+if (abs(menu_cam_x - menu_cam_target_x) < 0.5) menu_cam_x = menu_cam_target_x;
+menu_cam_x = clamp(menu_cam_x, min_cam_x, max_cam_x);
+menu_cam_y = clamp(menu_cam_y, min_cam_y, max_cam_y);
+camera_set_view_pos(cam, menu_cam_x, menu_cam_y);
+
+// Legacy compatibility mirrors
+cam_x = menu_cam_x;
+cam_target_x = menu_cam_target_x;
+cam_y = menu_cam_y;
+menu_page_x = menu_cam_x;
+menu_page_target_x = menu_cam_target_x;
 global.menu_page_x = menu_page_x;
 
+// Mouse WORLD coords (GUI mouse + camera offset)
+var cx = menu_cam_x;
+var cy = 0;
+var mx_world = device_mouse_x_to_gui(0) + cx;
+var my_world = device_mouse_y_to_gui(0) + cy;
+
 // Hit checks (left menu)
-var hit_start      = scr_menu_widget_hit("btn_start", mx, my);
-var hit_story      = scr_menu_widget_hit("btn_story", mx, my);
-var hit_arcade     = scr_menu_widget_hit("btn_arcade", mx, my);
-var hit_options    = scr_menu_widget_hit("btn_options", mx, my);
-var hit_newgame    = scr_menu_widget_hit("btn_newgame", mx, my);
-var hit_loadgame   = scr_menu_widget_hit("btn_loadgame", mx, my);
-var hit_page_right = scr_menu_widget_hit("btn_page_right", mx, my);
-var hit_game       = scr_menu_widget_hit("btn_game", mx, my);
-var hit_exit       = scr_menu_widget_hit("btn_exit", mx, my);
+var hit_start      = scr_menu_widget_hit("btn_start", mx_world, my_world);
+var hit_story      = scr_menu_widget_hit("btn_story", mx_world, my_world);
+var hit_arcade     = scr_menu_widget_hit("btn_arcade", mx_world, my_world);
+var hit_options    = scr_menu_widget_hit("btn_options", mx_world, my_world);
+var hit_newgame    = scr_menu_widget_hit("btn_newgame", mx_world, my_world);
+var hit_loadgame   = scr_menu_widget_hit("btn_loadgame", mx_world, my_world);
+var hit_page_right = scr_menu_widget_hit("btn_page_right", mx_world, my_world);
+var hit_game       = scr_menu_widget_hit("btn_game", mx_world, my_world);
+var hit_exit       = scr_menu_widget_hit("btn_exit", mx_world, my_world);
 
 var hit_options_slider_track = false;
 var hit_options_slider_knob = false;
@@ -153,23 +163,23 @@ var hit_options_slider_knob = false;
 var hit_start = hit_story;
 
 // Left-page difficulty hits (BEFORE pan)
-var hit_easyL   = scr_menu_widget_hit("btn_easyL", mx, my);
-var hit_normalL = scr_menu_widget_hit("btn_normalL", mx, my);
-var hit_hardL   = scr_menu_widget_hit("btn_hardL", mx, my);
+var hit_easyL   = scr_menu_widget_hit("btn_easyL", mx_world, my_world);
+var hit_normalL = scr_menu_widget_hit("btn_normalL", mx_world, my_world);
+var hit_hardL   = scr_menu_widget_hit("btn_hardL", mx_world, my_world);
 
 // Right page hits
-var hit_back = scr_menu_widget_hit("btn_back", mx, my);
+var hit_back = scr_menu_widget_hit("btn_back", mx_world, my_world);
 
 // Upgrade + Play hits
-var hit_upgrade = scr_menu_widget_hit("btn_upgrade", mx, my);
-var hit_play    = scr_menu_widget_hit("btn_play", mx, my);
+var hit_upgrade = scr_menu_widget_hit("btn_upgrade", mx_world, my_world);
+var hit_play    = scr_menu_widget_hit("btn_play", mx_world, my_world);
 
 // NEW: Level hits (right page)
 var hit_level = array_create(array_length(level_btn), false);
 if (menu_state == 2) {
     for (var li = 0; li < array_length(level_btn); li++) {
         var lb = level_btn[li];
-        hit_level[li] = (mx >= lb.x && mx <= lb.x + lb.w && my >= lb.y && my <= lb.y + lb.h);
+        hit_level[li] = (mx_world >= lb.x && mx_world <= lb.x + lb.w && my_world >= lb.y && my_world <= lb.y + lb.h);
     }
 }
 
@@ -252,13 +262,13 @@ switch (menu_state)
         else if (hit_options) hovered_button_id = "options";
         else if (hit_page_right) hovered_button_id = "page_right";
 
-        var click_start = scr_menu_click(btn_start, "start", mx, my);
-        var click_story = scr_menu_click(btn_story, "story", mx, my);
-        var click_arcade = scr_menu_click(btn_arcade, "arcade", mx, my);
-        var click_options = scr_menu_click(btn_options, "options", mx, my);
-        var click_newgame = story_submenu_open && scr_menu_click(btn_newgame, "newgame", mx, my);
-        var click_loadgame = story_submenu_open && scr_menu_click(btn_loadgame, "loadgame", mx, my);
-        var click_page_right = scr_menu_click(btn_page_right, "page_right", mx, my);
+        var click_start = scr_menu_click(btn_start, "start", mx_world, my_world);
+        var click_story = scr_menu_click(btn_story, "story", mx_world, my_world);
+        var click_arcade = scr_menu_click(btn_arcade, "arcade", mx_world, my_world);
+        var click_options = scr_menu_click(btn_options, "options", mx_world, my_world);
+        var click_newgame = story_submenu_open && scr_menu_click(btn_newgame, "newgame", mx_world, my_world);
+        var click_loadgame = story_submenu_open && scr_menu_click(btn_loadgame, "loadgame", mx_world, my_world);
+        var click_page_right = scr_menu_click(btn_page_right, "page_right", mx_world, my_world);
 
         if (back)
         {
@@ -300,7 +310,7 @@ switch (menu_state)
                 story_submenu_open = false;
                 active_top_item = "none";
                 reset_right_page_state();
-                cam_target_x = page_right_x;
+                menu_cam_target_x = MENU_PAGE_2_X;
                 right_target_state = 2;
                 menu_state = 1;
             }
@@ -327,8 +337,8 @@ switch (menu_state)
 
             if (sel_opt == 0 && right && !menu_game_adjust) menu_game_adjust = true;
 
-            ui_mouse_x = mx;
-            ui_mouse_y = my;
+            ui_mouse_x = mx_world;
+            ui_mouse_y = my_world;
             ui_input_left = left;
             ui_input_right = right;
             var _options_widget = scr_menu_widget_get("btn_options");
@@ -377,8 +387,8 @@ switch (menu_state)
                 }
                 else
                 {
-                    var _in_options_panel = (mx >= options_panel_x && mx <= options_panel_x + options_panel_w && my >= options_panel_y && my <= options_panel_y + options_panel_h);
-                    var _in_options_owner = btn_hit(btn_options, mx, my);
+                    var _in_options_panel = (mx_world >= options_panel_x && mx_world <= options_panel_x + options_panel_w && my_world >= options_panel_y && my_world <= options_panel_y + options_panel_h);
+                    var _in_options_owner = btn_hit(btn_options, mx_world, my_world);
                     if (!_in_options_panel && !_in_options_owner && !hit_game && !hit_options_slider_track && !hit_options_slider_knob)
                     {
                         options_open = false;
@@ -459,14 +469,14 @@ switch (menu_state)
 
                     reset_right_page_state();
 					lb_open = false;
-                    cam_target_x = page_right_x;
+                    menu_cam_target_x = MENU_PAGE_2_X;
                     right_target_state = 2;
                     menu_state = 1;
                 }
                 else
                 {
-                    var _arcade_panel_hit = panel_hit_rect(spr_menu_arcade_ui_box, 900, 200, mx, my);
-                    var _arcade_owner_hit = btn_hit(btn_arcade, mx, my);
+                    var _arcade_panel_hit = panel_hit_rect(spr_menu_arcade_ui_box, 900, 200, mx_world, my_world);
+                    var _arcade_owner_hit = btn_hit(btn_arcade, mx_world, my_world);
                     if (!_arcade_panel_hit && !_arcade_owner_hit)
                     {
                         sel_diff = -1;
@@ -495,7 +505,7 @@ switch (menu_state)
 
                 reset_right_page_state();
 
-                cam_target_x = page_right_x;
+                menu_cam_target_x = MENU_PAGE_2_X;
                 right_target_state = 2;
                 menu_state = 1;
             }
@@ -622,7 +632,7 @@ switch (menu_state)
                     close_large_panels();
                     story_submenu_open = false;
                     active_top_item = "none";
-                    cam_target_x = page_right_x;
+                    menu_cam_target_x = MENU_PAGE_2_X;
                     right_target_state = 2;
                     menu_state = 1;
                 }
@@ -633,10 +643,10 @@ switch (menu_state)
                 sel_main = -1;
                 sel_opt = -1;
 
-                var _story_panel_hit = panel_hit_rect(spr_menu_newgame_ui_box, 900, 200, mx, my) || panel_hit_rect(spr_menu_story_ui_box, 900, 200, mx, my);
-                var _story_owner_or_items = btn_hit(btn_story, mx, my) || (story_submenu_open && (btn_hit(btn_newgame, mx, my) || btn_hit(btn_loadgame, mx, my)));
-                var _arcade_panel_hit2 = panel_hit_rect(spr_menu_arcade_ui_box, 900, 200, mx, my);
-                var _options_panel_hit2 = (mx >= options_panel_x && mx <= options_panel_x + options_panel_w && my >= options_panel_y && my <= options_panel_y + options_panel_h);
+                var _story_panel_hit = panel_hit_rect(spr_menu_newgame_ui_box, 900, 200, mx_world, my_world) || panel_hit_rect(spr_menu_story_ui_box, 900, 200, mx_world, my_world);
+                var _story_owner_or_items = btn_hit(btn_story, mx_world, my_world) || (story_submenu_open && (btn_hit(btn_newgame, mx_world, my_world) || btn_hit(btn_loadgame, mx_world, my_world)));
+                var _arcade_panel_hit2 = panel_hit_rect(spr_menu_arcade_ui_box, 900, 200, mx_world, my_world);
+                var _options_panel_hit2 = (mx_world >= options_panel_x && mx_world <= options_panel_x + options_panel_w && my_world >= options_panel_y && my_world <= options_panel_y + options_panel_h);
 
                 if ((new_game_panel_open || load_game_panel_open) && !_story_panel_hit && !_story_owner_or_items)
                 {
@@ -644,12 +654,12 @@ switch (menu_state)
                     story_submenu_open = true;
                     active_top_item = "story";
                 }
-                else if (arcade_diff_open && !_arcade_panel_hit2 && !btn_hit(btn_arcade, mx, my))
+                else if (arcade_diff_open && !_arcade_panel_hit2 && !btn_hit(btn_arcade, mx_world, my_world))
                 {
                     close_large_panels();
                     active_top_item = "none";
                 }
-                else if (options_open && !_options_panel_hit2 && !btn_hit(btn_options, mx, my))
+                else if (options_open && !_options_panel_hit2 && !btn_hit(btn_options, mx_world, my_world))
                 {
                     close_large_panels();
                     active_top_item = "none";
@@ -713,14 +723,15 @@ switch (menu_state)
 
     case 1: // scrolling
     {
-        if (back) { cam_target_x = page_left_x; close_large_panels(); story_submenu_open = false; active_top_item = "none"; }
+        if (back) { menu_cam_target_x = MENU_PAGE_1_X; close_large_panels(); story_submenu_open = false; active_top_item = "none"; }
 
-        if (abs(cam_x - cam_target_x) < 1)
+        if (abs(menu_cam_x - menu_cam_target_x) < 0.5)
         {
-            cam_x = cam_target_x;
-            camera_set_view_pos(cam, cam_x, cam_y);
+            menu_cam_x = menu_cam_target_x;
+            camera_set_view_pos(cam, menu_cam_x, menu_cam_y);
+            cam_x = menu_cam_x;
 
-            if (cam_target_x == page_right_x) menu_state = right_target_state;
+            if (menu_cam_target_x == MENU_PAGE_2_X) menu_state = right_target_state;
             else
             {
                 close_large_panels();
@@ -749,7 +760,7 @@ switch (menu_state)
             close_large_panels();
             story_submenu_open = false;
             active_top_item = "none";
-            cam_target_x = page_left_x;
+            menu_cam_target_x = MENU_PAGE_1_X;
             menu_state = 1;
             break;
         }
@@ -844,7 +855,7 @@ switch (menu_state)
                 for (var j = 0; j < array_length(char_btn); j++)
                 {
                     var bb = char_btn[j];
-                    if (mx >= bb.x && mx <= bb.x + bb.w && my >= bb.y && my <= bb.y + bb.h)
+                    if (mx_world >= bb.x && mx_world <= bb.x + bb.w && my_world >= bb.y && my_world <= bb.y + bb.h)
                     {
                         clicked_any = true;
 
@@ -879,7 +890,7 @@ switch (menu_state)
         if (cs_focus_back)
         {
             if (right) cs_focus_back = false;
-            if (ok) { cs_focus_back = false; cam_target_x = page_left_x; menu_state = 1; }
+            if (ok) { cs_focus_back = false; menu_cam_target_x = MENU_PAGE_1_X; menu_state = 1; }
             break;
         }
 
@@ -976,7 +987,7 @@ switch (menu_state)
                 for (var i = 0; i < array_length(char_btn); i++)
                 {
                     var b = char_btn[i];
-                    if (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h) {
+                    if (mx_world >= b.x && mx_world <= b.x + b.w && my_world >= b.y && my_world <= b.y + b.h) {
                         sel_char = b.id;
                     }
                 }
@@ -1029,10 +1040,10 @@ for (var gi = 0; gi < array_length(level_btn); gi++)
 // Character hovers (ONLY when level picked)
 var hov0=false, hov1=false, hov2=false, hov3=false;
 if (menu_state == 2 && level_picked && sel_char >= 0) {
-    var b0 = char_btn[0]; hov0 = (mx>=b0.x && mx<=b0.x+b0.w && my>=b0.y && my<=b0.y+b0.h);
-    var b1 = char_btn[1]; hov1 = (mx>=b1.x && mx<=b1.x+b1.w && my>=b1.y && my<=b1.y+b1.h);
-    var b2 = char_btn[2]; hov2 = (mx>=b2.x && mx<=b2.x+b2.w && my>=b2.y && my<=b2.y+b2.h);
-    var b3 = char_btn[3]; hov3 = (mx>=b3.x && mx<=b3.x+b3.w && my>=b3.y && my<=b3.y+b3.h);
+    var b0 = char_btn[0]; hov0 = (mx_world>=b0.x && mx_world<=b0.x+b0.w && my_world>=b0.y && my_world<=b0.y+b0.h);
+    var b1 = char_btn[1]; hov1 = (mx_world>=b1.x && mx_world<=b1.x+b1.w && my_world>=b1.y && my_world<=b1.y+b1.h);
+    var b2 = char_btn[2]; hov2 = (mx_world>=b2.x && mx_world<=b2.x+b2.w && my_world>=b2.y && my_world<=b2.y+b2.h);
+    var b3 = char_btn[3]; hov3 = (mx_world>=b3.x && mx_world<=b3.x+b3.w && my_world>=b3.y && my_world<=b3.y+b3.h);
 }
 
 var hov_upgrade = (menu_state == 2) && level_picked && char_picked && hit_upgrade;

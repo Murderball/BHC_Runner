@@ -2,8 +2,15 @@
 
 if (!variable_instance_exists(id, "cam") || cam == noone) cam = view_camera[0];
 
-var cx = camera_get_view_x(cam);
-var cy = camera_get_view_y(cam);
+var cx = variable_instance_exists(id, "menu_cam_x") ? menu_cam_x : camera_get_view_x(cam);
+var cy = 0;
+
+// 3840x1080 menu background is drawn in world space and shifted by cx only (no scaling/zoom).
+var spr_menu_background = asset_get_index("menu_background");
+if (spr_menu_background >= 0)
+{
+    draw_sprite(spr_menu_background, 0, 0 - cx, 0 - cy);
+}
 
 // Glow tuning
 var g_off = 2;
