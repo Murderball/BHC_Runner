@@ -29,8 +29,8 @@ cs_focus_play = false;
 diff_focus_back = false;
 
 // View size (viewport 0)
-view_w = 1366;
-view_h = 768;
+view_w = display_get_gui_width();
+view_h = display_get_gui_height();
 
 // Camera bounds
 min_cam_x = 0;
@@ -40,16 +40,29 @@ max_cam_y = max(0, room_height - view_h);
 
 // Pages
 page_left_x  = 0;
-page_right_x = max_cam_x;
+page_right_x = 1920;
+max_cam_x = page_right_x;
 
 // Camera motion
 cam_x = page_left_x;
 cam_target_x = page_left_x;
 cam_y = 0;
 scroll_lerp = 0.14;
+global.menu_page_x = page_left_x;
+menu_page_x = page_left_x;
+menu_page_target_x = page_left_x;
 
 // States: 0=left menu, 1=scrolling, 2=right page (LEVEL SELECT -> CHARACTER SELECT)
-menu_state = 0;
+MENU_STATE_INIT = 0;
+MENU_STATE_SCROLLING = 1;
+MENU_STATE_PAGE2 = 2;
+MENU_STATE_STORY_SUBMENU = 10;
+MENU_STATE_NEW_GAME_PANEL = 11;
+MENU_STATE_LOAD_GAME_PANEL = 12;
+MENU_STATE_ARCADE_PANEL = 13;
+MENU_STATE_OPTIONS_VOLUME_PANEL = 14;
+
+menu_state = MENU_STATE_INIT;
 right_target_state = 2;
 
 // Button size
@@ -58,6 +71,7 @@ BTN_H = 91;
 
 // Start submenu open/closed
 start_open = false;
+story_submenu_open = false;
 
 // Options submenu open/closed
 options_open = false;
@@ -86,6 +100,24 @@ options_slider_y = 0;
 
 // Arcade difficulty submenu open (LEFT page)
 arcade_diff_open = false;
+new_game_panel_open = false;
+load_game_panel_open = false;
+load_slot_sel = 0;
+options_volume_panel_open = false;
+debug_menu_overlay = false;
+hovered_button_id = "none";
+
+spr_menu_newgame = asset_get_index("menu_newgame");
+spr_menu_loadgame = asset_get_index("menu_loadgame");
+spr_menu_newgame_ui_box = asset_get_index("menu_newgame_ui_box");
+spr_menu_story_ui_box = asset_get_index("menu_story_ui_box");
+spr_menu_arcade_ui_box = asset_get_index("menu_arcade_ui_box");
+spr_menu_volume = asset_get_index("menu_volume");
+spr_menu_level_select = asset_get_index("menu_level_select");
+spr_menu_pointer = asset_get_index("menu_pointer");
+
+if (spr_menu_newgame < 0) spr_menu_newgame = menu_start;
+if (spr_menu_loadgame < 0) spr_menu_loadgame = menu_story;
 
 // Selection indices
 sel_main = 0;
@@ -107,6 +139,9 @@ btn_start   = { spr: menu_start,   x: left_x, y: y_start,  w: BTN_W, h: BTN_H };
 btn_story   = { spr: menu_story,   x: left_x, y: y_story,  w: BTN_W, h: BTN_H };
 btn_arcade  = { spr: menu_arcade,  x: left_x, y: y_arcade, w: BTN_W, h: BTN_H };
 btn_options = { spr: menu_options, x: 220, y:600,   w: BTN_W, h: BTN_H };
+btn_newgame = { spr: spr_menu_newgame, x: left_x + 290, y: y_story + 0, w: BTN_W, h: BTN_H };
+btn_loadgame = { spr: spr_menu_loadgame, x: left_x + 290, y: y_story + 100, w: BTN_W, h: BTN_H };
+btn_page_right = { spr: menu_main, x: left_x + 620, y: y_exit + 40, w: BTN_W, h: BTN_H };
 
 var spr_menu_game = asset_get_index("menu_game");
 
