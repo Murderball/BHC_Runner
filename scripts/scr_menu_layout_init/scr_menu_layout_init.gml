@@ -1,4 +1,4 @@
-function scr_menu_layout_init(_inst)
+function scr_menu_layout_init(_menu_inst)
 {
     function _widget_make(_id, _x, _y, _w, _h, _z, _visible, _draggable, _sprite, _draw_fn)
     {
@@ -16,32 +16,21 @@ function scr_menu_layout_init(_inst)
         };
     }
 
-    function _safe_inst_ref(_target_inst, _varname)
+    function _safe_inst_ref(_menu_inst, _varname)
     {
-        if (!instance_exists(_target_inst)) return noone;
-        if (!variable_instance_exists(_target_inst, _varname))
-        {
-            if (debug_mode) show_debug_message("[MENU LAYOUT] Missing ref: " + _varname + " using fallback defaults");
-            return noone;
-        }
+        if (!instance_exists(_menu_inst)) return noone;
+        if (!variable_instance_exists(_menu_inst, _varname)) return noone;
 
-        var _value = variable_instance_get(_target_inst, _varname);
-        if (is_undefined(_value) || _value == noone || !instance_exists(_value))
-        {
-            if (debug_mode) show_debug_message("[MENU LAYOUT] Missing ref: " + _varname + " using fallback defaults");
-            return noone;
-        }
-
-        return _value;
+        var v = variable_instance_get(_menu_inst, _varname);
+        if (is_undefined(v) || v == noone) return noone;
+        return instance_exists(v) ? v : noone;
     }
 
-    function _widget_from_btn(_id, _btn_inst, _default_x, _default_y, _z, _visible, _draggable, _default_sprite, _default_w, _default_h)
+    function _widget_from_btn(_id, _btn_inst, _x, _y, _z)
     {
-        var _spr = _default_sprite;
-        var _x = _default_x;
-        var _y = _default_y;
-        var _w = _default_w;
-        var _h = _default_h;
+        var _spr = -1;
+        var _w = 256;
+        var _h = 64;
 
         if (_btn_inst != noone && instance_exists(_btn_inst))
         {
@@ -49,15 +38,16 @@ function scr_menu_layout_init(_inst)
             _y = _btn_inst.y;
 
             if (variable_instance_exists(_btn_inst, "sprite_index")) _spr = _btn_inst.sprite_index;
-            if (variable_instance_exists(_btn_inst, "w")) _w = variable_instance_get(_btn_inst, "w");
-            if (variable_instance_exists(_btn_inst, "h")) _h = variable_instance_get(_btn_inst, "h");
-        }
-
-        if (is_undefined(_spr)) _spr = -1;
-        if (_spr >= 0)
-        {
-            _w = sprite_get_width(_spr);
-            _h = sprite_get_height(_spr);
+            if (_spr >= 0)
+            {
+                _w = sprite_get_width(_spr);
+                _h = sprite_get_height(_spr);
+            }
+            else
+            {
+                if (variable_instance_exists(_btn_inst, "w")) _w = variable_instance_get(_btn_inst, "w");
+                if (variable_instance_exists(_btn_inst, "h")) _h = variable_instance_get(_btn_inst, "h");
+            }
         }
 
         return _widget_make(
@@ -67,17 +57,17 @@ function scr_menu_layout_init(_inst)
             _w,
             _h,
             _z,
-            _visible,
-            _draggable,
+            true,
+            true,
             _spr,
             -1
         );
     }
 
-    function _register_btn_widget(_widgets, _id, _varname, _default_x, _default_y, _z)
+    function _register_btn_widget(_widgets_ref, _menu_inst, _id, _varname, _x, _y, _z)
     {
-        var _ref = _safe_inst_ref(_inst, _varname);
-        array_push(_widgets, _widget_from_btn(_id, _ref, _default_x, _default_y, _z, true, true, -1, 256, 64));
+        var _ref = _safe_inst_ref(_menu_inst, _varname);
+        array_push(_widgets_ref, _widget_from_btn(_id, _ref, _x, _y, _z));
     }
 
     function _apply_widget_pos(_target_inst, _varname, _x, _y)
@@ -94,53 +84,51 @@ function scr_menu_layout_init(_inst)
 
     var _widgets = [];
 
-    _register_btn_widget(_widgets, "btn_start", "btn_start", 960, 260, 10);
-    _register_btn_widget(_widgets, "btn_story", "btn_story", 960, 332, 20);
-    _register_btn_widget(_widgets, "btn_arcade", "btn_arcade", 960, 404, 20);
-    _register_btn_widget(_widgets, "btn_options", "btn_options", 960, 476, 10);
-    _register_btn_widget(_widgets, "btn_newgame", "btn_newgame", 960, 360, 30);
-    _register_btn_widget(_widgets, "btn_loadgame", "btn_loadgame", 960, 432, 30);
-    _register_btn_widget(_widgets, "btn_page_right", "btn_page_right", 1220, 650, 10);
+    _register_btn_widget(_widgets, _menu_inst, "btn_start", "btn_start", 960, 260, 10);
+    _register_btn_widget(_widgets, _menu_inst, "btn_story", "btn_story", 960, 332, 20);
+    _register_btn_widget(_widgets, _menu_inst, "btn_arcade", "btn_arcade", 960, 404, 20);
+    _register_btn_widget(_widgets, _menu_inst, "btn_options", "btn_options", 960, 476, 10);
+    _register_btn_widget(_widgets, _menu_inst, "btn_newgame", "btn_newgame", 960, 360, 30);
+    _register_btn_widget(_widgets, _menu_inst, "btn_loadgame", "btn_loadgame", 960, 432, 30);
+    _register_btn_widget(_widgets, _menu_inst, "btn_page_right", "btn_page_right", 1220, 650, 10);
 
-    var ref_btn_game = _safe_inst_ref(_inst, "btn_game");
-    array_push(_widgets, _widget_from_btn("btn_game", ref_btn_game, 960, 548, 15, true, true, -1, 256, 64));
+    var ref_btn_game = _safe_inst_ref(_menu_inst, "btn_game");
+    array_push(_widgets, _widget_from_btn("btn_game", ref_btn_game, 960, 548, 15));
 
-    _register_btn_widget(_widgets, "btn_exit", "btn_exit", 960, 620, 15);
-    _register_btn_widget(_widgets, "btn_easyL", "btn_easyL", 700, 300, 35);
-    _register_btn_widget(_widgets, "btn_normalL", "btn_normalL", 960, 300, 35);
-    _register_btn_widget(_widgets, "btn_hardL", "btn_hardL", 1220, 300, 35);
-    _register_btn_widget(_widgets, "btn_back", "btn_back", 120, 650, 100);
-    _register_btn_widget(_widgets, "btn_upgrade", "btn_upgrade", 1560, 650, 90);
-    _register_btn_widget(_widgets, "btn_play", "btn_play", 1760, 650, 90);
+    _register_btn_widget(_widgets, _menu_inst, "btn_exit", "btn_exit", 960, 620, 15);
+    _register_btn_widget(_widgets, _menu_inst, "btn_easyL", "btn_easyL", 700, 300, 35);
+    _register_btn_widget(_widgets, _menu_inst, "btn_normalL", "btn_normalL", 960, 300, 35);
+    _register_btn_widget(_widgets, _menu_inst, "btn_hardL", "btn_hardL", 1220, 300, 35);
+    _register_btn_widget(_widgets, _menu_inst, "btn_back", "btn_back", 120, 650, 100);
+    _register_btn_widget(_widgets, _menu_inst, "btn_upgrade", "btn_upgrade", 1560, 650, 90);
+    _register_btn_widget(_widgets, _menu_inst, "btn_play", "btn_play", 1760, 650, 90);
 
-    var _has_level_btn = variable_instance_exists(_inst, "level_btn");
+    var _has_level_btn = variable_instance_exists(_menu_inst, "level_btn");
     if (_has_level_btn)
     {
-        var _level_btn_arr = variable_instance_get(_inst, "level_btn");
+        var _level_btn_arr = variable_instance_get(_menu_inst, "level_btn");
         if (is_array(_level_btn_arr))
         {
             for (var _i = 0; _i < array_length(_level_btn_arr); _i++)
             {
                 var _level_ref = _level_btn_arr[_i];
                 var _level_valid = (!is_undefined(_level_ref) && _level_ref != noone && instance_exists(_level_ref));
-                if (!_level_valid && debug_mode) show_debug_message("[MENU LAYOUT] Missing ref: level_btn[" + string(_i) + "] using fallback defaults");
-                array_push(_widgets, _widget_from_btn("level_" + string(_i), _level_valid ? _level_ref : noone, 640 + ((_i mod 6) * 220), 200 + ((_i div 6) * 100), 70, true, true, -1, 256, 64));
+                array_push(_widgets, _widget_from_btn("level_" + string(_i), _level_valid ? _level_ref : noone, 640 + ((_i mod 6) * 220), 200 + ((_i div 6) * 100), 70));
             }
         }
     }
 
-    var _has_char_btn = variable_instance_exists(_inst, "char_btn");
+    var _has_char_btn = variable_instance_exists(_menu_inst, "char_btn");
     if (_has_char_btn)
     {
-        var _char_btn_arr = variable_instance_get(_inst, "char_btn");
+        var _char_btn_arr = variable_instance_get(_menu_inst, "char_btn");
         if (is_array(_char_btn_arr))
         {
             for (var _j = 0; _j < array_length(_char_btn_arr); _j++)
             {
                 var _char_ref = _char_btn_arr[_j];
                 var _char_valid = (!is_undefined(_char_ref) && _char_ref != noone && instance_exists(_char_ref));
-                if (!_char_valid && debug_mode) show_debug_message("[MENU LAYOUT] Missing ref: char_btn[" + string(_j) + "] using fallback defaults");
-                array_push(_widgets, _widget_from_btn("char_" + string(_j), _char_valid ? _char_ref : noone, 640 + ((_j mod 6) * 220), 500 + ((_j div 6) * 100), 80, true, true, -1, 256, 64));
+                array_push(_widgets, _widget_from_btn("char_" + string(_j), _char_valid ? _char_ref : noone, 640 + ((_j mod 6) * 220), 500 + ((_j div 6) * 100), 80));
             }
         }
     }
@@ -186,25 +174,25 @@ function scr_menu_layout_init(_inst)
         var _w = global.menu_ui[_wi];
         switch (_w.id)
         {
-            case "btn_start": _apply_widget_pos(_inst, "btn_start", _w.x, _w.y); break;
-            case "btn_story": _apply_widget_pos(_inst, "btn_story", _w.x, _w.y); break;
-            case "btn_arcade": _apply_widget_pos(_inst, "btn_arcade", _w.x, _w.y); break;
-            case "btn_options": _apply_widget_pos(_inst, "btn_options", _w.x, _w.y); break;
-            case "btn_newgame": _apply_widget_pos(_inst, "btn_newgame", _w.x, _w.y); break;
-            case "btn_loadgame": _apply_widget_pos(_inst, "btn_loadgame", _w.x, _w.y); break;
-            case "btn_page_right": _apply_widget_pos(_inst, "btn_page_right", _w.x, _w.y); break;
-            case "btn_game": _apply_widget_pos(_inst, "btn_game", _w.x, _w.y); break;
-            case "btn_exit": _apply_widget_pos(_inst, "btn_exit", _w.x, _w.y); break;
-            case "btn_easyL": _apply_widget_pos(_inst, "btn_easyL", _w.x, _w.y); break;
-            case "btn_normalL": _apply_widget_pos(_inst, "btn_normalL", _w.x, _w.y); break;
-            case "btn_hardL": _apply_widget_pos(_inst, "btn_hardL", _w.x, _w.y); break;
-            case "btn_back": _apply_widget_pos(_inst, "btn_back", _w.x, _w.y); break;
-            case "btn_upgrade": _apply_widget_pos(_inst, "btn_upgrade", _w.x, _w.y); break;
-            case "btn_play": _apply_widget_pos(_inst, "btn_play", _w.x, _w.y); break;
+            case "btn_start": _apply_widget_pos(_menu_inst, "btn_start", _w.x, _w.y); break;
+            case "btn_story": _apply_widget_pos(_menu_inst, "btn_story", _w.x, _w.y); break;
+            case "btn_arcade": _apply_widget_pos(_menu_inst, "btn_arcade", _w.x, _w.y); break;
+            case "btn_options": _apply_widget_pos(_menu_inst, "btn_options", _w.x, _w.y); break;
+            case "btn_newgame": _apply_widget_pos(_menu_inst, "btn_newgame", _w.x, _w.y); break;
+            case "btn_loadgame": _apply_widget_pos(_menu_inst, "btn_loadgame", _w.x, _w.y); break;
+            case "btn_page_right": _apply_widget_pos(_menu_inst, "btn_page_right", _w.x, _w.y); break;
+            case "btn_game": _apply_widget_pos(_menu_inst, "btn_game", _w.x, _w.y); break;
+            case "btn_exit": _apply_widget_pos(_menu_inst, "btn_exit", _w.x, _w.y); break;
+            case "btn_easyL": _apply_widget_pos(_menu_inst, "btn_easyL", _w.x, _w.y); break;
+            case "btn_normalL": _apply_widget_pos(_menu_inst, "btn_normalL", _w.x, _w.y); break;
+            case "btn_hardL": _apply_widget_pos(_menu_inst, "btn_hardL", _w.x, _w.y); break;
+            case "btn_back": _apply_widget_pos(_menu_inst, "btn_back", _w.x, _w.y); break;
+            case "btn_upgrade": _apply_widget_pos(_menu_inst, "btn_upgrade", _w.x, _w.y); break;
+            case "btn_play": _apply_widget_pos(_menu_inst, "btn_play", _w.x, _w.y); break;
             default:
-                if (string_pos("level_", _w.id) == 1 && variable_instance_exists(_inst, "level_btn"))
+                if (string_pos("level_", _w.id) == 1 && variable_instance_exists(_menu_inst, "level_btn"))
                 {
-                    var _level_btn = variable_instance_get(_inst, "level_btn");
+                    var _level_btn = variable_instance_get(_menu_inst, "level_btn");
                     var _li = real(string_delete(_w.id, 1, 6));
                     if (is_array(_level_btn) && _li >= 0 && _li < array_length(_level_btn))
                     {
@@ -216,9 +204,9 @@ function scr_menu_layout_init(_inst)
                         }
                     }
                 }
-                else if (string_pos("char_", _w.id) == 1 && variable_instance_exists(_inst, "char_btn"))
+                else if (string_pos("char_", _w.id) == 1 && variable_instance_exists(_menu_inst, "char_btn"))
                 {
-                    var _char_btn = variable_instance_get(_inst, "char_btn");
+                    var _char_btn = variable_instance_get(_menu_inst, "char_btn");
                     var _ci = real(string_delete(_w.id, 1, 5));
                     if (is_array(_char_btn) && _ci >= 0 && _ci < array_length(_char_btn))
                     {
