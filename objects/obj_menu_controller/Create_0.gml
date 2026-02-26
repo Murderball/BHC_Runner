@@ -106,6 +106,8 @@ load_slot_sel = 0;
 options_volume_panel_open = false;
 debug_menu_overlay = false;
 hovered_button_id = "none";
+menu_click_armed = "";
+active_top_item = "none";
 
 spr_menu_newgame = asset_get_index("menu_newgame");
 spr_menu_loadgame = asset_get_index("menu_loadgame");

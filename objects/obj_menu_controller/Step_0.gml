@@ -9,6 +9,7 @@ if (!variable_instance_exists(id, "cam_y")) cam_y = camera_get_view_y(cam);
 var ok    = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space);
 var back  = keyboard_check_pressed(vk_escape) || keyboard_check_pressed(vk_backspace);
 var click = mouse_check_button_pressed(mb_left);
+var click_release = mouse_check_button_released(mb_left);
 var click_consumed = false;
 
 // --------------------------------------------------
@@ -187,6 +188,44 @@ function reset_right_page_state()
     cs_focus_back = false;
 }
 
+function btn_hit(_btn, _mx, _my)
+{
+    return (_mx >= _btn.x && _mx <= _btn.x + _btn.w && _my >= _btn.y && _my <= _btn.y + _btn.h);
+}
+
+function scr_menu_click(_btn, _btn_id, _mx, _my)
+{
+    if (mouse_check_button_pressed(mb_left) && btn_hit(_btn, _mx, _my)) menu_click_armed = _btn_id;
+
+    if (mouse_check_button_released(mb_left))
+    {
+        var _clicked = (menu_click_armed == _btn_id) && btn_hit(_btn, _mx, _my);
+        if (menu_click_armed == _btn_id) menu_click_armed = "";
+        return _clicked;
+    }
+
+    return false;
+}
+
+function close_large_panels()
+{
+    new_game_panel_open = false;
+    load_game_panel_open = false;
+    arcade_diff_open = false;
+    options_open = false;
+    menu_game_open = false;
+    menu_game_adjust = false;
+    options_slider_drag = false;
+}
+
+function panel_hit_rect(_spr, _x, _y, _mx, _my)
+{
+    if (_spr < 0) return false;
+    var _w = sprite_get_width(_spr);
+    var _h = sprite_get_height(_spr);
+    return (_mx >= _x && _mx <= _x + _w && _my >= _y && _my <= _y + _h);
+}
+
 // --------------------------------------------------
 // STATE MACHINE
 // --------------------------------------------------
@@ -202,13 +241,27 @@ switch (menu_state)
         else if (hit_options) hovered_button_id = "options";
         else if (hit_page_right) hovered_button_id = "page_right";
 
+        var click_start = scr_menu_click(btn_start, "start", mx, my);
+        var click_story = scr_menu_click(btn_story, "story", mx, my);
+        var click_arcade = scr_menu_click(btn_arcade, "arcade", mx, my);
+        var click_options = scr_menu_click(btn_options, "options", mx, my);
+        var click_newgame = story_submenu_open && scr_menu_click(btn_newgame, "newgame", mx, my);
+        var click_loadgame = story_submenu_open && scr_menu_click(btn_loadgame, "loadgame", mx, my);
+        var click_page_right = scr_menu_click(btn_page_right, "page_right", mx, my);
+
         if (back)
         {
-            if (options_open) options_open = false;
-            else if (load_game_panel_open) load_game_panel_open = false;
-            else if (new_game_panel_open) new_game_panel_open = false;
-            else if (story_submenu_open) story_submenu_open = false;
-            else if (arcade_diff_open) arcade_diff_open = false;
+            if (new_game_panel_open || load_game_panel_open || arcade_diff_open || options_open)
+            {
+                close_large_panels();
+                if (active_top_item != "story") story_submenu_open = false;
+                active_top_item = story_submenu_open ? "story" : "none";
+            }
+            else if (story_submenu_open)
+            {
+                story_submenu_open = false;
+                active_top_item = "none";
+            }
             else if (start_open) { start_open = false; if (sel_main > 0) sel_main = 0; }
             else game_end();
         }
@@ -232,6 +285,9 @@ switch (menu_state)
                 }
 
                 global.game_mode = "story";
+                close_large_panels();
+                story_submenu_open = false;
+                active_top_item = "none";
                 reset_right_page_state();
                 cam_target_x = page_right_x;
                 right_target_state = 2;
@@ -275,19 +331,25 @@ switch (menu_state)
                 options_slider_drag = true;
             }
 
-            if (click && !click_consumed)
+            if (click_release && !click_consumed)
             {
                 if (hit_exit)
                 {
                     sel_opt = 1;
                     game_end();
                 }
-                else if (!hit_game && !hit_options_slider_track && !hit_options_slider_knob)
+                else
                 {
-                    options_open = false;
-                    menu_game_adjust = false;
-                    options_slider_drag = false;
-                    sel_opt = -1;
+                    var _in_options_panel = (mx >= options_panel_x && mx <= options_panel_x + options_panel_w && my >= options_panel_y && my <= options_panel_y + options_panel_h);
+                    var _in_options_owner = btn_hit(btn_options, mx, my);
+                    if (!_in_options_panel && !_in_options_owner && !hit_game && !hit_options_slider_track && !hit_options_slider_knob)
+                    {
+                        options_open = false;
+                        menu_game_adjust = false;
+                        options_slider_drag = false;
+                        sel_opt = -1;
+                        if (active_top_item == "options") active_top_item = "none";
+                    }
                 }
             }
 
@@ -314,6 +376,7 @@ switch (menu_state)
                     menu_game_open = false;
                     options_slider_drag = false;
                     sel_opt = -1;
+                    if (active_top_item == "options") active_top_item = "none";
                 }
             }
 
@@ -333,9 +396,16 @@ switch (menu_state)
             }
 
             // Click on diff chooses diff AND pans to right page
-            if (click && !click_consumed)
+            if (click_release && !click_consumed)
             {
                 var clicked_any = false;
+
+                if (click_arcade)
+                {
+                    arcade_diff_open = false;
+                    active_top_item = "none";
+                    break;
+                }
 
                 if (hit_easyL)   { clicked_any = true; sel_diff = 0; }
                 else if (hit_normalL) { clicked_any = true; sel_diff = 1; }
@@ -346,7 +416,9 @@ switch (menu_state)
                     apply_diff_from_index(sel_diff);
 
                     global.game_mode = "arcade";
-                    arcade_diff_open = false;
+                    close_large_panels();
+                    story_submenu_open = false;
+                    active_top_item = "none";
 
                     reset_right_page_state();
 					lb_open = false;
@@ -356,8 +428,14 @@ switch (menu_state)
                 }
                 else
                 {
-                    sel_diff = -1;
-                    arcade_diff_open = false;
+                    var _arcade_panel_hit = panel_hit_rect(spr_menu_arcade_ui_box, 900, 200, mx, my);
+                    var _arcade_owner_hit = btn_hit(btn_arcade, mx, my);
+                    if (!_arcade_panel_hit && !_arcade_owner_hit)
+                    {
+                        sel_diff = -1;
+                        arcade_diff_open = false;
+                        active_top_item = "none";
+                    }
                 }
                 break;
             }
@@ -374,7 +452,9 @@ switch (menu_state)
                 apply_diff_from_index(sel_diff);
 
                 global.game_mode = "arcade";
-                arcade_diff_open = false;
+                close_large_panels();
+                story_submenu_open = false;
+                active_top_item = "none";
 
                 reset_right_page_state();
 
@@ -413,75 +493,98 @@ switch (menu_state)
         if (down) sel_main = (sel_main + 1) mod count;
 
         // CLICK behavior
-        if (click && !click_consumed)
+        if (click_release && !click_consumed)
         {
             var clicked_any = false;
 
             if (!start_open)
             {
-                if (hit_start)   { clicked_any = true; start_open = true; sel_main = 1; }
-                else if (hit_options) { clicked_any = true; options_open = true; menu_game_open = false; sel_opt = 0; }
-            }
-            else
-            {
-                if (hit_start) { clicked_any = true; start_open = false; story_submenu_open = false; sel_main = 0; }
-                else if (hit_story)
+                if (click_start) { clicked_any = true; start_open = true; sel_main = 1; active_top_item = "none"; }
+                else if (click_options)
                 {
                     clicked_any = true;
-                    story_submenu_open = !story_submenu_open;
-                    new_game_panel_open = false;
-                    load_game_panel_open = false;
-                }
-                else if (hit_arcade)
-                {
-                    clicked_any = true;
-
-                    global.game_mode = "arcade";
-                    arcade_diff_open = true;
-
-                    var d = string_lower(string(global.difficulty));
-                    if (d == "easy") sel_diff = 0;
-                    else if (d == "hard") sel_diff = 2;
-                    else sel_diff = 1;
-
+                    close_large_panels();
                     story_submenu_open = false;
-                    new_game_panel_open = false;
-                    load_game_panel_open = false;
-                }
-                else if (hit_options)
-                {
-                    clicked_any = true;
                     options_open = true;
                     menu_game_open = false;
                     sel_opt = 0;
+                    active_top_item = "options";
+                }
+            }
+            else
+            {
+                if (click_start) { clicked_any = true; start_open = false; story_submenu_open = false; close_large_panels(); active_top_item = "none"; sel_main = 0; }
+                else if (click_story)
+                {
+                    clicked_any = true;
+                    close_large_panels();
+                    story_submenu_open = !story_submenu_open;
+                    active_top_item = story_submenu_open ? "story" : "none";
+                }
+                else if (click_arcade)
+                {
+                    clicked_any = true;
+                    var _toggle_arcade = (active_top_item == "arcade") && arcade_diff_open;
+                    close_large_panels();
                     story_submenu_open = false;
-                    new_game_panel_open = false;
-                    load_game_panel_open = false;
+                    if (!_toggle_arcade)
+                    {
+                        global.game_mode = "arcade";
+                        arcade_diff_open = true;
+                        var d = string_lower(string(global.difficulty));
+                        if (d == "easy") sel_diff = 0;
+                        else if (d == "hard") sel_diff = 2;
+                        else sel_diff = 1;
+                        active_top_item = "arcade";
+                    }
+                    else active_top_item = "none";
                 }
-                else if (story_submenu_open && hit_newgame)
+                else if (click_options)
                 {
                     clicked_any = true;
-                    new_game_panel_open = true;
-                    load_game_panel_open = false;
-                    global.game_mode = "story";
-                    global.DIFFICULTY = "normal";
-                    global.difficulty = "normal";
-                    reset_right_page_state();
-                    cam_target_x = page_right_x;
-                    right_target_state = 2;
-                    menu_state = 1;
+                    var _toggle_options = (active_top_item == "options") && options_open;
+                    close_large_panels();
+                    story_submenu_open = false;
+                    if (!_toggle_options)
+                    {
+                        options_open = true;
+                        menu_game_open = false;
+                        sel_opt = 0;
+                        active_top_item = "options";
+                    }
+                    else active_top_item = "none";
                 }
-                else if (story_submenu_open && hit_loadgame)
+                else if (story_submenu_open && click_newgame)
                 {
                     clicked_any = true;
-                    load_game_panel_open = true;
-                    new_game_panel_open = false;
-                    if (up) load_slot_sel = max(0, load_slot_sel - 1);
-                    if (down) load_slot_sel = min(2, load_slot_sel + 1);
+                    var _toggle_newgame = new_game_panel_open;
+                    close_large_panels();
+                    if (!_toggle_newgame)
+                    {
+                        new_game_panel_open = true;
+                        active_top_item = "story";
+                        global.game_mode = "story";
+                        global.DIFFICULTY = "normal";
+                        global.difficulty = "normal";
+                    }
                 }
-                else if (hit_page_right)
+                else if (story_submenu_open && click_loadgame)
                 {
                     clicked_any = true;
+                    var _toggle_loadgame = load_game_panel_open;
+                    close_large_panels();
+                    if (!_toggle_loadgame)
+                    {
+                        load_game_panel_open = true;
+                        active_top_item = "story";
+                    }
+                }
+                else if (click_page_right)
+                {
+                    clicked_any = true;
+                    close_large_panels();
+                    story_submenu_open = false;
+                    active_top_item = "none";
                     cam_target_x = page_right_x;
                     right_target_state = 2;
                     menu_state = 1;
@@ -492,7 +595,33 @@ switch (menu_state)
             {
                 sel_main = -1;
                 sel_opt = -1;
-                if (!hit_story && !hit_newgame && !hit_loadgame) story_submenu_open = false;
+
+                var _story_panel_hit = panel_hit_rect(spr_menu_newgame_ui_box, 900, 200, mx, my) || panel_hit_rect(spr_menu_story_ui_box, 900, 200, mx, my);
+                var _story_owner_or_items = btn_hit(btn_story, mx, my) || (story_submenu_open && (btn_hit(btn_newgame, mx, my) || btn_hit(btn_loadgame, mx, my)));
+                var _arcade_panel_hit2 = panel_hit_rect(spr_menu_arcade_ui_box, 900, 200, mx, my);
+                var _options_panel_hit2 = (mx >= options_panel_x && mx <= options_panel_x + options_panel_w && my >= options_panel_y && my <= options_panel_y + options_panel_h);
+
+                if ((new_game_panel_open || load_game_panel_open) && !_story_panel_hit && !_story_owner_or_items)
+                {
+                    close_large_panels();
+                    story_submenu_open = true;
+                    active_top_item = "story";
+                }
+                else if (arcade_diff_open && !_arcade_panel_hit2 && !btn_hit(btn_arcade, mx, my))
+                {
+                    close_large_panels();
+                    active_top_item = "none";
+                }
+                else if (options_open && !_options_panel_hit2 && !btn_hit(btn_options, mx, my))
+                {
+                    close_large_panels();
+                    active_top_item = "none";
+                }
+                else if (story_submenu_open && !_story_owner_or_items)
+                {
+                    story_submenu_open = false;
+                    active_top_item = "none";
+                }
             }
 
             break;
@@ -513,18 +642,14 @@ switch (menu_state)
                 if (sel_main == 0) { start_open = false; sel_main = 0; }
                 else if (sel_main == 1)
                 {
-                    global.game_mode = "story";
-                    global.DIFFICULTY = "normal";
-                    global.difficulty = "normal";
-
-                    reset_right_page_state();
-					lb_open = false;
-                    cam_target_x = page_right_x;
-                    right_target_state = 2;
-                    menu_state = 1;
+                    close_large_panels();
+                    story_submenu_open = !story_submenu_open;
+                    active_top_item = story_submenu_open ? "story" : "none";
                 }
                 else if (sel_main == 2)
                 {
+                    close_large_panels();
+                    story_submenu_open = false;
                     global.game_mode = "arcade";
                     arcade_diff_open = true;
 
@@ -532,43 +657,26 @@ switch (menu_state)
                     if (d2 == "easy") sel_diff = 0;
                     else if (d2 == "hard") sel_diff = 2;
                     else sel_diff = 1;
+                    active_top_item = "arcade";
                 }
                 else if (sel_main == 3)
                 {
+                    close_large_panels();
+                    story_submenu_open = false;
                     options_open = true;
                     menu_game_open = false;
                     sel_opt = 0;
+                    active_top_item = "options";
                 }
             }
         }
 
-        // quick right to go into story/arcade when submenu open
-        if (right && start_open)
-        {
-            if (sel_main == 1)
-            {
-                global.game_mode = "story";
-                global.DIFFICULTY = "normal";
-                global.difficulty = "normal";
-
-                reset_right_page_state();
-
-                cam_target_x = page_right_x;
-                right_target_state = 2;
-                menu_state = 1;
-            }
-            if (sel_main == 2)
-            {
-                global.game_mode = "arcade";
-                arcade_diff_open = true;
-            }
-        }
     }
     break;
 
     case 1: // scrolling
     {
-        if (back) cam_target_x = page_left_x;
+        if (back) { cam_target_x = page_left_x; close_large_panels(); story_submenu_open = false; active_top_item = "none"; }
 
         if (abs(cam_x - cam_target_x) < 1)
         {
@@ -576,7 +684,13 @@ switch (menu_state)
             camera_set_view_pos(cam, cam_x, cam_y);
 
             if (cam_target_x == page_right_x) menu_state = right_target_state;
-            else menu_state = 0;
+            else
+            {
+                close_large_panels();
+                story_submenu_open = false;
+                active_top_item = "none";
+                menu_state = 0;
+            }
         }
     }
     break;
@@ -584,7 +698,7 @@ switch (menu_state)
     case 2: // RIGHT PAGE: Level Select first -> then Character Select
     {
         // Back to left
-        if (back || (click && hit_back))
+        if (back || (click_release && hit_back))
         {
             // clear right-side focus/picks
             char_picked = false;
@@ -595,6 +709,9 @@ switch (menu_state)
             level_picked = false;
             sel_level = -1;
 
+            close_large_panels();
+            story_submenu_open = false;
+            active_top_item = "none";
             cam_target_x = page_left_x;
             menu_state = 1;
             break;
