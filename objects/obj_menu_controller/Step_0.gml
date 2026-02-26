@@ -124,6 +124,9 @@ var cy = camera_get_view_y(cam);
 var mx = device_mouse_x_to_gui(0) + cx;
 var my = device_mouse_y_to_gui(0) + cy;
 
+if (variable_global_exists("MENU_LAYOUT_EDIT_MODE") && global.MENU_LAYOUT_EDIT_MODE) return;
+if (variable_global_exists("menu_layout_editor_on") && global.menu_layout_editor_on) return;
+
 // Smooth camera
 cam_x = lerp(cam_x, cam_target_x, scroll_lerp);
 cam_x = clamp(cam_x, min_cam_x, max_cam_x);
@@ -134,15 +137,15 @@ menu_page_target_x = cam_target_x;
 global.menu_page_x = menu_page_x;
 
 // Hit checks (left menu)
-var hit_start   = (mx >= btn_start.x   && mx <= btn_start.x   + btn_start.w   && my >= btn_start.y   && my <= btn_start.y   + btn_start.h);
-var hit_story   = (mx >= btn_story.x   && mx <= btn_story.x   + btn_story.w   && my >= btn_story.y   && my <= btn_story.y   + btn_story.h);
-var hit_arcade  = (mx >= btn_arcade.x  && mx <= btn_arcade.x  + btn_arcade.w  && my >= btn_arcade.y  && my <= btn_arcade.y  + btn_arcade.h);
-var hit_options = (mx >= btn_options.x && mx <= btn_options.x + btn_options.w && my >= btn_options.y && my <= btn_options.y + btn_options.h);
-var hit_newgame = (mx >= btn_newgame.x && mx <= btn_newgame.x + btn_newgame.w && my >= btn_newgame.y && my <= btn_newgame.y + btn_newgame.h);
-var hit_loadgame = (mx >= btn_loadgame.x && mx <= btn_loadgame.x + btn_loadgame.w && my >= btn_loadgame.y && my <= btn_loadgame.y + btn_loadgame.h);
-var hit_page_right = (mx >= btn_page_right.x && mx <= btn_page_right.x + btn_page_right.w && my >= btn_page_right.y && my <= btn_page_right.y + btn_page_right.h);
-var hit_game    = (mx >= btn_game.x    && mx <= btn_game.x    + btn_game.w    && my >= btn_game.y    && my <= btn_game.y    + btn_game.h);
-var hit_exit    = (mx >= btn_exit.x    && mx <= btn_exit.x    + btn_exit.w    && my >= btn_exit.y    && my <= btn_exit.y    + btn_exit.h);
+var hit_start      = scr_menu_widget_hit("btn_start", mx, my);
+var hit_story      = scr_menu_widget_hit("btn_story", mx, my);
+var hit_arcade     = scr_menu_widget_hit("btn_arcade", mx, my);
+var hit_options    = scr_menu_widget_hit("btn_options", mx, my);
+var hit_newgame    = scr_menu_widget_hit("btn_newgame", mx, my);
+var hit_loadgame   = scr_menu_widget_hit("btn_loadgame", mx, my);
+var hit_page_right = scr_menu_widget_hit("btn_page_right", mx, my);
+var hit_game       = scr_menu_widget_hit("btn_game", mx, my);
+var hit_exit       = scr_menu_widget_hit("btn_exit", mx, my);
 
 var hit_options_slider_track = false;
 var hit_options_slider_knob = false;
@@ -150,16 +153,16 @@ var hit_options_slider_knob = false;
 var hit_start = hit_story;
 
 // Left-page difficulty hits (BEFORE pan)
-var hit_easyL   = (mx >= btn_easyL.x   && mx <= btn_easyL.x   + btn_easyL.w   && my >= btn_easyL.y   && my <= btn_easyL.y   + btn_easyL.h);
-var hit_normalL = (mx >= btn_normalL.x && mx <= btn_normalL.x + btn_normalL.w && my >= btn_normalL.y && my <= btn_normalL.y + btn_normalL.h);
-var hit_hardL   = (mx >= btn_hardL.x   && mx <= btn_hardL.x   + btn_hardL.w   && my >= btn_hardL.y   && my <= btn_hardL.y   + btn_hardL.h);
+var hit_easyL   = scr_menu_widget_hit("btn_easyL", mx, my);
+var hit_normalL = scr_menu_widget_hit("btn_normalL", mx, my);
+var hit_hardL   = scr_menu_widget_hit("btn_hardL", mx, my);
 
 // Right page hits
-var hit_back = (mx >= btn_back.x && mx <= btn_back.x + btn_back.w && my >= btn_back.y && my <= btn_back.y + btn_back.h);
+var hit_back = scr_menu_widget_hit("btn_back", mx, my);
 
 // Upgrade + Play hits
-var hit_upgrade = (mx >= btn_upgrade.x && mx <= btn_upgrade.x + btn_upgrade.w && my >= btn_upgrade.y && my <= btn_upgrade.y + btn_upgrade.h);
-var hit_play    = (mx >= btn_play.x    && mx <= btn_play.x    + btn_play.w    && my >= btn_play.y    && my <= btn_play.y    + btn_play.h);
+var hit_upgrade = scr_menu_widget_hit("btn_upgrade", mx, my);
+var hit_play    = scr_menu_widget_hit("btn_play", mx, my);
 
 // NEW: Level hits (right page)
 var hit_level = array_create(array_length(level_btn), false);
@@ -328,7 +331,33 @@ switch (menu_state)
             ui_mouse_y = my;
             ui_input_left = left;
             ui_input_right = right;
-            var _panel_state = scr_ui_master_volume_panel_update(btn_options.x, btn_options.y, btn_options.w, btn_options.h, sel_opt == 0);
+            var _options_widget = scr_menu_widget_get("btn_options");
+            var _panel_x = 960;
+            var _panel_y = 476;
+            var _panel_w = 256;
+            var _panel_h = 64;
+
+            if (variable_instance_exists(id, "btn_options"))
+            {
+                var _btn_options_ref = variable_instance_get(id, "btn_options");
+                if (!is_undefined(_btn_options_ref) && _btn_options_ref != noone && instance_exists(_btn_options_ref))
+                {
+                    _panel_x = variable_instance_exists(_btn_options_ref, "x") ? _btn_options_ref.x : _panel_x;
+                    _panel_y = variable_instance_exists(_btn_options_ref, "y") ? _btn_options_ref.y : _panel_y;
+                    _panel_w = variable_instance_exists(_btn_options_ref, "w") ? _btn_options_ref.w : _panel_w;
+                    _panel_h = variable_instance_exists(_btn_options_ref, "h") ? _btn_options_ref.h : _panel_h;
+                }
+            }
+
+            if (!is_undefined(_options_widget))
+            {
+                _panel_x = _options_widget.x;
+                _panel_y = _options_widget.y;
+                _panel_w = _options_widget.w;
+                _panel_h = _options_widget.h;
+            }
+
+            var _panel_state = scr_ui_master_volume_panel_update(_panel_x, _panel_y, _panel_w, _panel_h, sel_opt == 0);
             hit_options_slider_track = _panel_state.hit_track;
             hit_options_slider_knob = _panel_state.hit_knob;
 

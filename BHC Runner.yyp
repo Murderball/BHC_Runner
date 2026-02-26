@@ -673,6 +673,8 @@
     {"id":{"name":"scr_menu_layout_draw","path":"scripts/scr_menu_layout_draw/scr_menu_layout_draw.yy",},},
     {"id":{"name":"scr_menu_layout_editor_step","path":"scripts/scr_menu_layout_editor_step/scr_menu_layout_editor_step.yy",},},
     {"id":{"name":"scr_menu_layout_init","path":"scripts/scr_menu_layout_init/scr_menu_layout_init.yy",},},
+    {"id":{"name":"scr_menu_widget_get","path":"scripts/scr_menu_widget_get/scr_menu_widget_get.yy",},},
+    {"id":{"name":"scr_menu_widget_hit","path":"scripts/scr_menu_widget_hit/scr_menu_widget_hit.yy",},},
     {"id":{"name":"scr_move_and_collide","path":"scripts/scr_move_and_collide/scr_move_and_collide.yy",},},
     {"id":{"name":"scr_music_play","path":"scripts/scr_music_play/scr_music_play.yy",},},
     {"id":{"name":"scr_music_stop","path":"scripts/scr_music_stop/scr_music_stop.yy",},},
