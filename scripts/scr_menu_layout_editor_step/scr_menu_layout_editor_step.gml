@@ -140,6 +140,14 @@ function scr_menu_layout_editor_step(_inst)
         }
     }
 
+    var _id = _inst;
+    if (!variable_instance_exists(_id, "btn_game")) {
+        with (_id) {
+            var _spr = asset_get_index("menu_game");
+            btn_game = { spr: _spr, x: 0, y: 0, w: BTN_W, h: BTN_H };
+        }
+    }
+
     with (_inst)
     {
         for (var _wi = 0; _wi < array_length(global.menu_ui); _wi++)
