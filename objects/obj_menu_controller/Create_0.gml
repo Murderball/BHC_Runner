@@ -128,6 +128,7 @@ spr_menu_newgame_ui_box = asset_get_index("menu_newgame_ui_box");
 spr_menu_story_ui_box = asset_get_index("menu_story_ui_box");
 spr_menu_arcade_ui_box = asset_get_index("menu_arcade_ui_box");
 spr_menu_volume = asset_get_index("menu_volume");
+spr_menu_game = asset_get_index("menu_game");
 spr_menu_level_select = asset_get_index("menu_level_select");
 spr_menu_pointer = asset_get_index("menu_pointer");
 
@@ -156,6 +157,7 @@ var y_exit   = 951;
 btn_story   = { spr: menu_story,   x: left_x, y: y_story,  w: BTN_W, h: BTN_H };
 btn_arcade  = { spr: menu_arcade,  x: left_x, y: y_arcade, w: BTN_W, h: BTN_H };
 btn_options = { spr: menu_options, x: left_x, y: y_opts,   w: BTN_W, h: BTN_H };
+btn_game    = { spr: spr_menu_game, x: 0, y: 0, w: BTN_W, h: BTN_H };
 btn_exit    = { spr: menu_exit,    x: left_x, y: y_exit,   w: BTN_W, h: BTN_H };
 
 // Story submenu (will tune later; placeholder positions near story)
