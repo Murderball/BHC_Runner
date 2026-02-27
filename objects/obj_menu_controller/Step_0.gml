@@ -76,7 +76,7 @@ if (array_length(btns) > 0)
         {
             with (obj_menu_controller)
             {
-                scr_menu_button_action(button_role);
+                scr_menu_button_action(other.button_role);
             }
         }
     }
