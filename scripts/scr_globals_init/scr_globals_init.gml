@@ -196,6 +196,10 @@ function scr_globals_init()
     global.note_last_atk3_t = -1000000000;
     global.note_last_ult_t  = -1000000000;
 
+    if (!variable_global_exists("actions_inited")) global.actions_inited = false;
+    if (!variable_global_exists("action_defs")) global.action_defs = [];
+    if (script_exists(scr_actions_init)) scr_actions_init();
+
     // ====================================================
     // LANES / GUI
     // ====================================================
