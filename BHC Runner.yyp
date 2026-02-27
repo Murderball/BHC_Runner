@@ -673,6 +673,7 @@
     {"id":{"name":"scr_markers_wipe_file","path":"scripts/scr_markers_wipe_file/scr_markers_wipe_file.yy",},},
     {"id":{"name":"scr_master_keybind_debug_update","path":"scripts/scr_master_keybind_debug_update/scr_master_keybind_debug_update.yy",},},
     {"id":{"name":"scr_master_sections_build_chunk_ranges","path":"scripts/scr_master_sections_build_chunk_ranges/scr_master_sections_build_chunk_ranges.yy",},},
+    {"id":{"name":"scr_menu_button_action","path":"scripts/scr_menu_button_action/scr_menu_button_action.yy",},},
     {"id":{"name":"scr_menu_game_draw","path":"scripts/scr_menu_game_draw/scr_menu_game_draw.yy",},},
     {"id":{"name":"scr_menu_game_open","path":"scripts/scr_menu_game_open/scr_menu_game_open.yy",},},
     {"id":{"name":"scr_menu_game_update","path":"scripts/scr_menu_game_update/scr_menu_game_update.yy",},},

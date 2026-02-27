@@ -49,6 +49,7 @@
     {"name":"scr_audio_settings_save","order":8,"path":"scripts/scr_audio_settings_save/scr_audio_settings_save.yy",},
     {"name":"scr_globals_init","order":57,"path":"scripts/scr_globals_init/scr_globals_init.yy",},
     {"name":"scr_level3_master_sections_init","order":4,"path":"scripts/scr_level3_master_sections_init/scr_level3_master_sections_init.yy",},
+    {"name":"scr_menu_button_action","order":2,"path":"scripts/scr_menu_button_action/scr_menu_button_action.yy",},
     {"name":"scr_menu_game_draw","order":4,"path":"scripts/scr_menu_game_draw/scr_menu_game_draw.yy",},
     {"name":"scr_menu_game_update","order":1,"path":"scripts/scr_menu_game_update/scr_menu_game_update.yy",},
     {"name":"scr_music_play","order":1,"path":"scripts/scr_music_play/scr_music_play.yy",},

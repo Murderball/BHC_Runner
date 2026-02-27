@@ -6,8 +6,8 @@
   "name":"scr_menu_button_action",
   "parent":{
     "name":"Menus",
-    "path":"folders/Menus.yy"
+    "path":"folders/Menus.yy",
   },
   "resourceType":"GMScript",
-  "resourceVersion":"2.0"
+  "resourceVersion":"2.0",
 }
