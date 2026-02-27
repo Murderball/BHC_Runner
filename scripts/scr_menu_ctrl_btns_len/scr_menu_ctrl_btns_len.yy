@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_menu_ctrl_btns_len",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_menu_ctrl_btns_len",
+  "parent":{
+    "name":"Menus",
+    "path":"folders/Menus.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
