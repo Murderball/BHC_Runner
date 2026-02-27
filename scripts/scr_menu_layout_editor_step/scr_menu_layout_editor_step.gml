@@ -1,4 +1,4 @@
-function scr_menu_layout_editor_step(_inst)
+function scr_menu_layout_editor_step(inst)
 {
     if (room != rm_menu) return false;
 
@@ -55,32 +55,6 @@ function scr_menu_layout_editor_step(_inst)
         return -1;
     }
 
-    function _set_editor_page(_page)
-    {
-        global.menu_editor_page = clamp(_page, 0, 1);
-
-        var _target_x = _inst.page_left_x;
-        if (global.menu_editor_page == 1) _target_x = _inst.page_right_x;
-
-        _inst.cam_target_x = _target_x;
-
-        if (variable_instance_exists(_inst, "menu_cam_target_x")) _inst.menu_cam_target_x = _target_x;
-        if (variable_instance_exists(_inst, "menu_page_target_x")) _inst.menu_page_target_x = _target_x;
-        if (variable_instance_exists(_inst, "menu_cam_x")) _inst.menu_cam_x = _target_x;
-        if (variable_instance_exists(_inst, "cam_x")) _inst.cam_x = _target_x;
-        if (variable_instance_exists(_inst, "menu_page_x")) _inst.menu_page_x = _target_x;
-
-        if (variable_instance_exists(_inst, "cam") && _inst.cam != noone)
-        {
-            var _target_y = camera_get_view_y(_inst.cam);
-            if (variable_instance_exists(_inst, "menu_cam_y")) _target_y = _inst.menu_cam_y;
-            camera_set_view_pos(_inst.cam, _target_x, _target_y);
-        }
-
-        global.menu_layout_selected = "";
-        global.menu_layout_dragging = false;
-    }
-
     if (!variable_global_exists("menu_layout_editor_on")) global.menu_layout_editor_on = false;
     if (!variable_global_exists("menu_layout_selected")) global.menu_layout_selected = "";
     if (!variable_global_exists("menu_layout_dragging")) global.menu_layout_dragging = false;
@@ -99,7 +73,39 @@ function scr_menu_layout_editor_step(_inst)
         }
         else
         {
-            _set_editor_page(global.menu_editor_page);
+            global.menu_editor_page = clamp(global.menu_editor_page, 0, 1);
+
+            if (instance_exists(inst))
+            {
+                var _target_x = room_width * 0.5;
+
+                if (global.menu_editor_page == 0)
+                {
+                    if (variable_instance_exists(inst, "page_left_x")) _target_x = inst.page_left_x;
+                }
+                else
+                {
+                    if (variable_instance_exists(inst, "page_right_x")) _target_x = inst.page_right_x;
+                }
+
+                inst.cam_target_x = _target_x;
+
+                if (variable_instance_exists(inst, "menu_cam_target_x")) inst.menu_cam_target_x = _target_x;
+                if (variable_instance_exists(inst, "menu_page_target_x")) inst.menu_page_target_x = _target_x;
+                if (variable_instance_exists(inst, "menu_cam_x")) inst.menu_cam_x = _target_x;
+                if (variable_instance_exists(inst, "cam_x")) inst.cam_x = _target_x;
+                if (variable_instance_exists(inst, "menu_page_x")) inst.menu_page_x = _target_x;
+
+                if (variable_instance_exists(inst, "cam") && inst.cam != noone)
+                {
+                    var _target_y = camera_get_view_y(inst.cam);
+                    if (variable_instance_exists(inst, "menu_cam_y")) _target_y = inst.menu_cam_y;
+                    camera_set_view_pos(inst.cam, _target_x, _target_y);
+                }
+            }
+
+            global.menu_layout_selected = "";
+            global.menu_layout_dragging = false;
         }
     }
 
@@ -107,7 +113,39 @@ function scr_menu_layout_editor_step(_inst)
 
     if (keyboard_check_pressed(vk_tab))
     {
-        _set_editor_page(1 - global.menu_editor_page);
+        global.menu_editor_page = 1 - global.menu_editor_page;
+
+        if (instance_exists(inst))
+        {
+            var _target_x = room_width * 0.5;
+
+            if (global.menu_editor_page == 0)
+            {
+                if (variable_instance_exists(inst, "page_left_x")) _target_x = inst.page_left_x;
+            }
+            else
+            {
+                if (variable_instance_exists(inst, "page_right_x")) _target_x = inst.page_right_x;
+            }
+
+            inst.cam_target_x = _target_x;
+
+            if (variable_instance_exists(inst, "menu_cam_target_x")) inst.menu_cam_target_x = _target_x;
+            if (variable_instance_exists(inst, "menu_page_target_x")) inst.menu_page_target_x = _target_x;
+            if (variable_instance_exists(inst, "menu_cam_x")) inst.menu_cam_x = _target_x;
+            if (variable_instance_exists(inst, "cam_x")) inst.cam_x = _target_x;
+            if (variable_instance_exists(inst, "menu_page_x")) inst.menu_page_x = _target_x;
+
+            if (variable_instance_exists(inst, "cam") && inst.cam != noone)
+            {
+                var _target_y = camera_get_view_y(inst.cam);
+                if (variable_instance_exists(inst, "menu_cam_y")) _target_y = inst.menu_cam_y;
+                camera_set_view_pos(inst.cam, _target_x, _target_y);
+            }
+        }
+
+        global.menu_layout_selected = "";
+        global.menu_layout_dragging = false;
     }
 
     var _active_indices = _active_widget_indices(global.menu_editor_page);
@@ -163,8 +201,8 @@ function scr_menu_layout_editor_step(_inst)
         }
     }
 
-    var _cx = camera_get_view_x(_inst.cam);
-    var _cy = camera_get_view_y(_inst.cam);
+    var _cx = camera_get_view_x(inst.cam);
+    var _cy = camera_get_view_y(inst.cam);
     var _mx = device_mouse_x_to_gui(0) + _cx;
     var _my = device_mouse_y_to_gui(0) + _cy;
 
@@ -233,7 +271,7 @@ function scr_menu_layout_editor_step(_inst)
         }
     }
 
-    var _id = _inst;
+    var _id = inst;
     if (!variable_instance_exists(_id, "btn_game"))
     {
         with (_id)
@@ -243,7 +281,7 @@ function scr_menu_layout_editor_step(_inst)
         }
     }
 
-    with (_inst)
+    with (inst)
     {
         for (var _wi = 0; _wi < array_length(global.menu_ui); _wi++)
         {
