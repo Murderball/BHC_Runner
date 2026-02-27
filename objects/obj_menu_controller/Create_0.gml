@@ -65,6 +65,7 @@ global.menu_page_x = menu_cam_x;
 menu_page_x = menu_cam_x;
 menu_page_target_x = menu_cam_target_x;
 
+// FIX: init btns
 if (!variable_instance_exists(id, "btns") || !is_array(btns)) btns = [];
 
 // States: 0=left menu, 1=scrolling, 2=right page (LEVEL SELECT -> CHARACTER SELECT)
@@ -330,4 +331,3 @@ lb_btn_y = 0;
 lb_btn_w = 0;
 lb_btn_h = 0;
 global.leaderboard_open = false;
-

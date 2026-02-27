@@ -57,11 +57,18 @@ if (back)
     }
 }
 
-btns = array_create(0);
+// FIX: init btns
+if (!variable_instance_exists(id, "btns") || !is_array(btns)) btns = [];
+
+// Rebuild visible button list each step.
+btns = [];
+
+// FIX: correct scope
+var _ctl = id;
 with (obj_menu_button)
 {
-    var _visible = (button_page == 0 && other.menu_state == other.MENU_STATE_INIT) || (button_page == 1 && other.menu_state == other.MENU_STATE_PAGE2);
-    if (_visible) array_push(btns, id);
+    var _visible = (button_page == 0 && _ctl.menu_state == _ctl.MENU_STATE_INIT) || (button_page == 1 && _ctl.menu_state == _ctl.MENU_STATE_PAGE2);
+    if (_visible) array_push(_ctl.btns, id);
 }
 
 if (array_length(btns) > 0)
