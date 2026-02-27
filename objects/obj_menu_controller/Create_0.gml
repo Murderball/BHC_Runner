@@ -46,7 +46,7 @@ max_cam_x = MENU_PAGE_2_X;
 min_cam_y = 0;
 max_cam_y = max(0, MENU_WORLD_HEIGHT - view_h);
 
-// Keep legacy names for compatibility with existing layout code.
+// Legacy aliases used by menu camera/page math.
 page_left_x = MENU_PAGE_1_X;
 page_right_x = MENU_PAGE_2_X;
 
@@ -368,7 +368,3 @@ lb_btn_w = 0;
 lb_btn_h = 0;
 global.leaderboard_open = false;
 
-if (script_exists(scr_menu_layout_init))
-{
-    scr_menu_layout_init(id);
-}

@@ -14,12 +14,6 @@ var click = mouse_check_button_pressed(mb_left);
 var click_release = mouse_check_button_released(mb_left);
 var click_consumed = false;
 
-if (script_exists(scr_menu_layout_editor_step))
-{
-    var _layout_editor_active = scr_menu_layout_editor_step(id);
-    if (_layout_editor_active) return;
-}
-
 // --------------------------------------------------
 // Leaderboard button (GUI) toggle handling
 // --------------------------------------------------
@@ -120,9 +114,6 @@ if (global.profile_panel_focus && !global.profile_ui_active)
 }
 
 if (variable_global_exists("menu_selected_room") && global.menu_selected_room != noone) global.profile_view_level_key = room_get_name(global.menu_selected_room);
-
-if (variable_global_exists("MENU_LAYOUT_EDIT_MODE") && global.MENU_LAYOUT_EDIT_MODE) return;
-if (variable_global_exists("menu_layout_editor_on") && global.menu_layout_editor_on) return;
 
 // Smooth camera over a 3840x1080 world using a 1920px page slide.
 menu_cam_target_x = clamp(menu_cam_target_x, MENU_PAGE_1_X, MENU_PAGE_2_X);

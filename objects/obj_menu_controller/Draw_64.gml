@@ -221,7 +221,3 @@ if (debug_menu_overlay)
     draw_text(24, 68, "hover: " + string(hovered_button_id));
 }
 
-if (script_exists(scr_menu_layout_draw))
-{
-    scr_menu_layout_draw(id);
-}
