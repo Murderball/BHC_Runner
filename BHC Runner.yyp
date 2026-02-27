@@ -291,6 +291,7 @@
     {"id":{"name":"obj_input_recorder_machine","path":"objects/obj_input_recorder_machine/obj_input_recorder_machine.yy",},},
     {"id":{"name":"obj_lightning_strike","path":"objects/obj_lightning_strike/obj_lightning_strike.yy",},},
     {"id":{"name":"obj_loading_controller","path":"objects/obj_loading_controller/obj_loading_controller.yy",},},
+    {"id":{"name":"obj_menu_button","path":"objects/obj_menu_button/obj_menu_button.yy",},},
     {"id":{"name":"obj_menu_controller","path":"objects/obj_menu_controller/obj_menu_controller.yy",},},
     {"id":{"name":"obj_menu_display_fullscreen","path":"objects/obj_menu_display_fullscreen/obj_menu_display_fullscreen.yy",},},
     {"id":{"name":"obj_pause_menu","path":"objects/obj_pause_menu/obj_pause_menu.yy",},},

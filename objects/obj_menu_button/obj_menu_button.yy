@@ -2,14 +2,17 @@
   "$GMObject":"",
   "%Name":"obj_menu_button",
   "eventList":[
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0"},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0"},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":64,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0"}
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":64,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
   "name":"obj_menu_button",
   "overriddenProperties":[],
-  "parent":{"name":"Menus","path":"folders/Menus.yy"},
+  "parent":{
+    "name":"Menus",
+    "path":"folders/Menus.yy",
+  },
   "parentObjectId":null,
   "persistent":false,
   "physicsAngularDamping":0.1,
@@ -24,14 +27,11 @@
   "physicsShape":1,
   "physicsShapePoints":[],
   "physicsStartAwake":true,
-  "properties":[
-    {"$GMObjectProperty":"v1","%Name":"button_role","filters":[],"listItems":[],"multiselect":false,"name":"button_role","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resource":{"name":"","path":""},"resourceFilter":"","value":"\"\"","varType":2},
-    {"$GMObjectProperty":"v1","%Name":"button_page","filters":[],"listItems":[],"multiselect":false,"name":"button_page","rangeEnabled":true,"rangeMax":1.0,"rangeMin":0.0,"resource":{"name":"","path":""},"resourceFilter":"","value":"0","varType":1}
-  ],
+  "properties":[],
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":null,
   "spriteMaskId":null,
-  "visible":true
+  "visible":true,
 }
