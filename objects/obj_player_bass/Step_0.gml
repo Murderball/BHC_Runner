@@ -117,230 +117,32 @@ if (paused)
 
 if (!global.editor_on)
 {
-    duck_timer = max(0, duck_timer - 1);
+    var _fps = max(1, game_get_speed(gamespeed_fps));
+    var _dt_s = 1 / _fps;
+    if (script_exists(scr_actions_update)) scr_actions_update(_dt_s);
 
-    var was_grounded = grounded;
-    var foot_x = (bbox_left + bbox_right) * 0.5;
-    var grounded_now = scr_solid_at(foot_x, bbox_bottom + 1);
-    var can_jump = was_grounded || grounded_now;
-
-    if (global.in_jump && can_jump)
-    {
-        var judgeJ = scr_try_trigger(global.ACT_JUMP);
-        global.last_jump_judge = judgeJ;
-        if (judgeJ != "miss") scr_perf_grade(judgeJ);
-
-        if (script_exists(scr_player_unstick_y)) scr_player_unstick_y(id);
-        vsp = jump_v;
-        grounded = false;
-
-        lock_anim("jump", ceil(game_get_speed(gamespeed_fps) * 0.10));
+    if (global.in_jump) {
+        if (script_exists(scr_action_try)) scr_action_try(ACT.JUMP);
     }
 
-    if (global.in_duck || (variable_global_exists("hold_duck") && global.hold_duck))
-    {
-        if (global.in_duck)
-        {
-            var judgeD = scr_try_trigger(global.ACT_DUCK);
-            global.last_duck_judge = judgeD;
-            if (judgeD != "miss") scr_perf_grade(judgeD);
-        }
-        duck_timer = max(duck_timer, ceil(game_get_speed(gamespeed_fps) * 0.20));
+    if (global.in_duck || (variable_global_exists("hold_duck") && global.hold_duck)) {
+        if (script_exists(scr_action_try)) scr_action_try(ACT.DUCK);
     }
 
-    // --- ATK1 ---
-    if (global.in_atk1)
-    {
-        var judgeA1 = scr_try_trigger(global.ACT_ATK1);
-        global.last_atk1_judge = judgeA1;
-        if (judgeA1 != "miss") {
-            scr_perf_grade(judgeA1);
-            atk_flash_t = 0.12;
-            atk_flash_color = c_black;
-        }
-
-        lock_anim("attack", ceil(game_get_speed(gamespeed_fps) * 0.15));
-
-        var dmg1 = 1;
-        if (judgeA1 == "perfect") dmg1 = 3;
-        else if (judgeA1 == "good") dmg1 = 2;
-
-        var cam_x = camera_get_view_x(cam);
-        var cam_y = camera_get_view_y(cam);
-
-        var zoom = 1.0;
-        if (instance_exists(obj_camera) && variable_instance_exists(obj_camera, "cam_zoom")) zoom = obj_camera.cam_zoom;
-
-		// Fire point in ROOM space, anchored to bbox (origin-safe)
-		var fire_x_room = bbox_left + 24;
-		var fire_y_room = bbox_top  + 75;
-
-		// Convert to GUI space
-		var ox = (fire_x_room - cam_x) * zoom;
-		var oy = (fire_y_room - cam_y) * zoom;
-
-        var tgt = scr_find_nearest_enemy_gui(ox, oy, 2500);
-
-        var dir = 0;
-        if (instance_exists(tgt))
-        {
-            var tp = scr_enemy_gui_pos(tgt);
-            dir = point_direction(ox, oy, tp.x, tp.y);
-        }
-
-		var p = instance_create_layer(fire_x_room, fire_y_room, "Instances", obj_proj_guitar);
-        p.gui_x = ox; p.gui_y = oy;
-        p.target = tgt; p.homing = instance_exists(tgt);
-
-        var spd = 900;
-        p.speed_gui = spd;
-        p.gui_vx = lengthdir_x(spd, dir);
-        p.gui_vy = lengthdir_y(spd, dir);
-        p.dir = dir;
-
-        p.damage = dmg1;
-        p.life_max = 1.2;
-        p.proj_act = "atk1";
-        p.proj_color = c_aqua;
+    if (global.in_atk1) {
+        if (script_exists(scr_action_try)) scr_action_try(ACT.ATK1);
     }
 
-    // --- ATK2 ---
-    if (global.in_atk2)
-    {
-        var judgeA2 = scr_try_trigger(global.ACT_ATK2);
-        global.last_atk2_judge = judgeA2;
-        if (judgeA2 != "miss") {
-            scr_perf_grade(judgeA2);
-            atk_flash_t = 0.14;
-            atk_flash_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(global.ACT_ATK2) : make_color_rgb(0, 200, 255);
-        }
-
-        lock_anim("attack", ceil(game_get_speed(gamespeed_fps) * 0.15));
-
-        var dmg2 = 2;
-        if (judgeA2 == "perfect") dmg2 = 4;
-        else if (judgeA2 == "good") dmg2 = 3;
-
-        var cam_x2 = camera_get_view_x(cam);
-        var cam_y2 = camera_get_view_y(cam);
-
-        var zoom2 = 1.0;
-        if (instance_exists(obj_camera) && variable_instance_exists(obj_camera, "cam_zoom")) zoom2 = obj_camera.cam_zoom;
-
-		var fire_x_room2 = bbox_left + 24;
-		var fire_y_room2 = bbox_top  + 75;
-
-		var ox2 = (fire_x_room2 - cam_x2) * zoom2;
-		var oy2 = (fire_y_room2 - cam_y2) * zoom2;
-
-        var tgt2 = scr_find_nearest_enemy_gui(ox2, oy2, 2500);
-
-        var dir2 = 0;
-        if (instance_exists(tgt2))
-        {
-            var tp2 = scr_enemy_gui_pos(tgt2);
-            dir2 = point_direction(ox2, oy2, tp2.x, tp2.y);
-        }
-
-
-		var p2 = instance_create_layer(fire_x_room2, fire_y_room2, "Instances", obj_proj_guitar);
-        p2.gui_x = ox2; p2.gui_y = oy2;
-        p2.target = tgt2; p2.homing = instance_exists(tgt2);
-
-        var spd2 = 1050;
-        p2.speed_gui = spd2;
-        p2.gui_vx = lengthdir_x(spd2, dir2);
-        p2.gui_vy = lengthdir_y(spd2, dir2);
-        p2.dir = dir2;
-
-        p2.damage = dmg2;
-        p2.life_max = 1.2;
-        p2.pierce = true;
-        p2.proj_act = "atk2";
-        p2.proj_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(p2.proj_act) : make_color_rgb(0, 200, 255);
+    if (global.in_atk2) {
+        if (script_exists(scr_action_try)) scr_action_try(ACT.ATK2);
     }
 
-    // --- ATK3 ---
-    if (global.in_atk3)
-    {
-        var judgeA3 = scr_try_trigger(global.ACT_ATK3);
-        global.last_atk3_judge = judgeA3;
-        if (judgeA3 != "miss") {
-            scr_perf_grade(judgeA3);
-            atk_flash_t = 0.16;
-            atk_flash_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(global.ACT_ATK3) : make_color_rgb(190, 95, 255);
-        }
-
-        lock_anim("attack", ceil(game_get_speed(gamespeed_fps) * 0.15));
-
-        var dmg3 = 3;
-        if (judgeA3 == "perfect") dmg3 = 6;
-        else if (judgeA3 == "good") dmg3 = 4;
-
-        var cam_x3 = camera_get_view_x(cam);
-        var cam_y3 = camera_get_view_y(cam);
-
-        var zoom3 = 1.0;
-        if (instance_exists(obj_camera) && variable_instance_exists(obj_camera, "cam_zoom")) zoom3 = obj_camera.cam_zoom;
-
-		var fire_x_room3 = bbox_left + 24;
-		var fire_y_room3 = bbox_top  + 75;
-
-		var ox3 = (fire_x_room3 - cam_x3) * zoom3;
-		var oy3 = (fire_y_room3 - cam_y3) * zoom3;
-
-        var tgt3 = scr_find_nearest_enemy_gui(ox3, oy3, 2500);
-
-        var dir3 = 0;
-        if (instance_exists(tgt3))
-        {
-            var tp3 = scr_enemy_gui_pos(tgt3);
-            dir3 = point_direction(ox3, oy3, tp3.x, tp3.y);
-        }
-
-
-		var p3 = instance_create_layer(fire_x_room3, fire_y_room3, "Instances", obj_proj_guitar);
-        p3.gui_x = ox3; p3.gui_y = oy3;
-        p3.target = tgt3; p3.homing = instance_exists(tgt3);
-
-        var spd3 = 850;
-        p3.speed_gui = spd3;
-        p3.gui_vx = lengthdir_x(spd3, dir3);
-        p3.gui_vy = lengthdir_y(spd3, dir3);
-        p3.dir = dir3;
-
-        p3.damage = dmg3;
-        p3.life_max = 1.4;
-        p3.hit_radius = 22;
-        p3.proj_act = "atk3";
-        p3.proj_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(p3.proj_act) : make_color_rgb(190, 95, 255);
+    if (global.in_atk3) {
+        if (script_exists(scr_action_try)) scr_action_try(ACT.ATK3);
     }
-// --- ULT (manual OR note-triggered) ---
-    if (global.in_ult || global.in_ult_manual)
-    {
-        var judgeU = "miss";
 
-        // If we actually have an ult note in-window, grade it normally
-        if (global.in_ult)
-        {
-            judgeU = scr_try_trigger(global.ACT_ULT);
-        }
-
-        // If manual ult was pressed and there was no ult note, still fire (baseline)
-        if (judgeU == "miss" && global.in_ult_manual)
-        {
-            judgeU = "good";
-        }
-
-        global.last_ult_judge = judgeU;
-
-        if (judgeU != "miss")
-        {
-            scr_perf_grade(judgeU);
-            atk_flash_t = 0.20;
-            atk_flash_color = script_exists(scr_note_draw_color) ? scr_note_draw_color(global.ACT_ULT) : make_color_rgb(255, 170, 40);
-            if (script_exists(scr_player_ultimate_guitar)) scr_player_ultimate_guitar(id, judgeU);
-        }
+    if (global.in_ult || global.in_ult_manual) {
+        if (script_exists(scr_action_try)) scr_action_try(ACT.ULT);
     }
 }
 

@@ -66,3 +66,9 @@ atk_flash_color = c_black;
 
 just_spawned = true;
 sprite_index = SPR_IDLE;
+
+// 6-action runtime state
+char_id = CHAR.DRUM;
+act_cd = array_create(ACT.COUNT, 0);
+if (variable_instance_exists(id, "ultimate_meter")) ult_meter = clamp(ultimate_meter, 0, 100);
+else ult_meter = variable_instance_exists(id, "ult_meter") ? clamp(ult_meter, 0, 100) : 0;
