@@ -138,6 +138,8 @@ if (spr_menu_loadgame < 0) spr_menu_loadgame = menu_story;
 // Selection indices
 sel_main = 0;
 sel_opt  = 0;
+sel_index = 0;
+current_page = 0;
 
 // ----------------------------
 // Layout (WORLD positions) — PAGE 1 LEFT COLUMN (Mockup 1)
@@ -153,22 +155,6 @@ var y_arcade = 558;
 var y_opts   = 759;
 var y_exit   = 951;
 
-// Main menu buttons (page 1)
-btn_story   = { spr: menu_story,   x: left_x, y: y_story,  w: BTN_W, h: BTN_H };
-btn_arcade  = { spr: menu_arcade,  x: left_x, y: y_arcade, w: BTN_W, h: BTN_H };
-btn_options = { spr: menu_options, x: left_x, y: y_opts,   w: BTN_W, h: BTN_H };
-btn_game    = { spr: spr_menu_game, x: 0, y: 0, w: BTN_W, h: BTN_H };
-btn_exit    = { spr: menu_exit,    x: left_x, y: y_exit,   w: BTN_W, h: BTN_H };
-
-// Story submenu (will tune later; placeholder positions near story)
-btn_newgame  = { spr: spr_menu_newgame,  x: left_x, y: y_story + 120, w: BTN_W, h: BTN_H };
-btn_loadgame = { spr: spr_menu_loadgame, x: left_x, y: y_story + 220, w: BTN_W, h: BTN_H };
-
-// Page right button (keep for now; we’ll position later)
-btn_page_right = { spr: menu_main, x: left_x + 620, y: y_exit + 40, w: BTN_W, h: BTN_H };
-
-// If you still use btn_start anywhere, keep it defined but parked offscreen
-btn_start = { spr: menu_start, x: -9999, y: -9999, w: BTN_W, h: BTN_H };
 
 // Default: left menu is expanded on load
 start_open = true;
@@ -191,12 +177,6 @@ sel_diff = 1; // default highlight = normal
 // ----------------------------
 var UI_SHIFT_LEFT = 360; // tweak if needed
 
-// (your char buttons are hard-coded to match your art placement)
-char_btn = [];
-char_btn[0] = { spr: menu_vocalist,  x: 1500, y: 75,  w: 220, h: 78, id: 0 };
-char_btn[1] = { spr: menu_guitarist, x: 1520, y: 250, w: 220, h: 78, id: 1 };
-char_btn[2] = { spr: menu_bassist,   x: 1500, y: 450, w: 220, h: 78, id: 2 };
-char_btn[3] = { spr: menu_drummer,   x: 1520, y: 650, w: 220, h: 78, id: 3 };
 
 sel_char = 0;
 
@@ -286,28 +266,9 @@ btn_play = {
     h: BTN_H
 };
 
-// BACK button (right page)
-btn_back = {
-    spr: menu_back_esc,
-    x: page_right_x + 40,
-    y: view_h - BTN_H - 40,
-    w: BTN_W,
-    h: BTN_H
-};
 
 // Glows
-glow_start   = 0;
-glow_story   = 0;
-glow_arcade  = 0;
-glow_options = 0;
-glow_game    = 0;
-glow_exit    = 0;
 
-glow_back    = 0;
-glow_char0   = 0;
-glow_char1   = 0;
-glow_char2   = 0;
-glow_char3   = 0;
 
 glow_easyL   = 0;
 glow_normalL = 0;
