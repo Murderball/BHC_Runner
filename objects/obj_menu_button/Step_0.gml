@@ -27,9 +27,10 @@ if (visible_on_page && button_role != "" && (click && hover))
     }
 }
 
-if (visible_on_page && instance_exists(ctrl) && array_length(ctrl.btns) > 0)
+var btn_count = scr_menu_ctrl_btns_len(ctrl);
+if (visible_on_page && instance_exists(ctrl) && btn_count > 0)
 {
-    if (ctrl.sel_index >= 0 && ctrl.sel_index < array_length(ctrl.btns) && ctrl.btns[ctrl.sel_index] == id)
+    if (ctrl.sel_index >= 0 && ctrl.sel_index < btn_count && ctrl.btns[ctrl.sel_index] == id)
     {
         var ok = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space);
         if (ok && button_role != "")

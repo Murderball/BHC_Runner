@@ -65,6 +65,8 @@ global.menu_page_x = menu_cam_x;
 menu_page_x = menu_cam_x;
 menu_page_target_x = menu_cam_target_x;
 
+if (!variable_instance_exists(id, "btns") || !is_array(btns)) btns = [];
+
 // States: 0=left menu, 1=scrolling, 2=right page (LEVEL SELECT -> CHARACTER SELECT)
 MENU_STATE_INIT = 0;
 MENU_STATE_SCROLLING = 1;
