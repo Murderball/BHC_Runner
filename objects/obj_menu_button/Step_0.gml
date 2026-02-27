@@ -2,6 +2,7 @@
 var ctrl = instance_find(obj_menu_controller, 0);
 if (!instance_exists(ctrl)) exit;
 
+if (!is_string(button_role)) button_role = "";
 if (sprite_index != -1)
 {
     w = sprite_width;
@@ -18,7 +19,7 @@ hover = visible_on_page && point_in_rectangle(mx_world, my_world, x, y, x + w, y
 glow = lerp(glow, hover ? 1 : 0, 0.18);
 
 var click = mouse_check_button_pressed(mb_left);
-if (visible_on_page && (click && hover))
+if (visible_on_page && button_role != "" && (click && hover))
 {
     with (obj_menu_controller)
     {
@@ -31,7 +32,7 @@ if (visible_on_page && instance_exists(ctrl) && array_length(ctrl.btns) > 0)
     if (ctrl.sel_index >= 0 && ctrl.sel_index < array_length(ctrl.btns) && ctrl.btns[ctrl.sel_index] == id)
     {
         var ok = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space);
-        if (ok)
+        if (ok && button_role != "")
         {
             with (obj_menu_controller)
             {
