@@ -1,121 +1,23 @@
 /// obj_menu_controller : Step
 
-// Camera safety
 if (!variable_instance_exists(id, "cam") || cam == noone) cam = view_camera[0];
 if (!variable_instance_exists(id, "menu_cam_x")) menu_cam_x = camera_get_view_x(cam);
 if (!variable_instance_exists(id, "menu_cam_target_x")) menu_cam_target_x = menu_cam_x;
 if (!variable_instance_exists(id, "menu_cam_speed")) menu_cam_speed = 0.15;
 if (!variable_instance_exists(id, "menu_cam_y")) menu_cam_y = 0;
 
-// Input
-var ok    = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space);
-var back  = keyboard_check_pressed(vk_escape) || keyboard_check_pressed(vk_backspace);
-var click = mouse_check_button_pressed(mb_left);
-var click_release = mouse_check_button_released(mb_left);
-var click_consumed = false;
-
-// --------------------------------------------------
-// Leaderboard button (GUI) toggle handling
-// --------------------------------------------------
-
-if (sprite_exists(spr_leaderboard))
-{
-    var gui_w = display_get_gui_width();
-    var gui_h = display_get_gui_height();
-
-    lb_btn_w = sprite_get_width(spr_leaderboard);
-    lb_btn_h = sprite_get_height(spr_leaderboard);
-
-    // Move button 250px to the RIGHT from your current placement
-    lb_btn_x = (gui_w * 0.5) - (lb_btn_w * 0.5) - 50 + 250;
-    lb_btn_y = (gui_h * 0.5) - (lb_btn_h * 0.5);
-
-    var lb_mx = device_mouse_x_to_gui(0);
-    var lb_my = device_mouse_y_to_gui(0);
-
-    if (click && point_in_rectangle(lb_mx, lb_my, lb_btn_x, lb_btn_y, lb_btn_x + lb_btn_w, lb_btn_y + lb_btn_h))
-    {
-        lb_open = !lb_open;
-        global.leaderboard_open = lb_open;
-
-        click_consumed = true;
-        click = false;
-    }
-}
-
-var up    = keyboard_check_pressed(vk_up)    || keyboard_check_pressed(ord("W"));
-var down  = keyboard_check_pressed(vk_down)  || keyboard_check_pressed(ord("S"));
-var left  = keyboard_check_pressed(vk_left)  || keyboard_check_pressed(ord("A"));
-var right = keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"));
+var ok = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space);
+var back = keyboard_check_pressed(vk_escape) || keyboard_check_pressed(vk_backspace);
+var up = keyboard_check_pressed(vk_up) || keyboard_check_pressed(ord("W"));
+var down = keyboard_check_pressed(vk_down) || keyboard_check_pressed(ord("S"));
 if (keyboard_check_pressed(vk_f3)) debug_menu_overlay = !debug_menu_overlay;
 
-// Keyboard usage detection (marching ants)
-var held_dir =
-    keyboard_check(vk_up)    || keyboard_check(ord("W")) ||
-    keyboard_check(vk_down)  || keyboard_check(ord("S")) ||
-    keyboard_check(vk_left)  || keyboard_check(ord("A")) ||
-    keyboard_check(vk_right) || keyboard_check(ord("D"));
-
+var held_dir = keyboard_check(vk_up) || keyboard_check(ord("W")) || keyboard_check(vk_down) || keyboard_check(ord("S")) || keyboard_check(vk_left) || keyboard_check(ord("A")) || keyboard_check(vk_right) || keyboard_check(ord("D"));
 var used_kb = held_dir || ok || back;
 if (used_kb) kb_nav_timer = 90;
 if (kb_nav_timer > 0) kb_nav_timer--;
 kb_dash_phase = (kb_dash_phase + 1) & 15;
 
-// Profile panel controls (isolated)
-if (keyboard_check_pressed(vk_tab)) global.profile_panel_focus = !global.profile_panel_focus;
-
-if (global.profile_panel_focus && !global.profile_ui_active)
-{
-    if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A"))) {
-        if (variable_global_exists("profiles_data") && is_struct(global.profiles_data) && is_array(global.profiles_data.profiles)) {
-            var _idx = -1;
-            for (var _i = 0; _i < array_length(global.profiles_data.profiles); _i++) if (global.profiles_data.profiles[_i].id == global.profiles_data.active_profile_id) { _idx = _i; break; }
-            if (_idx >= 0) {
-                _idx = (_idx - 1 + array_length(global.profiles_data.profiles)) mod array_length(global.profiles_data.profiles);
-                if (script_exists(scr_profiles_set_active)) scr_profiles_set_active(global.profiles_data.profiles[_idx].id);
-                if (script_exists(scr_profiles_save)) scr_profiles_save();
-            }
-        }
-    }
-    if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"))) {
-        if (variable_global_exists("profiles_data") && is_struct(global.profiles_data) && is_array(global.profiles_data.profiles)) {
-            var _idx2 = -1;
-            for (var _j = 0; _j < array_length(global.profiles_data.profiles); _j++) if (global.profiles_data.profiles[_j].id == global.profiles_data.active_profile_id) { _idx2 = _j; break; }
-            if (_idx2 >= 0) {
-                _idx2 = (_idx2 + 1) mod array_length(global.profiles_data.profiles);
-                if (script_exists(scr_profiles_set_active)) scr_profiles_set_active(global.profiles_data.profiles[_idx2].id);
-                if (script_exists(scr_profiles_save)) scr_profiles_save();
-            }
-        }
-    }
-
-    if (keyboard_check_pressed(ord("N"))) {
-        global.profile_ui_active = true;
-        global.profile_ui_mode = "new";
-        global.profile_ui_text = "";
-        global.profile_ui_prev_keyboard_string = "";
-        keyboard_string = "";
-    }
-    if (keyboard_check_pressed(ord("R")) || keyboard_check_pressed(vk_enter)) {
-        var _p = script_exists(scr_profiles_get_active) ? scr_profiles_get_active() : undefined;
-        global.profile_ui_active = true;
-        global.profile_ui_mode = "rename";
-        global.profile_ui_text = is_struct(_p) ? string(_p.name) : "";
-        global.profile_ui_prev_keyboard_string = "";
-        keyboard_string = global.profile_ui_text;
-    }
-
-    var _diffs = ["easy", "normal", "hard"];
-    var _didx = 1;
-    for (var _di = 0; _di < array_length(_diffs); _di++) if (global.profile_view_difficulty == _diffs[_di]) { _didx = _di; break; }
-    if (keyboard_check_pressed(vk_up)) _didx = (_didx - 1 + array_length(_diffs)) mod array_length(_diffs);
-    if (keyboard_check_pressed(vk_down)) _didx = (_didx + 1) mod array_length(_diffs);
-    global.profile_view_difficulty = _diffs[_didx];
-}
-
-if (variable_global_exists("menu_selected_room") && global.menu_selected_room != noone) global.profile_view_level_key = room_get_name(global.menu_selected_room);
-
-// Smooth camera over a 3840x1080 world using a 1920px page slide.
 menu_cam_target_x = clamp(menu_cam_target_x, MENU_PAGE_1_X, MENU_PAGE_2_X);
 menu_cam_x = lerp(menu_cam_x, menu_cam_target_x, menu_cam_speed);
 if (abs(menu_cam_x - menu_cam_target_x) < 0.5) menu_cam_x = menu_cam_target_x;
@@ -123,7 +25,6 @@ menu_cam_x = clamp(menu_cam_x, min_cam_x, max_cam_x);
 menu_cam_y = clamp(menu_cam_y, min_cam_y, max_cam_y);
 camera_set_view_pos(cam, menu_cam_x, menu_cam_y);
 
-// Legacy compatibility mirrors
 cam_x = menu_cam_x;
 cam_target_x = menu_cam_target_x;
 cam_y = menu_cam_y;
@@ -131,932 +32,107 @@ menu_page_x = menu_cam_x;
 menu_page_target_x = menu_cam_target_x;
 global.menu_page_x = menu_page_x;
 
-// Mouse WORLD coords (GUI mouse + camera offset)
+if (menu_state == MENU_STATE_SCROLLING)
+{
+    if (abs(menu_cam_x - menu_cam_target_x) < 0.5)
+    {
+        menu_state = (menu_cam_target_x == MENU_PAGE_2_X) ? MENU_STATE_PAGE2 : MENU_STATE_INIT;
+    }
+}
+
+if (menu_state == MENU_STATE_INIT) current_page = 0;
+else if (menu_state == MENU_STATE_PAGE2) current_page = 1;
+
+if (back)
+{
+    if (menu_state == MENU_STATE_PAGE2)
+    {
+        cam_target_x = page_left_x;
+        menu_cam_target_x = page_left_x;
+        menu_state = MENU_STATE_SCROLLING;
+    }
+    else if (options_open)
+    {
+        options_open = false;
+    }
+}
+
+btns = array_create(0);
+with (obj_menu_button)
+{
+    var _visible = (button_page == 0 && other.menu_state == other.MENU_STATE_INIT) || (button_page == 1 && other.menu_state == other.MENU_STATE_PAGE2);
+    if (_visible) array_push(btns, id);
+}
+
+if (array_length(btns) > 0)
+{
+    sel_index = clamp(sel_index, 0, array_length(btns) - 1);
+    if (up) sel_index = (sel_index - 1 + array_length(btns)) mod array_length(btns);
+    if (down) sel_index = (sel_index + 1) mod array_length(btns);
+
+    if (ok)
+    {
+        with (btns[sel_index])
+        {
+            with (obj_menu_controller)
+            {
+                scr_menu_button_action(button_role);
+            }
+        }
+    }
+}
+
+// Right-page level select logic remains controller-owned
 var cx = menu_cam_x;
-var cy = 0;
 var mx_world = device_mouse_x_to_gui(0) + cx;
-var my_world = device_mouse_y_to_gui(0) + cy;
+var my_world = device_mouse_y_to_gui(0);
+var click = mouse_check_button_pressed(mb_left);
 
-// Hit checks (left menu)
-var hit_start      = scr_menu_widget_hit("btn_start", mx_world, my_world);
-var hit_story      = scr_menu_widget_hit("btn_story", mx_world, my_world);
-var hit_arcade     = scr_menu_widget_hit("btn_arcade", mx_world, my_world);
-var hit_options    = scr_menu_widget_hit("btn_options", mx_world, my_world);
-var hit_newgame    = scr_menu_widget_hit("btn_newgame", mx_world, my_world);
-var hit_loadgame   = scr_menu_widget_hit("btn_loadgame", mx_world, my_world);
-var hit_page_right = scr_menu_widget_hit("btn_page_right", mx_world, my_world);
-var hit_game       = scr_menu_widget_hit("btn_game", mx_world, my_world);
-var hit_exit       = scr_menu_widget_hit("btn_exit", mx_world, my_world);
+var hit_upgrade = (mx_world >= btn_upgrade.x && mx_world <= btn_upgrade.x + btn_upgrade.w && my_world >= btn_upgrade.y && my_world <= btn_upgrade.y + btn_upgrade.h);
+var hit_play = (mx_world >= btn_play.x && mx_world <= btn_play.x + btn_play.w && my_world >= btn_play.y && my_world <= btn_play.y + btn_play.h);
 
-var hit_options_slider_track = false;
-var hit_options_slider_knob = false;
-// Legacy compatibility: treat "start" as story now (since menu is always expanded)
-var hit_start = hit_story;
-
-// Left-page difficulty hits (BEFORE pan)
-var hit_easyL   = scr_menu_widget_hit("btn_easyL", mx_world, my_world);
-var hit_normalL = scr_menu_widget_hit("btn_normalL", mx_world, my_world);
-var hit_hardL   = scr_menu_widget_hit("btn_hardL", mx_world, my_world);
-
-// Right page hits
-var hit_back = scr_menu_widget_hit("btn_back", mx_world, my_world);
-
-// Upgrade + Play hits
-var hit_upgrade = scr_menu_widget_hit("btn_upgrade", mx_world, my_world);
-var hit_play    = scr_menu_widget_hit("btn_play", mx_world, my_world);
-
-// NEW: Level hits (right page)
 var hit_level = array_create(array_length(level_btn), false);
-if (menu_state == 2) {
-    for (var li = 0; li < array_length(level_btn); li++) {
+if (menu_state == MENU_STATE_PAGE2)
+{
+    for (var li = 0; li < array_length(level_btn); li++)
+    {
         var lb = level_btn[li];
         hit_level[li] = (mx_world >= lb.x && mx_world <= lb.x + lb.w && my_world >= lb.y && my_world <= lb.y + lb.h);
+
+        if (click && hit_level[li] && lb.enabled)
+        {
+            sel_level = li;
+            level_picked = true;
+            global.menu_selected_room = lb.room;
+            global.menu_selected_level_name = lb.name;
+        }
     }
-}
 
-// --------------------------------------------------
-// Helpers
-// --------------------------------------------------
-function apply_diff_from_index(_idx)
-{
-    var d = "normal";
-    if (_idx == 0) d = "easy";
-    else if (_idx == 2) d = "hard";
-    global.DIFFICULTY = d;
-    global.difficulty = d;
-}
-
-function reset_right_page_state()
-{
-    // Level must be chosen before character select is active
-    level_picked = false;
-    sel_level = -1;
-
-    // Reset character pick path
-    char_picked = false;
-    sel_char = -1;
-    cs_focus_upgrade = false;
-    cs_focus_play = false;
-    cs_focus_back = false;
-}
-
-function btn_hit(_btn, _mx, _my)
-{
-    return (_mx >= _btn.x && _mx <= _btn.x + _btn.w && _my >= _btn.y && _my <= _btn.y + _btn.h);
-}
-
-function scr_menu_click(_btn, _btn_id, _mx, _my)
-{
-    if (mouse_check_button_pressed(mb_left) && btn_hit(_btn, _mx, _my)) menu_click_armed = _btn_id;
-
-    if (mouse_check_button_released(mb_left))
+    if (click && level_picked && hit_upgrade)
     {
-        var _clicked = (menu_click_armed == _btn_id) && btn_hit(_btn, _mx, _my);
-        if (menu_click_armed == _btn_id) menu_click_armed = "";
-        return _clicked;
+        global.in_menu = false;
+        global.in_upgrade = true;
+        room_goto(rm_upgrade);
     }
 
-    return false;
-}
-
-function close_large_panels()
-{
-    new_game_panel_open = false;
-    load_game_panel_open = false;
-    arcade_diff_open = false;
-    options_open = false;
-    menu_game_open = false;
-    menu_game_adjust = false;
-    options_slider_drag = false;
-}
-
-function panel_hit_rect(_spr, _x, _y, _mx, _my)
-{
-    if (_spr < 0) return false;
-    var _w = sprite_get_width(_spr);
-    var _h = sprite_get_height(_spr);
-    return (_mx >= _x && _mx <= _x + _w && _my >= _y && _my <= _y + _h);
-}
-
-// --------------------------------------------------
-// STATE MACHINE
-// --------------------------------------------------
-switch (menu_state)
-{
-    case 0: // left menu
+    if (click && level_picked && hit_play)
     {
-        hovered_button_id = "none";
-        if (hit_story) hovered_button_id = "story";
-        else if (hit_newgame) hovered_button_id = "new_game";
-        else if (hit_loadgame) hovered_button_id = "load_game";
-        else if (hit_arcade) hovered_button_id = "arcade";
-        else if (hit_options) hovered_button_id = "options";
-        else if (hit_page_right) hovered_button_id = "page_right";
-
-        var click_start = scr_menu_click(btn_start, "start", mx_world, my_world);
-        var click_story = scr_menu_click(btn_story, "story", mx_world, my_world);
-        var click_arcade = scr_menu_click(btn_arcade, "arcade", mx_world, my_world);
-        var click_options = scr_menu_click(btn_options, "options", mx_world, my_world);
-        var click_newgame = story_submenu_open && scr_menu_click(btn_newgame, "newgame", mx_world, my_world);
-        var click_loadgame = story_submenu_open && scr_menu_click(btn_loadgame, "loadgame", mx_world, my_world);
-        var click_page_right = scr_menu_click(btn_page_right, "page_right", mx_world, my_world);
-
-        if (back)
-        {
-            if (new_game_panel_open || load_game_panel_open || arcade_diff_open || options_open)
-            {
-                close_large_panels();
-                if (active_top_item != "story") story_submenu_open = false;
-                active_top_item = story_submenu_open ? "story" : "none";
-            }
-            else if (story_submenu_open)
-            {
-                story_submenu_open = false;
-                active_top_item = "none";
-            }
-            else if (start_open) { start_open = false; if (sel_main > 0) sel_main = 0; }
-            else game_end();
-        }
-
-        if (load_game_panel_open)
-        {
-            if (up) load_slot_sel = max(0, load_slot_sel - 1);
-            if (down) load_slot_sel = min(2, load_slot_sel + 1);
-
-            if (ok)
-            {
-                if (variable_global_exists("profiles_data") && is_struct(global.profiles_data) && is_array(global.profiles_data.profiles))
-                {
-                    var _pc = array_length(global.profiles_data.profiles);
-                    if (_pc > 0)
-                    {
-                        var _pick = clamp(load_slot_sel, 0, _pc - 1);
-                        if (script_exists(scr_profiles_set_active)) scr_profiles_set_active(global.profiles_data.profiles[_pick].id);
-                        if (script_exists(scr_profiles_save)) scr_profiles_save();
-                    }
-                }
-
-                global.game_mode = "story";
-                close_large_panels();
-                story_submenu_open = false;
-                active_top_item = "none";
-                reset_right_page_state();
-                menu_cam_target_x = MENU_PAGE_2_X;
-                right_target_state = 2;
-                menu_state = 1;
-            }
-        }
-
-        // -----------------------------
-        // OPTIONS submenu (EXIT)
-        // -----------------------------
-        if (options_open)
-        {
-            if (used_kb && sel_opt < 0) sel_opt = 0;
-
-            if (kb_nav_timer <= 0)
-            {
-                if (hit_game) sel_opt = 0;
-                else if (hit_exit) sel_opt = 1;
-            }
-
-            if (!menu_game_adjust)
-            {
-                if (up) sel_opt = (sel_opt - 1 + 2) mod 2;
-                if (down) sel_opt = (sel_opt + 1) mod 2;
-            }
-
-            if (sel_opt == 0 && right && !menu_game_adjust) menu_game_adjust = true;
-
-            ui_mouse_x = mx_world;
-            ui_mouse_y = my_world;
-            ui_input_left = left;
-            ui_input_right = right;
-            var _options_widget = scr_menu_widget_get("btn_options");
-            var _panel_x = 960;
-            var _panel_y = 476;
-            var _panel_w = 256;
-            var _panel_h = 64;
-
-            if (variable_instance_exists(id, "btn_options"))
-            {
-                var _btn_options_ref = variable_instance_get(id, "btn_options");
-                if (!is_undefined(_btn_options_ref) && _btn_options_ref != noone && instance_exists(_btn_options_ref))
-                {
-                    _panel_x = variable_instance_exists(_btn_options_ref, "x") ? _btn_options_ref.x : _panel_x;
-                    _panel_y = variable_instance_exists(_btn_options_ref, "y") ? _btn_options_ref.y : _panel_y;
-                    _panel_w = variable_instance_exists(_btn_options_ref, "w") ? _btn_options_ref.w : _panel_w;
-                    _panel_h = variable_instance_exists(_btn_options_ref, "h") ? _btn_options_ref.h : _panel_h;
-                }
-            }
-
-            if (!is_undefined(_options_widget))
-            {
-                _panel_x = _options_widget.x;
-                _panel_y = _options_widget.y;
-                _panel_w = _options_widget.w;
-                _panel_h = _options_widget.h;
-            }
-
-            var _panel_state = scr_ui_master_volume_panel_update(_panel_x, _panel_y, _panel_w, _panel_h, sel_opt == 0);
-            hit_options_slider_track = _panel_state.hit_track;
-            hit_options_slider_knob = _panel_state.hit_knob;
-
-            if (mouse_check_button_pressed(mb_left) && (hit_options_slider_track || hit_options_slider_knob))
-            {
-                sel_opt = 0;
-                menu_game_adjust = true;
-                options_slider_drag = true;
-            }
-
-            if (click_release && !click_consumed)
-            {
-                if (hit_exit)
-                {
-                    sel_opt = 1;
-                    game_end();
-                }
-                else
-                {
-                    var _in_options_panel = (mx_world >= options_panel_x && mx_world <= options_panel_x + options_panel_w && my_world >= options_panel_y && my_world <= options_panel_y + options_panel_h);
-                    var _in_options_owner = btn_hit(btn_options, mx_world, my_world);
-                    if (!_in_options_panel && !_in_options_owner && !hit_game && !hit_options_slider_track && !hit_options_slider_knob)
-                    {
-                        options_open = false;
-                        menu_game_adjust = false;
-                        options_slider_drag = false;
-                        sel_opt = -1;
-                        if (active_top_item == "options") active_top_item = "none";
-                    }
-                }
-            }
-
-            if (ok)
-            {
-                if (sel_opt < 0) sel_opt = 0;
-
-                if (sel_opt == 0)
-                {
-                    menu_game_adjust = !menu_game_adjust;
-                }
-                else
-                {
-                    game_end();
-                }
-            }
-
-            if (back)
-            {
-                if (menu_game_adjust) menu_game_adjust = false;
-                else
-                {
-                    options_open = false;
-                    menu_game_open = false;
-                    options_slider_drag = false;
-                    sel_opt = -1;
-                    if (active_top_item == "options") active_top_item = "none";
-                }
-            }
-
-            break;
-        }
-
-        // -----------------------------
-        // Arcade difficulty submenu (LEFT PAGE — before pan)
-        // -----------------------------
-        if (arcade_diff_open)
-        {
-            if (kb_nav_timer <= 0)
-            {
-                if (hit_easyL) sel_diff = 0;
-                else if (hit_normalL) sel_diff = 1;
-                else if (hit_hardL) sel_diff = 2;
-            }
-
-            // Click on diff chooses diff AND pans to right page
-            if (click_release && !click_consumed)
-            {
-                var clicked_any = false;
-
-                if (click_arcade)
-                {
-                    arcade_diff_open = false;
-                    active_top_item = "none";
-                    break;
-                }
-
-                if (hit_easyL)   { clicked_any = true; sel_diff = 0; }
-                else if (hit_normalL) { clicked_any = true; sel_diff = 1; }
-                else if (hit_hardL)   { clicked_any = true; sel_diff = 2; }
-
-                if (clicked_any)
-                {
-                    apply_diff_from_index(sel_diff);
-
-                    global.game_mode = "arcade";
-                    close_large_panels();
-                    story_submenu_open = false;
-                    active_top_item = "none";
-
-                    reset_right_page_state();
-					lb_open = false;
-                    menu_cam_target_x = MENU_PAGE_2_X;
-                    right_target_state = 2;
-                    menu_state = 1;
-                }
-                else
-                {
-                    var _arcade_panel_hit = panel_hit_rect(spr_menu_arcade_ui_box, 900, 200, mx_world, my_world);
-                    var _arcade_owner_hit = btn_hit(btn_arcade, mx_world, my_world);
-                    if (!_arcade_panel_hit && !_arcade_owner_hit)
-                    {
-                        sel_diff = -1;
-                        arcade_diff_open = false;
-                        active_top_item = "none";
-                    }
-                }
-                break;
-            }
-
-            // Keyboard nav
-            if (used_kb && sel_diff < 0) sel_diff = 1;
-            if (up && sel_diff >= 0)   sel_diff = (sel_diff - 1 + 3) mod 3;
-            if (down && sel_diff >= 0) sel_diff = (sel_diff + 1) mod 3;
-
-            if (ok)
-            {
-                if (sel_diff < 0) break;
-
-                apply_diff_from_index(sel_diff);
-
-                global.game_mode = "arcade";
-                close_large_panels();
-                story_submenu_open = false;
-                active_top_item = "none";
-
-                reset_right_page_state();
-
-                menu_cam_target_x = MENU_PAGE_2_X;
-                right_target_state = 2;
-                menu_state = 1;
-            }
-
-            break;
-        }
-
-        // -----------------------------
-        // Main menu selection
-        // -----------------------------
-        var count = start_open ? 4 : 2;
-
-        if (kb_nav_timer <= 0)
-        {
-            if (start_open)
-            {
-                if (hit_start)   sel_main = 0;
-                else if (hit_story)   sel_main = 1;
-                else if (hit_arcade)  sel_main = 2;
-                else if (hit_options) sel_main = 3;
-            }
-            else
-            {
-                if (hit_start)   sel_main = 0;
-                else if (hit_options) sel_main = 1;
-            }
-        }
-
-        if (used_kb && sel_main < 0) sel_main = 0;
-
-        if (up)   sel_main = (sel_main - 1 + count) mod count;
-        if (down) sel_main = (sel_main + 1) mod count;
-
-        // CLICK behavior
-        if (click_release && !click_consumed)
-        {
-            var clicked_any = false;
-
-            if (!start_open)
-            {
-                if (click_start) { clicked_any = true; start_open = true; sel_main = 1; active_top_item = "none"; }
-                else if (click_options)
-                {
-                    clicked_any = true;
-                    close_large_panels();
-                    story_submenu_open = false;
-                    options_open = true;
-                    menu_game_open = false;
-                    sel_opt = 0;
-                    active_top_item = "options";
-                }
-            }
-            else
-            {
-                if (click_start) { clicked_any = true; start_open = false; story_submenu_open = false; close_large_panels(); active_top_item = "none"; sel_main = 0; }
-                else if (click_story)
-                {
-                    clicked_any = true;
-                    close_large_panels();
-                    story_submenu_open = !story_submenu_open;
-                    active_top_item = story_submenu_open ? "story" : "none";
-                }
-                else if (click_arcade)
-                {
-                    clicked_any = true;
-                    var _toggle_arcade = (active_top_item == "arcade") && arcade_diff_open;
-                    close_large_panels();
-                    story_submenu_open = false;
-                    if (!_toggle_arcade)
-                    {
-                        global.game_mode = "arcade";
-                        arcade_diff_open = true;
-                        var d = string_lower(string(global.difficulty));
-                        if (d == "easy") sel_diff = 0;
-                        else if (d == "hard") sel_diff = 2;
-                        else sel_diff = 1;
-                        active_top_item = "arcade";
-                    }
-                    else active_top_item = "none";
-                }
-                else if (click_options)
-                {
-                    clicked_any = true;
-                    var _toggle_options = (active_top_item == "options") && options_open;
-                    close_large_panels();
-                    story_submenu_open = false;
-                    if (!_toggle_options)
-                    {
-                        options_open = true;
-                        menu_game_open = false;
-                        sel_opt = 0;
-                        active_top_item = "options";
-                    }
-                    else active_top_item = "none";
-                }
-                else if (story_submenu_open && click_newgame)
-                {
-                    clicked_any = true;
-                    var _toggle_newgame = new_game_panel_open;
-                    close_large_panels();
-                    if (!_toggle_newgame)
-                    {
-                        new_game_panel_open = true;
-                        active_top_item = "story";
-                        global.game_mode = "story";
-                        global.DIFFICULTY = "normal";
-                        global.difficulty = "normal";
-                    }
-                }
-                else if (story_submenu_open && click_loadgame)
-                {
-                    clicked_any = true;
-                    var _toggle_loadgame = load_game_panel_open;
-                    close_large_panels();
-                    if (!_toggle_loadgame)
-                    {
-                        load_game_panel_open = true;
-                        active_top_item = "story";
-                    }
-                }
-                else if (click_page_right)
-                {
-                    clicked_any = true;
-                    close_large_panels();
-                    story_submenu_open = false;
-                    active_top_item = "none";
-                    menu_cam_target_x = MENU_PAGE_2_X;
-                    right_target_state = 2;
-                    menu_state = 1;
-                }
-            }
-
-            if (!clicked_any)
-            {
-                sel_main = -1;
-                sel_opt = -1;
-
-                var _story_panel_hit = panel_hit_rect(spr_menu_newgame_ui_box, 900, 200, mx_world, my_world) || panel_hit_rect(spr_menu_story_ui_box, 900, 200, mx_world, my_world);
-                var _story_owner_or_items = btn_hit(btn_story, mx_world, my_world) || (story_submenu_open && (btn_hit(btn_newgame, mx_world, my_world) || btn_hit(btn_loadgame, mx_world, my_world)));
-                var _arcade_panel_hit2 = panel_hit_rect(spr_menu_arcade_ui_box, 900, 200, mx_world, my_world);
-                var _options_panel_hit2 = (mx_world >= options_panel_x && mx_world <= options_panel_x + options_panel_w && my_world >= options_panel_y && my_world <= options_panel_y + options_panel_h);
-
-                if ((new_game_panel_open || load_game_panel_open) && !_story_panel_hit && !_story_owner_or_items)
-                {
-                    close_large_panels();
-                    story_submenu_open = true;
-                    active_top_item = "story";
-                }
-                else if (arcade_diff_open && !_arcade_panel_hit2 && !btn_hit(btn_arcade, mx_world, my_world))
-                {
-                    close_large_panels();
-                    active_top_item = "none";
-                }
-                else if (options_open && !_options_panel_hit2 && !btn_hit(btn_options, mx_world, my_world))
-                {
-                    close_large_panels();
-                    active_top_item = "none";
-                }
-                else if (story_submenu_open && !_story_owner_or_items)
-                {
-                    story_submenu_open = false;
-                    active_top_item = "none";
-                }
-            }
-
-            break;
-        }
-
-        // OK (keyboard)
-        if (ok)
-        {
-            if (sel_main < 0) break;
-
-            if (!start_open)
-            {
-                if (sel_main == 0) { start_open = true; sel_main = 1; }
-                else { options_open = true; menu_game_open = false; sel_opt = 0; }
-            }
-            else
-            {
-                if (sel_main == 0) { start_open = false; sel_main = 0; }
-                else if (sel_main == 1)
-                {
-                    close_large_panels();
-                    story_submenu_open = !story_submenu_open;
-                    active_top_item = story_submenu_open ? "story" : "none";
-                }
-                else if (sel_main == 2)
-                {
-                    close_large_panels();
-                    story_submenu_open = false;
-                    global.game_mode = "arcade";
-                    arcade_diff_open = true;
-
-                    var d2 = string_lower(string(global.difficulty));
-                    if (d2 == "easy") sel_diff = 0;
-                    else if (d2 == "hard") sel_diff = 2;
-                    else sel_diff = 1;
-                    active_top_item = "arcade";
-                }
-                else if (sel_main == 3)
-                {
-                    close_large_panels();
-                    story_submenu_open = false;
-                    options_open = true;
-                    menu_game_open = false;
-                    sel_opt = 0;
-                    active_top_item = "options";
-                }
-            }
-        }
-
+        global.in_menu = false;
+        global.GAME_STATE = "loading";
+        global.in_loading = true;
+        global.GAME_PAUSED = false;
+        global.editor_on = false;
+        global.next_room = global.menu_selected_room;
+        room_goto(rm_loading);
     }
-    break;
-
-    case 1: // scrolling
-    {
-        if (back) { menu_cam_target_x = MENU_PAGE_1_X; close_large_panels(); story_submenu_open = false; active_top_item = "none"; }
-
-        if (abs(menu_cam_x - menu_cam_target_x) < 0.5)
-        {
-            menu_cam_x = menu_cam_target_x;
-            camera_set_view_pos(cam, menu_cam_x, menu_cam_y);
-            cam_x = menu_cam_x;
-
-            if (menu_cam_target_x == MENU_PAGE_2_X) menu_state = right_target_state;
-            else
-            {
-                close_large_panels();
-                story_submenu_open = false;
-                active_top_item = "none";
-                menu_state = 0;
-            }
-        }
-    }
-    break;
-
-    case 2: // RIGHT PAGE: Level Select first -> then Character Select
-    {
-        // Back to left
-        if (back || (click_release && hit_back))
-        {
-            // clear right-side focus/picks
-            char_picked = false;
-            cs_focus_upgrade = false;
-            cs_focus_play = false;
-            cs_focus_back = false;
-
-            level_picked = false;
-            sel_level = -1;
-
-            close_large_panels();
-            story_submenu_open = false;
-            active_top_item = "none";
-            menu_cam_target_x = MENU_PAGE_1_X;
-            menu_state = 1;
-            break;
-        }
-
-        // CLICK behavior
-        if (click && !click_consumed)
-        {
-            var clicked_any = false;
-
-            // 1) LEVEL CLICK (always available on right page)
-            for (var li2 = 0; li2 < array_length(level_btn); li2++)
-            {
-                if (hit_level[li2])
-                {
-                    var L = level_btn[li2];
-
-                    // placeholders are NOT selectable
-                    if (L.enabled)
-                    {
-                        clicked_any = true;
-
-                        sel_level = li2;
-                        level_picked = true;
-
-                        global.menu_selected_room = L.room;
-                        global.menu_selected_level_name = L.name;
-
-                        // choosing a level resets character pick path
-                        char_picked = false;
-                        sel_char = -1;
-                        cs_focus_upgrade = false;
-                        cs_focus_play = false;
-                        cs_focus_back = false;
-                    }
-                    else
-                    {
-                        clicked_any = true;
-                        // do nothing (placeholder)
-                    }
-                    break;
-                }
-            }
-
-            // 2) If level is picked, allow character select + upgrade/play
-            if (level_picked)
-            {
-                // Upgrade click (only when revealed)
-                if (char_picked && hit_upgrade)
-                {
-                    clicked_any = true;
-
-                    global.upgrade_char_id = picked_char_id;
-                    global.char_id = global.upgrade_char_id;
-
-                    if (variable_global_exists("menu_music_handle") && global.menu_music_handle >= 0) {
-                        audio_stop_sound(global.menu_music_handle);
-                        global.menu_music_handle = -1;
-                    }
-
-                    global.in_menu = false;
-                    global.in_upgrade = true;
-                    room_goto(rm_upgrade);
-                    break;
-                }
-
-                // LETS GO click (only when revealed)
-                if (char_picked && hit_play)
-                {
-                    clicked_any = true;
-
-                    global.char_id = picked_char_id;
-
-                    global.in_menu = false;
-                    global.GAME_STATE = "loading";
-                    global.in_loading = true;
-                    global.GAME_PAUSED = false;
-                    global.editor_on = false;
-                    global.play_requested = true;
-
-                    if (variable_global_exists("menu_music_handle") && global.menu_music_handle >= 0) {
-                        audio_stop_sound(global.menu_music_handle);
-                        global.menu_music_handle = -1;
-                    }
-
-                    // NEW: route to selected level/boss
-                    global.next_room = global.menu_selected_room;
-                    room_goto(rm_loading);
-                    break;
-                }
-
-                // Character click = PICK ONLY (never start)
-                for (var j = 0; j < array_length(char_btn); j++)
-                {
-                    var bb = char_btn[j];
-                    if (mx_world >= bb.x && mx_world <= bb.x + bb.w && my_world >= bb.y && my_world <= bb.y + bb.h)
-                    {
-                        clicked_any = true;
-
-                        sel_char = bb.id;
-                        picked_char_id = sel_char;
-                        global.char_id = picked_char_id;
-
-                        char_picked = true;
-                        cs_focus_upgrade = false;
-                        cs_focus_play = false;
-                        cs_focus_back = false;
-
-                        break;
-                    }
-                }
-
-                // Click-off deselect (character only)
-                if (!clicked_any)
-                {
-                    sel_char = -1;
-                    cs_focus_back = false;
-                    cs_focus_upgrade = false;
-                    cs_focus_play = false;
-                    break;
-                }
-            }
-
-            // If level NOT picked and you click empty space, do nothing
-        }
-
-        // Keyboard focus: Back
-        if (cs_focus_back)
-        {
-            if (right) cs_focus_back = false;
-            if (ok) { cs_focus_back = false; menu_cam_target_x = MENU_PAGE_1_X; menu_state = 1; }
-            break;
-        }
-
-        // Keyboard focus: Upgrade
-        if (cs_focus_upgrade)
-        {
-            if (right) { cs_focus_upgrade = false; cs_focus_play = true; }
-            if (up) cs_focus_upgrade = false;
-
-            if (ok)
-            {
-                if (!level_picked || !char_picked) break;
-
-                global.upgrade_char_id = picked_char_id;
-                global.char_id = global.upgrade_char_id;
-
-                if (variable_global_exists("menu_music_handle") && global.menu_music_handle >= 0) {
-                    audio_stop_sound(global.menu_music_handle);
-                    global.menu_music_handle = -1;
-                }
-
-                global.in_menu = false;
-                global.in_upgrade = true;
-                room_goto(rm_upgrade);
-            }
-            break;
-        }
-
-        // Keyboard focus: Lets Go
-        if (cs_focus_play)
-        {
-            if (left) { cs_focus_play = false; cs_focus_upgrade = true; }
-            if (up) cs_focus_play = false;
-
-            if (ok)
-            {
-                if (!level_picked || !char_picked) break;
-
-                global.char_id = picked_char_id;
-
-                global.in_menu = false;
-                global.GAME_STATE = "loading";
-                global.in_loading = true;
-                global.GAME_PAUSED = false;
-                global.editor_on = false;
-                global.play_requested = true;
-
-                if (variable_global_exists("menu_music_handle") && global.menu_music_handle >= 0) {
-                    audio_stop_sound(global.menu_music_handle);
-                    global.menu_music_handle = -1;
-                }
-
-                global.next_room = global.menu_selected_room;
-                room_goto(rm_loading);
-            }
-            break;
-        }
-
-        // Character keyboard grid nav only after level picked
-        if (level_picked)
-        {
-            if (used_kb && sel_char < 0) sel_char = 0;
-
-            if (left)
-            {
-                if (sel_char == 0 || sel_char == 2) cs_focus_back = true;
-                else if (sel_char == 1) sel_char = 0;
-                else if (sel_char == 3) sel_char = 2;
-            }
-            if (right)
-            {
-                if (sel_char == 0) sel_char = 1;
-                else if (sel_char == 2) sel_char = 3;
-            }
-            if (up)
-            {
-                if (sel_char >= 2) sel_char -= 2;
-            }
-            if (down)
-            {
-                if (char_picked && (sel_char == 2 || sel_char == 3))
-                {
-                    cs_focus_upgrade = true;
-                }
-                else
-                {
-                    if (sel_char <= 1) sel_char += 2;
-                }
-            }
-
-            // Mouse hover selection (highlight only)
-            if (kb_nav_timer <= 0 && sel_char >= 0)
-            {
-                for (var i = 0; i < array_length(char_btn); i++)
-                {
-                    var b = char_btn[i];
-                    if (mx_world >= b.x && mx_world <= b.x + b.w && my_world >= b.y && my_world <= b.y + b.h) {
-                        sel_char = b.id;
-                    }
-                }
-            }
-
-            // OK on character = PICK ONLY (never start)
-            if (ok && !cs_focus_upgrade && !cs_focus_play && !cs_focus_back)
-            {
-                if (sel_char < 0) break;
-
-                picked_char_id = sel_char;
-                global.char_id = picked_char_id;
-
-                char_picked = true;
-            }
-        }
-    }
-    break;
 }
 
-// --------------------------------------------------
-// Glow update
-// --------------------------------------------------
-var gs = glow_speed;
-
-// Left menu glows
-var hov_start   = false; // no longer used on left page
-var hov_story   = (menu_state == 0) && hit_story;
-var hov_arcade  = (menu_state == 0) && start_open && hit_arcade;
-var hov_options = (menu_state == 0) && hit_options;
-var hov_game    = (menu_state == 0) && options_open && !menu_game_open && hit_game;
-var hov_exit    = (menu_state == 0) && options_open && !menu_game_open && hit_exit;
-
-// Left-page diff hovers
-var hov_easyL   = (menu_state == 0) && arcade_diff_open && hit_easyL;
-var hov_normalL = (menu_state == 0) && arcade_diff_open && hit_normalL;
-var hov_hardL   = (menu_state == 0) && arcade_diff_open && hit_hardL;
-
-// Right-page hovers
-var hov_back = (menu_state == 2) && hit_back;
-
-// NEW: level hover (and selected stays glowing a bit)
 for (var gi = 0; gi < array_length(level_btn); gi++)
 {
-    var is_hov = (menu_state == 2) && hit_level[gi];
-    var is_sel = (menu_state == 2) && level_picked && (sel_level == gi);
-    glow_level[gi] = lerp(glow_level[gi], (is_hov || is_sel) ? 1 : 0, gs);
+    var is_hov = (menu_state == MENU_STATE_PAGE2) && hit_level[gi];
+    var is_sel = (menu_state == MENU_STATE_PAGE2) && level_picked && (sel_level == gi);
+    glow_level[gi] = lerp(glow_level[gi], (is_hov || is_sel) ? 1 : 0, glow_speed);
 }
 
-// Character hovers (ONLY when level picked)
-var hov0=false, hov1=false, hov2=false, hov3=false;
-if (menu_state == 2 && level_picked && sel_char >= 0) {
-    var b0 = char_btn[0]; hov0 = (mx_world>=b0.x && mx_world<=b0.x+b0.w && my_world>=b0.y && my_world<=b0.y+b0.h);
-    var b1 = char_btn[1]; hov1 = (mx_world>=b1.x && mx_world<=b1.x+b1.w && my_world>=b1.y && my_world<=b1.y+b1.h);
-    var b2 = char_btn[2]; hov2 = (mx_world>=b2.x && mx_world<=b2.x+b2.w && my_world>=b2.y && my_world<=b2.y+b2.h);
-    var b3 = char_btn[3]; hov3 = (mx_world>=b3.x && mx_world<=b3.x+b3.w && my_world>=b3.y && my_world<=b3.y+b3.h);
-}
-
-var hov_upgrade = (menu_state == 2) && level_picked && char_picked && hit_upgrade;
-var hov_play    = (menu_state == 2) && level_picked && char_picked && hit_play;
-
-glow_start   = lerp(glow_start,   hov_start   ? 1 : 0, gs);
-glow_story   = lerp(glow_story,   hov_story   ? 1 : 0, gs);
-glow_arcade  = lerp(glow_arcade,  hov_arcade  ? 1 : 0, gs);
-glow_options = lerp(glow_options, hov_options ? 1 : 0, gs);
-glow_game    = lerp(glow_game,    hov_game    ? 1 : 0, gs);
-glow_exit    = lerp(glow_exit,    hov_exit    ? 1 : 0, gs);
-
-glow_easyL   = lerp(glow_easyL,   hov_easyL   ? 1 : 0, gs);
-glow_normalL = lerp(glow_normalL, hov_normalL ? 1 : 0, gs);
-glow_hardL   = lerp(glow_hardL,   hov_hardL   ? 1 : 0, gs);
-
-glow_back    = lerp(glow_back,    hov_back ? 1 : 0, gs);
-
-glow_char0   = lerp(glow_char0,   hov0 ? 1 : 0, gs);
-glow_char1   = lerp(glow_char1,   hov1 ? 1 : 0, gs);
-glow_char2   = lerp(glow_char2,   hov2 ? 1 : 0, gs);
-glow_char3   = lerp(glow_char3,   hov3 ? 1 : 0, gs);
-
-glow_upgrade = lerp(glow_upgrade, hov_upgrade ? 1 : 0, gs);
-glow_play    = lerp(glow_play,    hov_play    ? 1 : 0, gs);
+glow_upgrade = lerp(glow_upgrade, (menu_state == MENU_STATE_PAGE2 && level_picked && hit_upgrade) ? 1 : 0, glow_speed);
+glow_play = lerp(glow_play, (menu_state == MENU_STATE_PAGE2 && level_picked && hit_play) ? 1 : 0, glow_speed);
